@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>유압 시스템 강의실</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;600;700&display=swap">
+<style>
+/* VOICE   차분한 사내 교육. 실무자가 출퇴근길에 휴대폰으로 3분씩 보는 강의실
+   IDEA    유압 회로도 한 장: 흰 종이, 검은 선, 압력 라인은 빨강, 리턴 라인은 파랑
+   PICTURE 첫 화면의 '오늘 볼 강의' 카드와 31칸 진도 띠 (칸 하나 = 강의 하나)
+   COLOUR  종이 흰색(밤에는 먹색) 바탕, 강조 = 압력 빨강, 보조 = 리턴 파랑, 통과 = 초록
+   TYPE    IBM Plex Sans KR 네 가지 크기, 숫자는 tabular-nums
+   LAYOUT  휴대폰 한 줄 기둥(최대 640px). 목록 → 강의(동영상, 정리 노트, 퀴즈) */
+:root{color-scheme:light dark;
+  --bg:light-dark(#f3f4f1,#0e1215);--surface:light-dark(#ffffff,#161b20);--ink:light-dark(#15191d,#e8ecef);
+  --muted:light-dark(#59626b,#98a3ad);--line:light-dark(#d8dcdf,#29313a);--off:light-dark(#eceeef,#222a31);
+  --p:light-dark(#c3112e,#ff6176);--p-ink:#ffffff;--r:light-dark(#1d5ea6,#74a9ff);
+  --ok:light-dark(#17784c,#62d39b);--okbg:light-dark(#def2e7,#13301f);
+  --code-bg:light-dark(#15191d,#0a0d10);--code-ink:#cfe6ff;
+  --f:"IBM Plex Sans KR","Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:16px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--f);word-break:keep-all;overflow-x:clip;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:640px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px));
+  display:flex;flex-direction:column;gap:20px}
+[hidden]{display:none!important}
+a{color:inherit}
+a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible,textarea:focus-visible{outline:2px solid var(--r);outline-offset:2px}
+h1{font-size:clamp(1.9rem,7vw,2.4rem);line-height:1.1;margin:0;text-wrap:balance}
+.lede{margin:6px 0 0;color:var(--muted)}
+.sec{font-size:1.05rem;margin:0 0 6px;color:var(--muted)}
+.num{color:var(--p);font-weight:700;font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+
+/* 첫 화면 */
+.home{display:flex;flex-direction:column;gap:22px}
+.today{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.today .label{font-size:.85rem;color:var(--muted)}
+.today .ttl{font-size:1.45rem;font-weight:700;line-height:1.25;text-wrap:balance}
+.strip{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:3px}
+.strip i{height:22px;border-radius:3px;background:var(--off)}
+.strip i.open{background:transparent;box-shadow:inset 0 0 0 2px var(--r)}
+.strip i.pass{background:var(--ok)}
+.strip i.unit{margin-left:6px}
+.legend-row{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.82rem;color:var(--muted)}
+.legend-row span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.legend-row .k1::before{background:var(--ok)}.legend-row .k2::before{box-shadow:inset 0 0 0 2px var(--r)}.legend-row .k3::before{background:var(--off)}
+.cta{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:48px;background:var(--p);color:var(--p-ink);
+  text-decoration:none;font-weight:700;border-radius:12px;padding:12px 16px}
+.unit h3{font-size:1rem;margin:0 0 8px;display:flex;gap:8px;align-items:baseline}
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.item{display:flex;align-items:center;gap:12px;min-height:56px;padding:10px 14px;background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;text-decoration:none}
+.item.planned{opacity:.6;border-style:dashed}
+.item .ibody{display:flex;flex-direction:column;flex:1}
+.item .iname{font-weight:600}
+.item .isub{font-size:.82rem;color:var(--muted)}
+.go{color:var(--muted);font-size:1.3rem}
+.chip{font-size:.75rem;padding:2px 8px;border-radius:999px;font-weight:600;white-space:nowrap;background:var(--off);color:var(--muted)}
+.chip.ok{background:var(--okbg);color:var(--ok)}
+.chip.mid{background:transparent;box-shadow:inset 0 0 0 1.5px var(--r);color:var(--r)}
+details.more{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+details.more ul{margin:8px 0 4px;padding-left:1.2em;font-size:.92rem;color:var(--muted)}
+summary{cursor:pointer;font-weight:600;color:var(--r);min-height:28px}
+
+/* 내 기록 · 수강 현황 */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.card h2{font-size:1.05rem;margin:0}
+.rec{font-size:.88rem;color:var(--muted);margin:0}
+.rec.good{color:var(--ok)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row label{font-size:.9rem;color:var(--muted)}
+input[type=text],input[inputmode]{font:inherit;font-size:16px;min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;
+  background:var(--bg);color:var(--ink);flex:1}
+textarea{width:100%;font:inherit;font-size:.88rem;line-height:1.5;padding:10px 12px;border:1px solid var(--line);border-radius:10px;
+  background:var(--bg);color:var(--ink);resize:vertical}
+.btn{font:inherit;font-weight:700;min-height:44px;border:0;border-radius:10px;padding:8px 16px;background:var(--ink);color:var(--bg);cursor:pointer}
+.btn.ghost{background:var(--off);color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.dots{display:flex;flex-wrap:wrap;gap:3px}
+.dots i{width:12px;height:12px;border-radius:3px;background:var(--off)}
+.dots i.pass{background:var(--ok)}.dots i.mid{box-shadow:inset 0 0 0 2px var(--r);background:transparent}
+.foot{font-size:.8rem;color:var(--muted);text-align:center;margin-top:8px}
+
+/* 강의 화면 */
+.lesson{display:flex;flex-direction:column;gap:20px}
+.back{color:var(--r);text-decoration:none;font-weight:600;align-self:flex-start;min-height:32px}
+.lhead h2{font-size:clamp(1.5rem,6vw,1.9rem);line-height:1.2;margin:6px 0 4px;text-wrap:balance}
+.lhead .sub{margin:0;color:var(--muted)}
+.eyebrow{display:flex;gap:10px;align-items:center}
+.player{margin:0;display:flex;flex-direction:column;align-items:center;gap:6px}
+.player video{width:100%;max-width:min(360px,100%);max-height:72vh;aspect-ratio:9/16;background:#000;border-radius:14px}
+.player figcaption{font-size:.82rem;color:var(--muted);text-align:center}
+.notes{display:flex;flex-direction:column;gap:14px}
+.note{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 16px 6px}
+.note h3{font-size:1.1rem;margin:0 0 10px}
+.step{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.step p{margin:0;color:var(--muted);font-size:.95rem}
+.vis{overflow-x:auto}
+.vis ol,.vis ul{margin:0;padding-left:1.4em}
+.big{font-size:clamp(1.6rem,7vw,2.1rem);font-weight:700;color:var(--p);text-align:center;font-variant-numeric:tabular-nums}
+.mid{font-size:clamp(1.05rem,4.6vw,1.3rem);font-weight:700;text-align:center}
+.dim{color:var(--muted);font-size:.9rem}
+.hl{color:var(--p);font-weight:700}
+.ok{color:var(--ok);font-weight:700}
+.eq{font-size:clamp(1.2rem,5.6vw,1.65rem);font-weight:700;text-align:center;white-space:nowrap}
+.rad{border-top:2px solid currentColor;padding:1px 4px 0;margin-left:1px}
+svg.fig{display:block;width:100%;max-width:520px;height:auto;margin:0 auto;color:var(--ink);overflow:visible}
+svg.fig text{fill:currentColor;font-family:var(--f)}
+svg.fig .as{stroke:var(--p)}svg.fig .af{fill:var(--p)}
+ul.legend{list-style:none;padding-left:0}
+ul.legend li{margin-bottom:6px}
+ul.legend b{display:inline-block;min-width:3.2em;color:var(--p)}
+code{font-size:.92em;background:var(--off);border-radius:6px;padding:1px 6px}
+
+/* 퀴즈 */
+.quiz{background:var(--surface);border:2px solid var(--p);border-radius:14px;padding:16px}
+.quiz ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:18px}
+.qtext{font-weight:600}
+.ans{display:flex;gap:8px;margin-top:8px;align-items:center}
+.ans .unit{color:var(--muted);font-size:.9rem;white-space:nowrap}
+.ans button{font:inherit;font-weight:700;min-height:44px;border:0;border-radius:10px;padding:8px 16px;background:var(--p);color:var(--p-ink);cursor:pointer}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
+.opt{font:inherit;min-height:48px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);cursor:pointer;text-align:center}
+.opt.wrong{opacity:.45;text-decoration:line-through}
+.opt.right{border-color:var(--ok);background:var(--okbg);color:var(--ok);font-weight:700}
+.hints{display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.hints details{border-radius:8px;background:var(--bg);padding:6px 10px}
+.hints details p{margin:6px 0 2px;font-size:.92rem}
+.reveal{font:inherit;font-size:.85rem;font-weight:700;align-self:flex-start;min-height:36px;border:0;border-radius:10px;padding:6px 12px;background:var(--off);color:var(--ink);cursor:pointer}
+.fb{margin:6px 0 0;font-size:.92rem}
+.fb:empty{display:none}
+.fb.good{color:var(--ok);font-weight:700}
+.fb.bad{color:var(--p)}
+.q.solved input{border-color:var(--ok)}
+.answer{margin:16px 0 0;font-size:.9rem;color:var(--muted)}
+.answer.done{color:var(--ok);font-weight:700}
+
+/* 휴대폰: 왼쪽 끝을 밀어서 목록으로 */
+.swipe-hint{position:fixed;left:0;top:50%;z-index:20;padding:10px 14px 10px calc(10px + env(safe-area-inset-left,0px));border-radius:0 999px 999px 0;
+  background:var(--p);color:var(--p-ink);font-weight:700;font-size:.9rem;pointer-events:none;transform:translate(-100%,-50%);opacity:0}
+.swipe-hint.ready{background:var(--ink);color:var(--bg)}
+@media (prefers-reduced-motion:no-preference){.lesson{animation:fade .25s ease}.swipe-hint.back,.lesson.settle{transition:transform .2s ease,opacity .2s ease}}
+@keyframes fade{from{opacity:.4}to{opacity:1}}
+@media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px}
+  .stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:5.5em;text-align:start}
+  .stack td::before{content:attr(data-l);float:inline-start;width:5em;margin-inline-start:-5.5em;color:var(--muted)}.stack td:empty{display:none}}
+
+/* 계산기: 강의 화면에서만 오른쪽 아래 버튼, 누르면 아래에서 올라오는 판 */
+.calc-fab{display:none;position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;
+  font:inherit;font-weight:700;min-height:48px;padding:10px 18px;border:0;border-radius:999px;background:var(--r);color:var(--surface);
+  box-shadow:0 4px 14px rgb(0 0 0 / .25);cursor:pointer}
+body.in-lesson .calc-fab:not([hidden]){display:block}
+.calc{position:fixed;left:0;right:0;bottom:0;z-index:31;margin:0 auto;max-width:440px;background:var(--surface);color:var(--ink);
+  border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;box-shadow:0 -6px 24px rgb(0 0 0 / .25);
+  padding:12px max(14px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));
+  display:flex;flex-direction:column;gap:10px}
+.calc-top{display:flex;justify-content:space-between;align-items:center}
+.calc-kb{font:inherit;font-size:.85rem;min-height:36px;padding:4px 10px;border:0;border-radius:10px;background:transparent;color:var(--r);cursor:pointer}
+.calc-x{font:inherit;font-size:.9rem;min-height:36px;padding:4px 12px;border:0;border-radius:10px;background:var(--off);color:var(--ink);cursor:pointer}
+.calc-scr{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px 12px;text-align:right;font-variant-numeric:tabular-nums}
+.calc-ex{font-size:1.25rem;min-height:1.6em;overflow-wrap:anywhere}
+.calc-res{font-size:1rem;color:var(--muted);min-height:1.5em}
+.calc-res.final{font-size:1.45rem;font-weight:700;color:var(--ink)}
+.calc-keys{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.calc-keys button{font:inherit;font-size:1.1rem;min-height:46px;border:1px solid var(--line);border-radius:10px;background:var(--off);color:var(--ink);cursor:pointer;padding:0}
+.calc-keys button.n{background:var(--bg)}
+.calc-keys button.eq{background:var(--r);border-color:var(--r);color:var(--surface);font-weight:700}
+.calc-put{font:inherit;font-weight:700;min-height:46px;border:0;border-radius:10px;background:var(--p);color:var(--p-ink);cursor:pointer}
+.calc-put:disabled{opacity:.45;cursor:default}
+body.in-lesson .quiz{margin-bottom:64px}
+
+/* 처음 온 사람: 이름 적기 */
+.gate{position:fixed;inset:0;z-index:50;background:rgb(0 0 0 / .55);display:flex;align-items:center;justify-content:center;padding:16px}
+.gate-box{width:100%;max-width:400px;background:var(--surface);color:var(--ink);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.gate-box h2{margin:0;font-size:1.3rem}
+.gate-box p{margin:0;color:var(--muted);font-size:.92rem}
+.gate-box input{flex:none}
+.gate-box .btn{background:var(--p);color:var(--p-ink)}
+.gate-box .btn:disabled{opacity:.45;cursor:default}
+body.gated{overflow:hidden}
+body.gated .calc-fab{display:none!important}
+/* 강의 끝: 교육 담당자에게 전달됐는지 */
+.report{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--off);display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.report p{margin:0;font-size:.92rem;font-weight:600}
+.report.good{background:var(--okbg);color:var(--ok)}
+.report.bad p{color:var(--ink)}
+
+.linkbtn{font:inherit;font-size:inherit;color:inherit;background:none;border:0;padding:4px 2px;text-decoration:underline;cursor:pointer}
+</style></head><body>
+<main class="wrap">
+  <section class="home">
+    <header>
+      <h1>유압 시스템 강의실</h1>
+      <p class="lede">유압 실무 1~5년차 과정 · 부품에서 시스템으로</p>
+    </header>
+    <div class="today">
+      <span class="label">오늘 볼 강의</span>
+      <span class="ttl" id="today-ttl">H01-1 · 오리피스 식</span>
+      <div class="strip" style="--n:31" role="img" aria-label="전체 31강 진도"><i data-n="H01-1" class="open" title="H01-1"></i><i data-n="H01-2" class="open" title="H01-2"></i><i data-n="H01-3" class="open" title="H01-3"></i><i data-n="H01-4" class="open" title="H01-4"></i><i data-n="H02-1" class="open unit" title="H02-1"></i><i data-n="H02-2" class="open" title="H02-2"></i><i data-n="H02-3" class="open" title="H02-3"></i><i data-n="H02-4" class="open" title="H02-4"></i><i data-n="H03-1" class="open unit" title="H03-1"></i><i data-n="H03-2" class="" title="H03-2"></i><i data-n="H03-3" class="" title="H03-3"></i><i data-n="H03-4" class="" title="H03-4"></i><i data-n="H04-1" class=" unit" title="H04-1"></i><i data-n="H04-2" class="" title="H04-2"></i><i data-n="H04-3" class="" title="H04-3"></i><i data-n="H04-4" class="" title="H04-4"></i><i data-n="H05-1" class=" unit" title="H05-1"></i><i data-n="H05-2" class="" title="H05-2"></i><i data-n="H05-3" class="" title="H05-3"></i><i data-n="H05-4" class="" title="H05-4"></i><i data-n="H06-1" class=" unit" title="H06-1"></i><i data-n="H06-2" class="" title="H06-2"></i><i data-n="H06-3" class="" title="H06-3"></i><i data-n="H07-1" class=" unit" title="H07-1"></i><i data-n="H07-2" class="" title="H07-2"></i><i data-n="H07-3" class="" title="H07-3"></i><i data-n="H07-4" class="" title="H07-4"></i><i data-n="H08-1" class=" unit" title="H08-1"></i><i data-n="H08-2" class="" title="H08-2"></i><i data-n="H08-3" class="" title="H08-3"></i><i data-n="H08-4" class="" title="H08-4"></i></div>
+      <div class="legend-row"><span class="k1">통과</span><span class="k2">공개</span><span class="k3">준비 중</span><span id="count"></span></div>
+      <a class="cta" id="cta" href="#H01-1">강의 보기 <span aria-hidden="true">›</span></a>
+    </div>
+    <h2 class="sec">강의 목록</h2>
+    <section class="unit"><h3><span class="num">H01</span> 기본 식을 실무 감각으로</h3><ul class="list">
+      <li><a class="item" href="#H01-1"><span class="num">H01-1</span>
+        <span class="ibody"><span class="iname">오리피스 식</span><span class="isub">유량은 면적에 비례하고, 차압의 제곱근에 비례한다</span></span>
+        <span class="chip">안 봄</span><span class="go" aria-hidden="true">›</span></a></li>
+      <li><a class="item" href="#H01-2"><span class="num">H01-2</span>
+        <span class="ibody"><span class="iname">압축성과 압력 상승</span><span class="isub">기름도 줄어든다. 그래서 압력은 시간을 두고 오른다</span></span>
+        <span class="chip">안 봄</span><span class="go" aria-hidden="true">›</span></a></li>
+      <li><a class="item" href="#H01-3"><span class="num">H01-3</span>
+        <span class="ibody"><span class="iname">유압 동력과 효율</span><span class="isub">동력 = 압력 × 유량. 버린 동력은 열이 된다</span></span>
+        <span class="chip">안 봄</span><span class="go" aria-hidden="true">›</span></a></li>
+      <li><a class="item" href="#H01-4"><span class="num">H01-4</span>
+        <span class="ibody"><span class="iname">압력 손실과 온도</span><span class="isub">같은 회로도 기름 온도에 따라 손실이 달라진다</span></span>
+        <span class="chip">안 봄</span><span class="go" aria-hidden="true">›</span></a></li></ul></section>
+    <section class="unit"><h3><span class="num">H02</span> 펌프와 레귤레이터</h3><ul class="list">
+      <li><a class="item" href="#H02-1"><span class="num">H02-1</span>
+        <span class="ibody"><span class="iname">가변 사판 펌프: 사판각과 토출량</span><span class="isub">유량 = 배제용적 × 회전수. 사판각이 배제용적을 정한다</span></span>
+        <span class="chip">안 봄</span><span class="go" aria-hidden="true">›</span></a></li>
+      <li><a class="item" href="#H02-2"><span class="num">H02-2</span>
+        <span class="ibody"><span class="iname">마력 제어: 압력이 오르면 유량을 줄이는 이유 (P-Q 선도)</span><span class="isub">압력이 오르면 유량을 줄여 엔진 동력을 넘지 않는다</span></span>
+        <span class="chip">안 봄</span><span class="go" aria-hidden="true">›</span></a></li>
+      <li><a class="item" href="#H02-3"><span class="num">H02-3</span>
+        <span class="ibody"><span class="iname">유량 제어 신호: 펌프는 무엇을 보고 토출량을 정하나</span><span class="isub">펌프는 무엇을 보고 토출량을 정하나</span></span>
+        <span class="chip">안 봄</span><span class="go" aria-hidden="true">›</span></a></li>
+      <li><a class="item" href="#H02-4"><span class="num">H02-4</span>
+        <span class="ibody"><span class="iname">엔진과 펌프 매칭: 토크 한계와 엔진 스톨</span><span class="isub">펌프가 먹는 토크가 엔진 토크를 넘으면 회전수가 떨어진다</span></span>
+        <span class="chip">안 봄</span><span class="go" aria-hidden="true">›</span></a></li></ul></section>
+    <section class="unit"><h3><span class="num">H03</span> MCV 와 스풀</h3><ul class="list">
+      <li><a class="item" href="#H03-1"><span class="num">H03-1</span>
+        <span class="ibody"><span class="iname">오픈센터 MCV: 센터 바이패스와 미터인을 동시에 조절</span><span class="isub">센터 바이패스를 닫으면서 미터인을 연다</span></span>
+        <span class="chip">안 봄</span><span class="go" aria-hidden="true">›</span></a></li>
+      <li><div class="item planned"><span class="num">H03-2</span>
+        <span class="ibody"><span class="iname">스풀 노치와 개구면적 선도</span><span class="isub">준비 중</span></span>
+        <span class="chip">예정</span></div></li>
+      <li><div class="item planned"><span class="num">H03-3</span>
+        <span class="ibody"><span class="iname">미터인·미터아웃: 속도 제어와 캐비테이션</span><span class="isub">준비 중</span></span>
+        <span class="chip">예정</span></div></li>
+      <li><div class="item planned"><span class="num">H03-4</span>
+        <span class="ibody"><span class="iname">부하 의존성: 같은 레버인데 속도가 다른 이유</span><span class="isub">준비 중</span></span>
+        <span class="chip">예정</span></div></li></ul></section>
+    <details class="more"><summary>앞으로 열릴 단원 5개</summary><ul><li>H04 유량 제어 방식 비교 · 4강</li><li>H05 복합 동작과 유량 분배 · 4강</li><li>H06 재생과 에너지 · 3강</li><li>H07 전자 유압과 제어 기초 · 4강</li><li>H08 시험 데이터 읽기 · 4강</li></ul></details>
+    <section class="card" id="mine">
+      <h2>내 기록</h2>
+      <p class="rec" id="rec"></p>
+      <div class="row"><label for="myname">이름</label><input type="text" id="myname" placeholder="이름 (교육 담당자에게 보이는 이름)" autocomplete="name"></div>
+      <textarea id="result" rows="4" readonly aria-label="보낼 결과 글"></textarea>
+      <div class="row"><button type="button" class="btn ghost" id="copy">결과 복사</button></div>
+    </section>
+    <section class="card" id="teacher" hidden>
+      <h2>수강 현황 <span class="muted" style="font-weight:400;font-size:.85rem">· 교육 담당자에게만 보여요</span></h2>
+      <table class="stack" id="roster"></table>
+      <p class="rec" id="roster-note"></p>
+      <p class="rec">기록이 비어 있으면 후배에게 이 강의실의 쓰기 권한이 있는지 확인하세요. 권한이 없으면 후배가 '결과 복사'로 보낸 글로 확인합니다.</p>
+      <div class="row"><button type="button" class="btn ghost" id="reload">다시 불러오기</button></div>
+    </section>
+    <p class="foot">제작 Seunghwan.Kim · 교과서 수준의 일반값으로 만든 교육 자료입니다 · <button type="button" class="linkbtn" id="tlogin">교육 담당자</button></p>
+  </section>
+
+  <article class="lesson" data-lesson="H01-1" hidden>
+    <a class="back" href="#">← 강의 목록</a>
+    <header class="lhead">
+      <div class="eyebrow"><span class="num">H01-1</span><span class="chip">안 봄</span></div>
+      <h2>오리피스 식</h2>
+      <p class="sub">유량은 면적에 비례하고, 차압의 제곱근에 비례한다</p>
+    </header>
+    <figure class="player">
+      <video controls playsinline preload="metadata" src="videos/H01-1-orifice.mp4"></video>
+      <figcaption>약 3분 · 한국어 내레이션과 자막. 소리 없이 자막만 봐도 돼요</figcaption>
+    </figure>
+    <div class="notes">
+      <h2 class="sec">정리 노트</h2>
+      <section class="note">
+        <h3>구멍 하나를 지나는 기름</h3>
+        <div class="step">
+          <div class="vis"><svg class='fig' viewBox='0 0 600 250' role='img' aria-label='오리피스를 지나는 흐름'><line x1='20' y1='60' x2='580' y2='60' stroke='currentColor' stroke-width='4'/><line x1='20' y1='190' x2='580' y2='190' stroke='currentColor' stroke-width='4'/><rect x='286' y='60' width='28' height='50' fill='currentColor'/><rect x='286' y='140' width='28' height='50' fill='currentColor'/><line class='as' x1='40' y1='125' x2='540' y2='125' stroke-width='6'/><polygon class='af' points='540,110 570,125 540,140'/><text x='150' y='40' font-size='30' text-anchor='middle'>P₁ 높은 압력</text><text x='450' y='40' font-size='30' text-anchor='middle'>P₂ 낮은 압력</text><text x='300' y='235' font-size='30' text-anchor='middle'>면적 A</text><text class='af' x='110' y='165' font-size='30'>Q</text></svg></div>
+          <p>스풀 노치든 오리피스든, 기름이 좁은 구멍을 지나는 모습은 같습니다. 앞쪽 압력이 높고 뒤쪽 압력이 낮습니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>흐름을 만드는 건 <span class='hl'>압력 차이</span><br>ΔP = P₁ − P₂</div></div>
+          <p>유량을 정하는 건 압력 자체가 아니라, 구멍 앞뒤의 압력 차이입니다. 이걸 차압, 델타 피라고 부릅니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>오리피스 식</h3>
+        <div class="step">
+          <div class="vis"><div class='eq'>Q = C<sub>d</sub> · A · √<span class='rad'>2ΔP / ρ</span></div></div>
+          <p>오리피스 식입니다. 유량은 유량계수와 면적, 그리고 차압의 제곱근에 비례합니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ul class='legend'><li><b>C<sub>d</sub></b> 유량계수 · 보통 0.6 ~ 0.7</li><li><b>A</b> 열린 면적</li><li><b>ΔP</b> 앞뒤 압력 차</li><li><b>ρ</b> 작동유 밀도 · 약 850 kg/m³</li></ul></div>
+          <p>유량계수는 보통 0.6에서 0.7, 작동유 밀도는 약 850 입니다. 오늘은 0.65 와 850 으로 계산합니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ① 차압의 효과는 제곱근</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>차압 ×2 → 유량 <span class='hl'>×1.41</span></div><div class='dim' style='text-align:center'>√2 = 1.41</div></div>
+          <p>면적은 그대로 두고 차압만 두 배로 올리면, 유량은 두 배가 아니라 1.41배가 됩니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>유량 ×2 ← 차압 <span class='hl'>×4</span></div></div>
+          <p>거꾸로, 유량을 두 배로 늘리려면 차압은 네 배가 필요합니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><svg class='fig' viewBox='0 0 600 330' role='img' aria-label='차압에 따른 유량 곡선'><line x1='70' y1='270' x2='575' y2='270' stroke='currentColor' stroke-width='3'/><line x1='70' y1='270' x2='70' y2='25' stroke='currentColor' stroke-width='3'/><polyline class='as' fill='none' stroke-width='6' points='70,270 76,245 82,234 89,226 95,219 101,213 108,208 114,203 120,198 126,194 132,190 139,186 145,182 151,178 158,175 164,172 170,168 176,165 182,162 189,159 195,156 201,154 208,151 214,148 220,146 226,143 232,141 239,138 245,136 251,133 258,131 264,129 270,126 276,124 282,122 289,120 295,118 301,116 308,114 314,111 320,109 326,107 332,106 339,104 345,102 351,100 358,98 364,96 370,94 376,92 382,91 389,89 395,87 401,85 408,83 414,82 420,80 426,78 432,77 439,75 445,73 451,72 458,70 464,69 470,67 476,65 482,64 489,62 495,61 501,59 508,58 514,56 520,55 526,53 532,52 539,50 545,49 551,47 558,46 564,44 570,43'/><circle cx='195' cy='156' r='9' fill='currentColor'/><circle cx='320' cy='110' r='9' fill='currentColor'/><circle cx='570' cy='43' r='9' fill='currentColor'/><text x='205' y='190' font-size='26'>10 bar · 38</text><text x='330' y='145' font-size='26'>20 bar · 54</text><text x='560' y='118' font-size='26' text-anchor='end'>40 bar · 76</text><text x='575' y='310' font-size='26' text-anchor='end'>차압 ΔP (bar)</text><text x='80' y='22' font-size='26'>유량 Q (L/min)</text></svg></div>
+          <p>면적 20 mm²일 때의 곡선입니다. 차압을 올릴수록 유량은 점점 덜 늘어납니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ② 면적은 그대로 비례한다</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>면적 ×2 → 유량 <span class='hl'>×2</span></div></div>
+          <p>면적은 다릅니다. 열린 면적을 두 배로 하면 유량도 정확히 두 배입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>차압을 묶어 두면<br>유량은 <span class='hl'>면적만</span> 따라간다</div></div>
+          <p>그래서 차압을 일정하게 묶어 두면, 유량은 스풀이 연 면적만으로 정해집니다. 이게 압력 보상 밸브의 원리입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>현장 암산식</h3>
+        <div class="step">
+          <div class="vis"><div class='eq'>Q ≈ <span class='hl'>0.6</span> · A · √<span class='rad'>ΔP</span></div><div class='dim' style='text-align:center'>Q: L/min · A: mm² · ΔP: bar</div></div>
+          <p>실무 단위로 바꾸면 암산식이 됩니다. 리터 퍼 미닛은 0.6 곱하기 면적 곱하기 차압의 루트입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>0.6 에 묶인 것<br>C<sub>d</sub> 0.65 · ρ 850 · 단위 환산</div><div class='dim' style='text-align:center'>정확히는 0.598</div></div>
+          <p>상수 0.6 은 유량계수 0.65, 밀도 850, 그리고 단위 환산을 하나로 묶은 값입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ① 유량 구하기</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>A = 20 mm², ΔP = 10 bar<br>Q = ?</div></div>
+          <p>열린 면적 20 mm², 차압 10 bar일 때 유량은 얼마일까요? 잠깐 멈추고 계산해 보세요.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>0.6 × 20 × √10<br>= 0.6 × 20 × 3.16</div><div class='big'>≈ 38 L/min</div></div>
+          <p>루트 10 은 약 3.16 입니다. 0.6 곱하기 20 곱하기 3.16, 약 38 리터 퍼 미닛입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ② 부하가 바뀌면</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>같은 스풀 위치에서<br>차압 10 → 40 bar</div></div>
+          <p>같은 스풀 위치에서 부하가 줄어 차압이 10 bar에서 40 bar로 올라가면, 유량은 어떻게 될까요?</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>차압 ×4 → √4 = <span class='hl'>×2</span></div><div class='big'>≈ 76 L/min</div></div>
+          <p>차압이 네 배니까 루트 4, 유량은 두 배입니다. 약 76 리터 퍼 미닛입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>실무와 연결 · 부하 의존성</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>같은 레버 = 같은 면적</div><div class='dim' style='text-align:center'>부하가 바뀌면 → ΔP 가 바뀌고 → 속도가 바뀐다</div></div>
+          <p>레버를 같은 만큼 밀어도 부하가 바뀌면 차압이 바뀌고, 그래서 속도가 달라집니다. 방금 계산이 바로 이 현상입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>압력 보상 = ΔP 고정<br>→ <span class='hl'>Q ∝ A</span></div><div class='dim' style='text-align:center'>부하와 상관없이 같은 레버에 같은 속도</div></div>
+          <p>압력 보상이 있는 시스템은 차압을 묶어서, 부하와 상관없이 같은 레버에 같은 속도를 냅니다. 이 차이는 H04 유량 제어 방식에서 다시 봅니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>한 줄 요약</h3>
+        <div class="step">
+          <div class="vis"><ol><li>유량은 면적에 비례, 차압의 <span class='hl'>제곱근</span>에 비례</li></ol></div>
+          <p>정리합니다. 첫째, 유량은 면적에 비례하고 차압의 제곱근에 비례합니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='2'><li>차압 ×2 → 유량 ×1.41<br>유량 ×2 → 차압 ×4</li></ol></div>
+          <p>둘째, 차압 두 배는 유량 1.41배, 유량 두 배에는 차압 네 배가 필요합니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='3'><li>암산식 <b>Q ≈ 0.6 · A · √ΔP</b><br><span class='dim'>L/min · mm² · bar</span></li></ol></div>
+          <p>셋째, 암산식은 0.6 곱하기 면적 곱하기 차압의 루트. 이제 강의실에서 퀴즈 세 문제를 풀어 보세요.</p>
+        </div>
+      </section>
+    </div>
+    <section class="quiz">
+      <h2 class="sec">퀴즈 3문제</h2>
+      <ol>
+        <li class="q" data-q="0" data-type="num" data-k="9JDMuAjOiw2b0JCL1IjLyojIhJye" data-show="Mi4yNeuwsCAoMS41wrIgPSAyLjI1KQ==">
+          <div class="qtext">면적은 그대로 두고 유량을 <b>1.5배</b>로 늘리려면, 차압은 몇 배가 필요할까요?</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H01-1-0" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="1번 답">
+            <span class="unit">배</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>유량은 차압의 제곱근에 비례합니다. 거꾸로 하면 차압은 유량의 몇 제곱에 비례할까요?</p></details><details><summary>더 큰 힌트</summary><p>차압 배수 = (유량 배수)². 1.5 를 제곱해 보세요.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="1" data-type="num" data-k="9NDMuAjOiw2b0JCL44SM3ojIhJye" data-show="7JW9IDcyIEwvbWluICjsoJXtmZXtlZwg7Iud7Jy866GcIDcxLjgp">
+          <div class="qtext">열린 면적 <b>30 mm²</b>, 차압 <b>16 bar</b> 일 때 유량은 약 몇 L/min 일까요? (C<sub>d</sub> 0.65, ρ 850)</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H01-1-1" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="2번 답">
+            <span class="unit">L/min</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>암산식 Q ≈ 0.6 × A × √ΔP 를 쓰세요. 단위는 L/min, mm², bar 입니다.</p></details><details><summary>더 큰 힌트</summary><p>√16 = 4 입니다. 0.6 × 30 × 4 를 계산하면 됩니다.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="2" data-type="choice" data-k="16dzu28k3cz" data-show="7Iqk7ZKA7J20IOyXsCDrqbTsoIE=">
+          <div class="qtext">압력 보상 밸브가 스풀 앞뒤 차압을 일정하게 유지하면, 액추에이터로 가는 유량은 무엇에 비례할까요?</div>
+          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">부하 압력</button><button type="button" class="opt" data-o="1">스풀이 연 면적</button><button type="button" class="opt" data-o="2">펌프 토출 압력</button><button type="button" class="opt" data-o="3">차압의 제곱근</button></div>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>오리피스 식에서 차압이 고정되면, 남는 변수는 무엇인가요?</p></details><details><summary>더 큰 힌트</summary><p>C<sub>d</sub> 와 ρ 는 거의 일정합니다. 남는 것은 A 하나입니다.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li></ol>
+      <p class="answer" data-summary>답을 적고 <b>확인</b>을 누르세요. 계산 문제는 반올림 차이를 인정해요. 틀리면 힌트가 차례로 열리고, 5번 틀리면 정답을 알려 드려요. 계산 문제는 답 칸을 누르면 <b>계산기</b>가 열려요.</p>
+    </section>
+  </article>
+
+  <article class="lesson" data-lesson="H01-2" hidden>
+    <a class="back" href="#">← 강의 목록</a>
+    <header class="lhead">
+      <div class="eyebrow"><span class="num">H01-2</span><span class="chip">안 봄</span></div>
+      <h2>압축성과 압력 상승</h2>
+      <p class="sub">기름도 줄어든다. 그래서 압력은 시간을 두고 오른다</p>
+    </header>
+    <figure class="player">
+      <video controls playsinline preload="metadata" src="videos/H01-2-compressibility.mp4"></video>
+      <figcaption>약 3분 · 한국어 내레이션과 자막. 소리 없이 자막만 봐도 돼요</figcaption>
+    </figure>
+    <div class="notes">
+      <h2 class="sec">정리 노트</h2>
+      <section class="note">
+        <h3>기름도 조금은 줄어든다</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>체적탄성계수 β<br><span class='hl'>약 1,400 MPa</span></div><div class='dim' style='text-align:center'>교과서 값 · 공기·호스가 섞이면 더 낮아진다</div></div>
+          <p>기름이 얼마나 단단한지는 체적탄성계수, 베타로 나타냅니다. 교과서 값으로 약 1400 MPa 입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>부피 <span class='hl'>1%</span> 줄이면<br>압력 <span class='hl'>140 bar</span> 상승</div><div class='dim' style='text-align:center'>ΔP = β × ΔV / V = 1400 MPa × 0.01</div></div>
+          <p>기름을 1% 만 눌러 줄여도 압력이 140 bar 오릅니다. 조금 줄어들지만, 그 조금이 큰 압력이 됩니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>압력 상승 식</h3>
+        <div class="step">
+          <div class="vis"><svg class='fig' viewBox='0 0 600 260' role='img' aria-label='갇힌 부피에 기름이 들어오고 나가는 그림'><rect x='190' y='60' width='220' height='140' rx='12' fill='none' stroke='currentColor' stroke-width='4'/><text x='300' y='140' font-size='34' text-anchor='middle'>부피 V</text><line class='as' x1='30' y1='130' x2='170' y2='130' stroke-width='6'/><polygon class='af' points='170,115 190,130 170,145'/><text class='af' x='60' y='110' font-size='28'>Q 들어옴</text><line x1='410' y1='130' x2='550' y2='130' stroke='currentColor' stroke-width='4'/><polygon fill='currentColor' points='550,118 570,130 550,142'/><text x='440' y='110' font-size='28'>Q 나감</text><text x='300' y='240' font-size='28' text-anchor='middle'>남는 기름이 V 를 눌러 압력이 오른다</text></svg></div>
+          <p>실린더 한쪽 방이나 호스처럼 갇힌 부피에, 나가는 것보다 많은 기름이 들어오면 압력이 오릅니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='eq'>dP/dt = <span class='hl'>β / V</span> × ΔQ</div><div class='dim' style='text-align:center'>ΔQ = 들어온 유량 − 나간 유량</div></div>
+          <p>압력이 오르는 속도는 베타 나누기 부피, 곱하기 남는 유량입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ① 부피가 크면 느리다</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>부피 ×2 → 상승 속도 <span class='hl'>×½</span></div></div>
+          <p>같은 유량이 들어와도 부피가 두 배면 압력은 절반 속도로 오릅니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>긴 호스 · 큰 실린더<br>→ 응답이 <span class='hl'>느리고 부드럽다</span></div></div>
+          <p>그래서 호스가 길거나 실린더가 클수록 압력 응답이 느리고 부드럽습니다. 짧은 배관은 반대로 빠르고 날카롭습니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ② 공기가 섞이면 물렁해진다</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>β ×½ → 상승 속도 <span class='hl'>×½</span></div><div class='dim' style='text-align:center'>공기 혼입 · 호스 팽창 → 실제 β 가 낮아진다</div></div>
+          <p>공기가 섞이거나 호스가 부풀면 실제 베타가 낮아집니다. 베타가 반이면 압력 상승도 반 속도입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>조작감이 <span class='hl'>스펀지</span>처럼<br>늦게 따라온다</div></div>
+          <p>현장에서 레버를 밀었는데 한 박자 늦고 물렁하다면, 공기 혼입을 먼저 의심합니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ① 얼마나 빨리 오르나</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>V = 2 L, 남는 유량 10 L/min<br>β = 1400 MPa<br>dP/dt = ?</div></div>
+          <p>갇힌 부피 2리터에 남는 유량이 분당 10리터면, 압력은 1초에 몇 bar 오를까요? 잠깐 멈추고 계산해 보세요.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>1400 MPa ÷ 2 L<br>× 10 L/min</div><div class='big'>≈ 1,170 bar/s</div><div class='dim' style='text-align:center'>300 bar 까지 약 0.26초</div></div>
+          <p>약 1170 bar/s 입니다. 300 bar 까지 0.26초, 눈 깜짝할 사이입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ② 호스가 두 배로 길면</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>같은 유량, 부피 2 → 4 L</div></div>
+          <p>같은 조건에서 호스가 길어져 부피가 4리터가 되면 어떻게 될까요?</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>부피 ×2 → 속도 ×½</div><div class='big'>≈ 580 bar/s</div><div class='dim' style='text-align:center'>공기로 β 가 반이 돼도 같은 결과</div></div>
+          <p>부피가 두 배니까 약 580 bar/s, 절반입니다. 공기로 베타가 반이 되어도 똑같이 느려집니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>실무와 연결 · 서지와 응답</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>작은 부피 + 급정지<br>→ <span class='hl'>압력 서지</span></div><div class='dim' style='text-align:center'>릴리프가 열리기 전에 압력이 먼저 튄다</div></div>
+          <p>부피가 작은 곳에서 흐름이 갑자기 막히면 압력이 너무 빨리 올라, 릴리프가 열리기 전에 서지가 튑니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>응답이 늦다 → <span class='hl'>V 와 β</span> 부터</div><div class='dim' style='text-align:center'>호스 길이 · 실린더 크기 · 공기 혼입</div></div>
+          <p>반대로 응답이 늦다는 불만이 오면 부피와 베타부터 봅니다. 호스 길이, 실린더 크기, 공기 혼입입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>한 줄 요약</h3>
+        <div class="step">
+          <div class="vis"><ol><li>dP/dt = <span class='hl'>β / V</span> × 남는 유량</li></ol></div>
+          <p>정리합니다. 첫째, 압력 상승 속도는 베타 나누기 부피, 곱하기 남는 유량입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='2'><li>부피 ×2 또는 β ×½ → 속도 ×½</li></ol></div>
+          <p>둘째, 부피가 두 배거나 베타가 반이면 압력은 절반 속도로 오릅니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='3'><li>부피 1% 압축 ≈ <b>140 bar</b><br><span class='dim'>β 1400 MPa 기준</span></li></ol></div>
+          <p>셋째, 기름 부피 1% 압축은 약 140 bar. 이제 강의실에서 퀴즈 세 문제를 풀어 보세요.</p>
+        </div>
+      </section>
+    </div>
+    <section class="quiz">
+      <h2 class="sec">퀴즈 3문제</h2>
+      <ol>
+        <li class="q" data-q="0" data-type="num" data-k="==QfzAjLwojIs9GdiwCM3ojIhJye" data-show="NzAgYmFyICgxNDAwIE1QYSDDlyAwLjAwNSA9IDcgTVBhKQ==">
+          <div class="qtext">갇힌 기름의 부피를 <b>0.5%</b> 줄이면 압력은 약 몇 bar 오를까요? (β 1400 MPa)</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H01-2-0" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="1번 답">
+            <span class="unit">bar</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>ΔP = β × ΔV / V 입니다. 1% 면 140 bar 였습니다.</p></details><details><summary>더 큰 힌트</summary><p>1400 MPa × 0.005 = 7 MPa 입니다. 1 MPa = 10 bar.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="1" data-type="num" data-k="==QfzAjLwojIs9GdiwSM3EjLwojIhJye" data-show="7JW9IDAuMTfstIggKOyDgeyKuSDsho3rj4Qg7JW9IDExNjcgYmFyL3Mp">
+          <div class="qtext">갇힌 부피 <b>4 L</b>, 남는 유량 <b>20 L/min</b>, β 1400 MPa 일 때, 0 에서 <b>200 bar</b> 까지 오르는 데 약 몇 초 걸릴까요?</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H01-2-1" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="2번 답">
+            <span class="unit">초</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>먼저 dP/dt = β / V × 남는 유량 으로 1초에 몇 bar 오르는지 구하세요.</p></details><details><summary>더 큰 힌트</summary><p>강의 예(2 L, 10 L/min)와 부피·유량이 모두 두 배라 상승 속도는 같은 약 1170 bar/s 입니다. 200 을 나누세요.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="2" data-type="choice" data-k="18xb9p31swg" data-show="7JWV66Cl7J20IOuKkOumrOqyjCDsmKTrpbTqs6Ag66y866CB7ZW07KeE64uk">
+          <div class="qtext">작동유에 공기가 섞이면 압력 응답은 어떻게 될까요?</div>
+          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">압력이 더 빨리 오른다</button><button type="button" class="opt" data-o="1">압력이 느리게 오르고 물렁해진다</button><button type="button" class="opt" data-o="2">아무 변화가 없다</button><button type="button" class="opt" data-o="3">유량이 늘어난다</button></div>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>공기는 기름보다 훨씬 잘 줄어듭니다. 실제 β 는 커질까요, 작아질까요?</p></details><details><summary>더 큰 힌트</summary><p>dP/dt = β / V × 남는 유량. β 가 작아지면 상승 속도는?</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li></ol>
+      <p class="answer" data-summary>답을 적고 <b>확인</b>을 누르세요. 계산 문제는 반올림 차이를 인정해요. 틀리면 힌트가 차례로 열리고, 5번 틀리면 정답을 알려 드려요. 계산 문제는 답 칸을 누르면 <b>계산기</b>가 열려요.</p>
+    </section>
+  </article>
+
+  <article class="lesson" data-lesson="H01-3" hidden>
+    <a class="back" href="#">← 강의 목록</a>
+    <header class="lhead">
+      <div class="eyebrow"><span class="num">H01-3</span><span class="chip">안 봄</span></div>
+      <h2>유압 동력과 효율</h2>
+      <p class="sub">동력 = 압력 × 유량. 버린 동력은 열이 된다</p>
+    </header>
+    <figure class="player">
+      <video controls playsinline preload="metadata" src="videos/H01-3-power.mp4"></video>
+      <figcaption>약 3분 · 한국어 내레이션과 자막. 소리 없이 자막만 봐도 돼요</figcaption>
+    </figure>
+    <div class="notes">
+      <h2 class="sec">정리 노트</h2>
+      <section class="note">
+        <h3>동력은 압력 × 유량</h3>
+        <div class="step">
+          <div class="vis"><div class='eq'>동력 = <span class='hl'>p × Q</span></div><div class='dim' style='text-align:center'>압력은 '힘', 유량은 '속도'</div></div>
+          <p>유압 동력은 압력 곱하기 유량입니다. 압력이 힘을, 유량이 속도를 맡습니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><svg class='fig' viewBox='0 0 600 320' role='img' aria-label='압력-유량 그래프에서 사각형 넓이가 동력'><rect class='af' x='70' y='110' width='327' height='160' opacity='0.35'/><line x1='70' y1='270' x2='575' y2='270' stroke='currentColor' stroke-width='3'/><line x1='70' y1='270' x2='70' y2='25' stroke='currentColor' stroke-width='3'/><circle cx='397' cy='110' r='9' fill='currentColor'/><text x='410' y='100' font-size='26'>200 bar · 100 L/min</text><text x='233' y='200' font-size='30' text-anchor='middle'>넓이 = 동력</text><text x='575' y='305' font-size='26' text-anchor='end'>유량 Q (L/min)</text><text x='80' y='22' font-size='26'>압력 p (bar)</text></svg></div>
+          <p>압력과 유량 그래프에서 사각형의 넓이가 동력입니다. 압력이나 유량 어느 쪽이 두 배가 되어도 동력은 두 배입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>현장 암산식</h3>
+        <div class="step">
+          <div class="vis"><div class='eq'>kW = p × Q ÷ <span class='hl'>600</span></div><div class='dim' style='text-align:center'>p: bar · Q: L/min</div></div>
+          <p>실무 단위로는 압력 bar 곱하기 유량 L/min, 나누기 600 이 킬로와트입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>600 = 단위 환산<br>(근사가 아님)</div><div class='dim' style='text-align:center'>1 bar = 10⁵ Pa<br>1 L/min = 1/60000 m³/s</div></div>
+          <p>600 은 bar 와 분당 리터를 와트로 바꾸는 단위 환산만 묶은 숫자입니다. 근사가 아니라 정확한 값입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ① 효율과 입력 동력</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>엔진 동력<br>= 유압 동력 ÷ <span class='hl'>η</span></div><div class='dim' style='text-align:center'>펌프 전효율 η · 교과서 값 0.85 ~ 0.9</div></div>
+          <p>펌프는 받은 동력을 다 유압으로 바꾸지 못합니다. 엔진이 줘야 할 동력은 유압 동력 나누기 펌프 전효율입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>모자란 만큼은 <span class='hl'>열</span></div><div class='dim' style='text-align:center'>펌프 안 누설 · 마찰</div></div>
+          <p>그 차이는 펌프 안의 누설과 마찰로 열이 되어 기름 온도를 올립니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ② 버린 동력은 모두 열</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>릴리프로 흘림<br>= p × Q 가 <span class='hl'>전부 열</span></div></div>
+          <p>릴리프 밸브로 기름이 빠져나가면, 그 압력 곱하기 유량은 일을 하나도 못 하고 전부 열이 됩니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>스풀 차압 × 유량<br>= <span class='hl'>조절 손실</span></div></div>
+          <p>MCV 스풀에서 깎아 낸 차압도 같습니다. 차압 곱하기 지나간 유량만큼이 열로 바뀝니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ① 몇 kW 인가</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>200 bar · 100 L/min<br>η 0.85 → 동력은?</div></div>
+          <p>200 bar, 분당 100리터, 펌프 효율 0.85 입니다. 유압 동력과 엔진이 줘야 할 동력은 각각 얼마일까요?</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>유압 ≈ 33.3 kW<br>엔진 = 33.3 ÷ 0.85</div><div class='big'>≈ 39.2 kW</div></div>
+          <p>유압 동력 33.3 kW, 엔진 동력 39.2 kW 입니다. 차이 약 5.9 kW 는 펌프에서 열이 됩니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ② 릴리프로 버리면</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>300 bar 릴리프로<br>50 L/min 이 계속 흐른다면?</div></div>
+          <p>버킷이 끝까지 닿은 채 레버를 계속 당겨서, 300 bar 릴리프로 분당 50리터가 흐르면 얼마가 열이 될까요?</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>300 × 50 ÷ 600</div><div class='big'>= 25 kW</div><div class='dim' style='text-align:center'>전기 난로 10대 이상이 기름을 데우는 셈</div></div>
+          <p>25 kW 입니다. 일은 하나도 안 하고, 가정용 전기 난로 10대 넘는 열로 기름을 데웁니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>실무와 연결 · 기름이 뜨거울 때</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>오일 온도가 높다<br>→ <span class='hl'>어디서 p × Q 를 버리나</span></div></div>
+          <p>오일 온도가 높다는 문제가 오면, 어디서 압력 곱하기 유량을 버리고 있는지부터 찾습니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>릴리프 상시 작동<br>큰 스풀 차압 · 펌프 누설</div><div class='dim' style='text-align:center'>버린 동력이 냉각 능력보다 크면 온도가 오른다</div></div>
+          <p>릴리프가 자주 열리는지, 스풀 차압이 큰지, 펌프 누설이 늘었는지를 봅니다. 버린 동력이 쿨러 능력보다 크면 온도가 오릅니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>한 줄 요약</h3>
+        <div class="step">
+          <div class="vis"><ol><li>동력 = <span class='hl'>p × Q</span>, 압력 ×2 → 동력 ×2</li></ol></div>
+          <p>정리합니다. 첫째, 동력은 압력 곱하기 유량. 어느 쪽이 두 배여도 동력은 두 배입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='2'><li>암산식 <b>kW = p × Q ÷ 600</b><br><span class='dim'>bar · L/min</span></li></ol></div>
+          <p>둘째, 킬로와트는 bar 곱하기 분당 리터 나누기 600 입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='3'><li>버린 동력은 <span class='hl'>전부 열</span><br><span class='dim'>릴리프 · 스풀 차압 · 펌프 효율</span></li></ol></div>
+          <p>셋째, 일을 못 한 동력은 전부 열이 됩니다. 이제 강의실에서 퀴즈 세 문제를 풀어 보세요.</p>
+        </div>
+      </section>
+    </div>
+    <section class="quiz">
+      <h2 class="sec">퀴즈 3문제</h2>
+      <ol>
+        <li class="q" data-q="0" data-type="num" data-k="==QfzAjLwojIs9GdiwCM1ojIhJye" data-show="NTAga1cgKDI1MCDDlyAxMjAgw7cgNjAwKQ==">
+          <div class="qtext">압력 <b>250 bar</b>, 유량 <b>120 L/min</b> 의 유압 동력은 몇 kW 일까요?</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H01-3-0" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="1번 답">
+            <span class="unit">kW</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>암산식 kW = bar × L/min ÷ 600 을 쓰세요.</p></details><details><summary>더 큰 힌트</summary><p>250 × 120 = 30000 입니다. 600 으로 나누세요.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="1" data-type="num" data-k="9NDMuAjOiw2b0JCLz4SNzojIhJye" data-show="7JW9IDM1LjMga1cgKDMwIMO3IDAuODUp">
+          <div class="qtext">펌프가 내는 유압 동력이 <b>30 kW</b>, 펌프 전효율이 <b>0.85</b> 일 때 엔진이 펌프에 줘야 할 동력은 약 몇 kW 일까요?</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H01-3-1" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="2번 답">
+            <span class="unit">kW</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>엔진이 줄 동력 = 유압 동력 ÷ 전효율 입니다.</p></details><details><summary>더 큰 힌트</summary><p>30 ÷ 0.85 를 계산하세요. 30 보다 커야 합니다.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="2" data-type="choice" data-k="15svg6mbni9" data-show="7Je07J20IOuQmOyWtCDquLDrpoQg7Jio64+E66W8IOyYrOumsOuLpA==">
+          <div class="qtext">릴리프 밸브로 기름이 계속 빠져나갈 때, 그 압력 × 유량 만큼의 동력은 어떻게 될까요?</div>
+          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">실린더를 미는 일로 바뀐다</button><button type="button" class="opt" data-o="1">탱크로 돌아가 회수된다</button><button type="button" class="opt" data-o="2">열이 되어 기름 온도를 올린다</button><button type="button" class="opt" data-o="3">펌프로 되돌아가 재사용된다</button></div>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>릴리프로 빠진 기름은 액추에이터를 움직이지 않습니다.</p></details><details><summary>더 큰 힌트</summary><p>일을 하지 못한 에너지는 마찰과 난류를 거쳐 결국 무엇이 될까요?</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li></ol>
+      <p class="answer" data-summary>답을 적고 <b>확인</b>을 누르세요. 계산 문제는 반올림 차이를 인정해요. 틀리면 힌트가 차례로 열리고, 5번 틀리면 정답을 알려 드려요. 계산 문제는 답 칸을 누르면 <b>계산기</b>가 열려요.</p>
+    </section>
+  </article>
+
+  <article class="lesson" data-lesson="H01-4" hidden>
+    <a class="back" href="#">← 강의 목록</a>
+    <header class="lhead">
+      <div class="eyebrow"><span class="num">H01-4</span><span class="chip">안 봄</span></div>
+      <h2>압력 손실과 온도</h2>
+      <p class="sub">같은 회로도 기름 온도에 따라 손실이 달라진다</p>
+    </header>
+    <figure class="player">
+      <video controls playsinline preload="metadata" src="videos/H01-4-loss-temperature.mp4"></video>
+      <figcaption>약 3분 · 한국어 내레이션과 자막. 소리 없이 자막만 봐도 돼요</figcaption>
+    </figure>
+    <div class="notes">
+      <h2 class="sec">정리 노트</h2>
+      <section class="note">
+        <h3>점도는 온도에 아주 민감하다</h3>
+        <div class="step">
+          <div class="vis"><svg class='fig' viewBox='0 0 600 320' role='img' aria-label='온도에 따른 점도 막대'><line x1='60' y1='260' x2='580' y2='260' stroke='currentColor' stroke-width='3'/><rect class='af' x='90' y='40' width='70' height='220'/><rect x='250' y='242' width='70' height='18' fill='currentColor'/><rect x='410' y='256' width='70' height='4' fill='currentColor'/><text x='125' y='30' font-size='26' text-anchor='middle'>약 580</text><text x='285' y='232' font-size='26' text-anchor='middle'>46</text><text x='445' y='246' font-size='26' text-anchor='middle'>약 11</text><text x='125' y='300' font-size='28' text-anchor='middle'>0 °C</text><text x='285' y='300' font-size='28' text-anchor='middle'>40 °C</text><text x='445' y='300' font-size='28' text-anchor='middle'>80 °C</text><text x='575' y='30' font-size='24' text-anchor='end'>점도 cSt · VG46</text></svg></div>
+          <p>일반적인 VG46 작동유의 점도입니다. 40도에서 46, 0도에서는 약 580, 80도에서는 약 11 센티스토크스입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>0 °C → <span class='hl'>약 12배</span> 끈적<br>80 °C → <span class='hl'>약 ¼</span></div><div class='dim' style='text-align:center'>40 °C 기준</div></div>
+          <p>40도와 비교하면, 겨울 아침 0도에서는 약 12배 끈적하고, 80도에서는 4분의 1로 묽어집니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ① 배관 손실은 점도를 따라간다</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>층류 배관 손실<br>ΔP ∝ <span class='hl'>점도</span> × 유량</div><div class='dim' style='text-align:center'>가늘고 긴 배관 · 차가운 기름일수록 층류</div></div>
+          <p>가는 배관에서 천천히 흐르는 층류에서는, 압력 손실이 점도에 그대로 비례합니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>점도 ×12 → 손실 <span class='hl'>×12</span></div></div>
+          <p>그래서 기름이 12배 끈적하면, 배관 손실도 12배가 됩니다. 냉간 시동 직후 동작이 굼뜬 이유입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ② 오리피스와 누설은 다르다</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>오리피스 · 스풀 노치<br>→ 점도 <span class='hl'>거의 무관</span></div><div class='dim' style='text-align:center'>H01-1 식에는 밀도만 있고 점도가 없다</div></div>
+          <p>반면 오리피스나 스풀 노치의 손실은 점도와 거의 상관없습니다. H01-1 식에는 밀도만 있고 점도가 없었습니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>좁은 틈 누설<br>∝ <span class='hl'>1 / 점도</span></div><div class='dim' style='text-align:center'>펌프 · 스풀 · 실린더 틈새</div></div>
+          <p>대신 펌프나 스풀의 좁은 틈으로 새는 누설은 점도에 반비례합니다. 기름이 묽어지면 더 많이 샙니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ① 겨울 아침 호스</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>호스 5 m · 안지름 20 mm<br>40 L/min · 40 °C<br>→ 손실 약 0.33 bar</div></div>
+          <p>길이 5미터, 안지름 20밀리 호스에 분당 40리터가 흐릅니다. 40도에서 손실은 약 0.33 bar 입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>0 °C : 점도 ×12.5</div><div class='big'>≈ 4.2 bar</div><div class='dim' style='text-align:center'>호스 하나에서 · 회로 전체로는 더 크다</div></div>
+          <p>0도에서는 점도가 12.5배라 손실도 약 4.2 bar 입니다. 호스 하나가 이 정도니 회로 전체로는 훨씬 큽니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ② 뜨거운 오후의 누설</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>40 °C 누설 1 L/min<br>80 °C 이면?</div></div>
+          <p>펌프 내부 누설이 40도에서 분당 1리터라면, 기름이 80도까지 오르면 얼마나 샐까요?</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>점도 46 → 약 11</div><div class='big'>≈ 4 L/min</div><div class='dim' style='text-align:center'>누설 약 4배 → 속도 저하 · 실린더 처짐</div></div>
+          <p>점도가 약 4분의 1이니 누설은 약 4배, 분당 4리터입니다. 속도가 떨어지고 실린더가 처지기 쉬워집니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>실무와 연결 · 온도부터 확인</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>차가울 때<br>→ 배관 손실 ↑ · 동작 굼뜸</div><div class='dim' style='text-align:center'>그래서 웜업 운전을 한다</div></div>
+          <p>차가울 때는 배관 손실이 커서 동작이 굼뜹니다. 그래서 작업 전에 웜업 운전을 합니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>뜨거울 때<br>→ 누설 ↑ · 효율 ↓ · 처짐</div><div class='dim' style='text-align:center'>시험값은 반드시 유온과 함께 적는다</div></div>
+          <p>뜨거울 때는 누설이 늘어 효율이 떨어집니다. 그래서 속도나 압력 시험값은 반드시 유온과 함께 적어야 비교가 됩니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>한 줄 요약</h3>
+        <div class="step">
+          <div class="vis"><ol><li>점도: 0 °C 는 40 °C 의 <span class='hl'>약 12배</span><br>80 °C 는 약 ¼</li></ol></div>
+          <p>정리합니다. 첫째, 점도는 0도에서 40도의 약 12배, 80도에서는 약 4분의 1입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='2'><li>층류 배관 손실 ∝ 점도<br>오리피스 손실은 거의 무관</li></ol></div>
+          <p>둘째, 층류 배관 손실은 점도에 비례하고, 오리피스 손실은 점도와 거의 상관없습니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='3'><li>좁은 틈 누설 ∝ <b>1 / 점도</b><br><span class='dim'>뜨거우면 더 샌다</span></li></ol></div>
+          <p>셋째, 누설은 점도에 반비례해서 뜨거우면 더 샙니다. 이제 강의실에서 퀴즈 세 문제를 풀어 보세요.</p>
+        </div>
+      </section>
+    </div>
+    <section class="quiz">
+      <h2 class="sec">퀴즈 3문제</h2>
+      <ol>
+        <li class="q" data-q="0" data-type="num" data-k="==QfzAjLwojIs9GdiwCMxojIhJye" data-show="MTAgYmFyICjsuLXrpZgg7IaQ7IukIOKInSDsoJDrj4Qp">
+          <div class="qtext">층류인 배관에서 40 °C 일 때 압력 손실이 <b>1 bar</b> 였습니다. 같은 유량에서 점도가 <b>10배</b>가 되면 손실은 약 몇 bar 일까요?</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H01-4-0" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="1번 답">
+            <span class="unit">bar</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>층류 배관 손실은 점도에 비례합니다.</p></details><details><summary>더 큰 힌트</summary><p>1 bar × 10 을 계산하세요.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="1" data-type="num" data-k="9NDMuAjOiw2b0JCL4EjL0ojIhJye" data-show="7JW9IDQuMiBML21pbiAoNDYgw7cgMTEg4omIIDQuMTjrsLAp">
+          <div class="qtext">펌프 내부 누설이 40 °C (점도 46 cSt) 에서 <b>1 L/min</b> 입니다. 유온이 올라 점도가 <b>11 cSt</b> 가 되면 누설은 약 몇 L/min 일까요?</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H01-4-1" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="2번 답">
+            <span class="unit">L/min</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>좁은 틈 누설은 점도에 반비례합니다. 기름이 묽어지면(점도 ↓) 누설은 늘어날까요, 줄어들까요?</p></details><details><summary>더 큰 힌트</summary><p>묽어지면 더 샙니다. 누설 = 1 × (46 ÷ 11) 입니다. 11 ÷ 46 으로 나누면 거꾸로예요.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="2" data-type="choice" data-k="h5hdupy3hx" data-show="7KCQ64+E7JmAIOqxsOydmCDsg4HqtIDsl4bri6Q=">
+          <div class="qtext">스풀 노치(오리피스)를 지날 때의 압력 손실은 기름 온도에 따라 어떻게 될까요?</div>
+          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">점도에 비례해 크게 바뀐다</button><button type="button" class="opt" data-o="1">점도에 반비례해 크게 바뀐다</button><button type="button" class="opt" data-o="2">점도와 거의 상관없다</button><button type="button" class="opt" data-o="3">온도가 오르면 항상 두 배가 된다</button></div>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>H01-1 오리피스 식 Q = C<sub>d</sub> · A · √(2ΔP/ρ) 에 점도가 있나요?</p></details><details><summary>더 큰 힌트</summary><p>식에는 밀도 ρ 만 있고 점도는 없습니다.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li></ol>
+      <p class="answer" data-summary>답을 적고 <b>확인</b>을 누르세요. 계산 문제는 반올림 차이를 인정해요. 틀리면 힌트가 차례로 열리고, 5번 틀리면 정답을 알려 드려요. 계산 문제는 답 칸을 누르면 <b>계산기</b>가 열려요.</p>
+    </section>
+  </article>
+
+  <article class="lesson" data-lesson="H02-1" hidden>
+    <a class="back" href="#">← 강의 목록</a>
+    <header class="lhead">
+      <div class="eyebrow"><span class="num">H02-1</span><span class="chip">안 봄</span></div>
+      <h2>가변 사판 펌프</h2>
+      <p class="sub">유량 = 배제용적 × 회전수. 사판각이 배제용적을 정한다</p>
+    </header>
+    <figure class="player">
+      <video controls playsinline preload="metadata" src="videos/H02-1-swash-plate.mp4"></video>
+      <figcaption>약 3분 · 한국어 내레이션과 자막. 소리 없이 자막만 봐도 돼요</figcaption>
+    </figure>
+    <div class="notes">
+      <h2 class="sec">정리 노트</h2>
+      <section class="note">
+        <h3>펌프 유량을 정하는 두 가지</h3>
+        <div class="step">
+          <div class="vis"><div class='eq'>Q = <span class='hl'>q</span> × <span class='hl'>N</span> × η<sub>v</sub></div><div class='dim' style='text-align:center'>q 배제용적 · N 회전수 · η<sub>v</sub> 용적효율</div></div>
+          <p>펌프 유량은 한 바퀴에 밀어내는 양, 배제용적과 회전수의 곱입니다. 여기에 용적효율을 곱합니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>L/min<br>= cc/rev × rpm ÷ <span class='hl'>1000</span></div></div>
+          <p>실무 단위로는 cc 퍼 레브 곱하기 rpm 나누기 1000 이 분당 리터입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ① 사판각이 배제용적을 정한다</h3>
+        <div class="step">
+          <div class="vis"><svg class='fig' viewBox='0 0 600 320' role='img' aria-label='사판각과 피스톤 행정'><line x1='40' y1='150' x2='580' y2='150' stroke='currentColor' stroke-width='3' stroke-dasharray='10 8'/><line class='as' x1='150' y1='40' x2='210' y2='260' stroke-width='10'/><text class='af' x='180' y='300' font-size='30' text-anchor='middle'>사판</text><path d='M180 150 A 50 50 0 0 0 166 108' fill='none' stroke='currentColor' stroke-width='3'/><text x='112' y='122' font-size='30'>α</text><rect x='300' y='70' width='240' height='50' fill='none' stroke='currentColor' stroke-width='4'/><rect x='300' y='180' width='240' height='50' fill='none' stroke='currentColor' stroke-width='4'/><text x='420' y='105' font-size='28' text-anchor='middle'>피스톤</text><text x='420' y='215' font-size='28' text-anchor='middle'>피스톤</text><text x='420' y='275' font-size='28' text-anchor='middle'>행정 ∝ tan α</text><text x='420' y='308' font-size='24' text-anchor='middle'>각이 크면 행정이 길다</text></svg></div>
+          <p>축과 함께 도는 피스톤은 기울어진 사판을 따라 왕복합니다. 사판이 많이 기울수록 행정이 길어집니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>배제용적 ∝ <span class='hl'>tan α</span></div><div class='dim' style='text-align:center'>작은 각에서는 거의 각도에 비례</div></div>
+          <p>배제용적은 사판각의 탄젠트에 비례합니다. 실제 쓰는 작은 각도에서는 거의 각도에 비례한다고 봐도 됩니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ② 레귤레이터는 사판각만 바꾼다</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>레귤레이터 → <span class='hl'>사판각</span><br>엔진 → <span class='hl'>회전수</span></div></div>
+          <p>레귤레이터가 바꾸는 건 사판각 하나입니다. 회전수는 엔진이 정합니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>최대 유량 = 최대 사판각<br>× 그때의 회전수</div><div class='dim' style='text-align:center'>엔진 회전수가 낮으면 최대 유량도 낮다</div></div>
+          <p>그래서 최대 유량은 최대 사판각과 그때의 엔진 회전수로 정해집니다. 회전수를 낮추면 최대 유량도 같이 낮아집니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ① 최대 유량</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>q = 100 cc/rev<br>N = 1800 rpm · η<sub>v</sub> 0.95<br>Q = ?</div></div>
+          <p>배제용적 100 cc, 회전수 1800 rpm, 용적효율 0.95 일 때 유량은 얼마일까요? 잠깐 멈추고 계산해 보세요.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>100 × 1800 ÷ 1000<br>= 180, × 0.95</div><div class='big'>≈ 171 L/min</div></div>
+          <p>100 곱하기 1800 나누기 1000 은 180, 효율을 곱하면 분당 171리터입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ② 회전수를 낮추면</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>같은 펌프 · 최대 사판각<br>1800 → 1500 rpm</div></div>
+          <p>연비를 위해 엔진 회전수를 1800 에서 1500 rpm 으로 낮추면 최대 유량은 어떻게 될까요?</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>1500 ÷ 1800 = <span class='hl'>×0.83</span></div><div class='big'>≈ 142.5 L/min</div><div class='dim' style='text-align:center'>최대 속도도 약 17% 줄어든다</div></div>
+          <p>회전수가 0.83배니 유량도 0.83배, 약 142.5리터입니다. 실린더 최대 속도도 약 17% 줄어듭니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>실무와 연결 · 속도가 안 나올 때</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>최대 속도가 낮다<br>→ <span class='hl'>N 인가, 사판각인가</span></div></div>
+          <p>최대 속도가 안 나온다는 문제가 오면, 엔진 회전수 문제인지 사판각 문제인지부터 나눕니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>회전수 정상 · 유량 부족<br>→ 사판이 덜 섰다 or 누설</div><div class='dim' style='text-align:center'>레귤레이터 신호는 H02-3 에서</div></div>
+          <p>회전수가 정상인데 유량이 모자라면 사판이 덜 섰거나 누설이 큰 것입니다. 사판을 세우는 신호는 H02-3 에서 봅니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>한 줄 요약</h3>
+        <div class="step">
+          <div class="vis"><ol><li>Q = <span class='hl'>q × N</span> × η<sub>v</sub></li></ol></div>
+          <p>정리합니다. 첫째, 펌프 유량은 배제용적 곱하기 회전수, 곱하기 용적효율입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='2'><li>L/min = cc/rev × rpm ÷ 1000</li></ol></div>
+          <p>둘째, 분당 리터는 cc 곱하기 rpm 나누기 1000 입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='3'><li>레귤레이터는 <b>사판각</b>,<br>엔진은 <b>회전수</b></li></ol></div>
+          <p>셋째, 레귤레이터는 사판각을, 엔진은 회전수를 정합니다. 이제 강의실에서 퀴즈 세 문제를 풀어 보세요.</p>
+        </div>
+      </section>
+    </div>
+    <section class="quiz">
+      <h2 class="sec">퀴즈 3문제</h2>
+      <ol>
+        <li class="q" data-q="0" data-type="num" data-k="=03Mw4CM6ICbvRnIsgjMyojIhJye" data-show="MjI4IEwvbWluICgyNDAgw5cgMC45NSk=">
+          <div class="qtext">배제용적 <b>120 cc/rev</b>, 회전수 <b>2000 rpm</b>, 용적효율 <b>0.95</b> 인 펌프의 유량은 몇 L/min 일까요?</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H02-1-0" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="1번 답">
+            <span class="unit">L/min</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>L/min = cc/rev × rpm ÷ 1000, 여기에 용적효율을 곱합니다.</p></details><details><summary>더 큰 힌트</summary><p>120 × 2000 ÷ 1000 = 240 입니다. 0.95 를 곱하세요.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="1" data-type="num" data-k="==QfyAjLwojIs9GdiwyMzgjLwojIhJye" data-show="7JW9IDAuODPrsLAgKDE1MDAgw7cgMTgwMCk=">
+          <div class="qtext">사판각은 그대로 두고 엔진 회전수를 <b>1800 → 1500 rpm</b> 으로 낮추면, 펌프 유량은 몇 배가 될까요?</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H02-1-1" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="2번 답">
+            <span class="unit">배</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>유량은 회전수에 비례합니다.</p></details><details><summary>더 큰 힌트</summary><p>1500 ÷ 1800 을 계산하세요.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="2" data-type="choice" data-k="1mbjyyeovfe" data-show="7IKs7YyQ6rCB">
+          <div class="qtext">가변 펌프의 레귤레이터가 유량을 바꾸기 위해 직접 바꾸는 것은 무엇일까요?</div>
+          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">엔진 회전수</button><button type="button" class="opt" data-o="1">사판각</button><button type="button" class="opt" data-o="2">릴리프 설정 압력</button><button type="button" class="opt" data-o="3">작동유 점도</button></div>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>Q = q × N × η<sub>v</sub> 에서 펌프 안에서 바꿀 수 있는 값은?</p></details><details><summary>더 큰 힌트</summary><p>배제용적 q 는 사판의 기울기로 정해집니다.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li></ol>
+      <p class="answer" data-summary>답을 적고 <b>확인</b>을 누르세요. 계산 문제는 반올림 차이를 인정해요. 틀리면 힌트가 차례로 열리고, 5번 틀리면 정답을 알려 드려요. 계산 문제는 답 칸을 누르면 <b>계산기</b>가 열려요.</p>
+    </section>
+  </article>
+
+  <article class="lesson" data-lesson="H02-2" hidden>
+    <a class="back" href="#">← 강의 목록</a>
+    <header class="lhead">
+      <div class="eyebrow"><span class="num">H02-2</span><span class="chip">안 봄</span></div>
+      <h2>마력 제어</h2>
+      <p class="sub">압력이 오르면 유량을 줄여 엔진 동력을 넘지 않는다</p>
+    </header>
+    <figure class="player">
+      <video controls playsinline preload="metadata" src="videos/H02-2-horsepower-control.mp4"></video>
+      <figcaption>약 3분 · 한국어 내레이션과 자막. 소리 없이 자막만 봐도 돼요</figcaption>
+    </figure>
+    <div class="notes">
+      <h2 class="sec">정리 노트</h2>
+      <section class="note">
+        <h3>엔진이 줄 수 있는 동력은 정해져 있다</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>엔진 → 펌프 <span class='hl'>40 kW</span><br>× η 0.85 = 유압 34 kW</div><div class='dim' style='text-align:center'>교과서용 일반 값</div></div>
+          <p>엔진이 펌프에 줄 수 있는 동력이 40 kW 라고 합시다. 효율 0.85 를 곱하면 쓸 수 있는 유압 동력은 34 kW 입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>p × Q ÷ 600 ≤ <span class='hl'>34 kW</span></div></div>
+          <p>H01-3 의 동력 식으로 쓰면, 압력 곱하기 유량 나누기 600 이 34 를 넘으면 안 됩니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ① p × Q 를 일정하게</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>압력 ×2 → 유량 <span class='hl'>×½</span></div><div class='dim' style='text-align:center'>p × Q = 일정</div></div>
+          <p>동력을 일정하게 지키려면, 압력이 두 배가 될 때 유량은 절반이 되어야 합니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>토출 압력을 보고<br><span class='hl'>사판각을 줄인다</span></div></div>
+          <p>그래서 레귤레이터는 자기 토출 압력을 보고, 압력이 오르면 사판각을 줄여 유량을 낮춥니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ② P-Q 선도 읽기</h3>
+        <div class="step">
+          <div class="vis"><svg class='fig' viewBox='0 0 600 330' role='img' aria-label='마력 제어 P-Q 선도'><line x1='70' y1='270' x2='575' y2='270' stroke='currentColor' stroke-width='3'/><line x1='70' y1='270' x2='70' y2='25' stroke='currentColor' stroke-width='3'/><polyline class='as' fill='none' stroke-width='6' points='70,54 229,54 238,66 252,82 266,95 280,107 294,117 308,126 322,134 336,141 350,148 364,153 378,159 392,164 406,168 420,172 434,176 448,179 462,183 476,186 490,188 504,191 518,194 532,196 546,198 560,200'/><circle cx='350' cy='148' r='9' fill='currentColor'/><circle cx='490' cy='188' r='9' fill='currentColor'/><text x='150' y='84' font-size='24' text-anchor='middle'>최대 유량 180</text><text x='360' y='130' font-size='24'>200 bar · 102</text><text x='560' y='235' font-size='24' text-anchor='end'>300 bar · 68</text><text x='575' y='310' font-size='24' text-anchor='end'>압력 p (bar)</text><text x='80' y='22' font-size='24'>유량 Q (L/min)</text></svg></div>
+          <p>가로가 압력, 세로가 유량인 P-Q 선도입니다. 낮은 압력에서는 최대 유량으로 평평하다가, 마력 한계를 만나면 곡선을 따라 내려갑니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>꺾이는 압력<br>34×600÷180 ≈ <span class='hl'>113 bar</span></div></div>
+          <p>꺾이는 점은 34 곱하기 600 나누기 최대 유량 180, 약 113 bar 입니다. 이보다 높은 압력에서는 마력 제어가 유량을 정합니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ① 200 bar 에서</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>유압 한계 34 kW<br>p = 200 bar → Q = ?</div></div>
+          <p>유압 동력 한계가 34 kW 이고 압력이 200 bar 면, 펌프는 최대 몇 리터까지 낼 수 있을까요?</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>34 × 600 ÷ 200</div><div class='big'>= 102 L/min</div><div class='dim' style='text-align:center'>최대 180 의 약 57%</div></div>
+          <p>34 곱하기 600 나누기 200, 분당 102리터입니다. 최대 유량의 약 57% 입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ② 300 bar 로 오르면</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>200 → 300 bar<br>유량은?</div></div>
+          <p>단단한 땅을 파서 압력이 300 bar 로 오르면 유량은 얼마가 될까요?</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>압력 ×1.5 → 유량 ÷1.5</div><div class='big'>= 68 L/min</div><div class='dim' style='text-align:center'>p × Q = 20,400 그대로</div></div>
+          <p>압력이 1.5배니 유량은 1.5로 나눈 68리터입니다. 압력 곱하기 유량은 그대로 20400 입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>실무와 연결 · 느려지는 게 정상</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>무거운 작업 = 느린 속도<br>→ <span class='hl'>엔진 스톨 방지</span></div></div>
+          <p>무거운 작업에서 속도가 떨어지는 건 마력 제어가 엔진을 지키는 것입니다. 없으면 엔진이 꺼지거나 회전수가 크게 떨어집니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>고압에서 너무 느리다<br>→ <span class='hl'>마력 설정 · 엔진 출력</span></div><div class='dim' style='text-align:center'>엔진과의 매칭은 H02-4 에서</div></div>
+          <p>반대로 고압에서 지나치게 느리다면 마력 설정이나 엔진 출력을 확인합니다. 엔진과의 매칭은 H02-4 에서 봅니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>한 줄 요약</h3>
+        <div class="step">
+          <div class="vis"><ol><li>마력 제어: <span class='hl'>p × Q 를 일정</span>하게</li></ol></div>
+          <p>정리합니다. 첫째, 마력 제어는 압력 곱하기 유량을 일정하게 지킵니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='2'><li>압력 ×2 → 유량 ×½</li></ol></div>
+          <p>둘째, 마력 제어 구간에서는 압력이 두 배면 유량은 절반입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='3'><li>Q 한계 = <b>kW × 600 ÷ bar</b></li></ol></div>
+          <p>셋째, 유량 한계는 킬로와트 곱하기 600 나누기 압력. 이제 강의실에서 퀴즈 세 문제를 풀어 보세요.</p>
+        </div>
+      </section>
+    </div>
+    <section class="quiz">
+      <h2 class="sec">퀴즈 3문제</h2>
+      <ol>
+        <li class="q" data-q="0" data-type="num" data-k="==QfzAjLwojIs9GdiwiM3ojIhJye" data-show="NzIgTC9taW4gKDMwIMOXIDYwMCDDtyAyNTAp">
+          <div class="qtext">유압 동력 한계가 <b>30 kW</b> 인 펌프가 <b>250 bar</b> 에서 낼 수 있는 최대 유량은 몇 L/min 일까요?</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H02-2-0" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="1번 답">
+            <span class="unit">L/min</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>kW = bar × L/min ÷ 600 을 유량으로 풀어 보세요.</p></details><details><summary>더 큰 힌트</summary><p>Q = 30 × 600 ÷ 250 입니다.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="1" data-type="num" data-k="=0nMw4CM6ICbvRnIsUjLwojIhJye" data-show="MC4167CwICjslZXroKUgw5cyIOKGkiDsnKDrn4kgw5fCvSk=">
+          <div class="qtext">마력 제어 구간에서 압력이 <b>150 → 300 bar</b> 로 오르면, 펌프 유량은 몇 배가 될까요?</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H02-2-1" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="2번 답">
+            <span class="unit">배</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>마력 제어 구간에서는 p × Q 가 일정합니다.</p></details><details><summary>더 큰 힌트</summary><p>압력이 두 배면 유량은?</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="2" data-type="choice" data-k="127amfd4mad" data-show="7JeU7KeE7J20IOuCvCDsiJgg7J6I64qUIOuPmeugpeydhCDrhJjsp4Ag7JWK7Jy866Ck6rOg">
+          <div class="qtext">마력 제어가 압력이 오를 때 펌프 유량을 줄이는 가장 큰 이유는?</div>
+          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">작동유 온도를 낮추려고</button><button type="button" class="opt" data-o="1">엔진이 낼 수 있는 동력을 넘지 않으려고</button><button type="button" class="opt" data-o="2">릴리프 밸브를 보호하려고</button><button type="button" class="opt" data-o="3">실린더 속도를 일정하게 하려고</button></div>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>펌프를 돌리는 동력은 어디서 오나요?</p></details><details><summary>더 큰 힌트</summary><p>p × Q 가 엔진 동력을 넘으면 엔진 회전수가 떨어지거나 꺼집니다.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li></ol>
+      <p class="answer" data-summary>답을 적고 <b>확인</b>을 누르세요. 계산 문제는 반올림 차이를 인정해요. 틀리면 힌트가 차례로 열리고, 5번 틀리면 정답을 알려 드려요. 계산 문제는 답 칸을 누르면 <b>계산기</b>가 열려요.</p>
+    </section>
+  </article>
+
+  <article class="lesson" data-lesson="H02-3" hidden>
+    <a class="back" href="#">← 강의 목록</a>
+    <header class="lhead">
+      <div class="eyebrow"><span class="num">H02-3</span><span class="chip">안 봄</span></div>
+      <h2>유량 제어 신호</h2>
+      <p class="sub">펌프는 무엇을 보고 토출량을 정하나</p>
+    </header>
+    <figure class="player">
+      <video controls playsinline preload="metadata" src="videos/H02-3-flow-signal.mp4"></video>
+      <figcaption>약 3분 · 한국어 내레이션과 자막. 소리 없이 자막만 봐도 돼요</figcaption>
+    </figure>
+    <div class="notes">
+      <h2 class="sec">정리 노트</h2>
+      <section class="note">
+        <h3>펌프가 받는 신호 세 가지</h3>
+        <div class="step">
+          <div class="vis"><ul class='legend'><li><b>네거티브</b> 남는 기름이 많으면 줄인다</li><li><b>포지티브</b> 레버를 많이 밀면 늘린다</li><li><b>로드센싱</b> 부하 압력 + 여유만큼</li></ul></div>
+          <p>레귤레이터가 받는 유량 신호는 크게 세 가지입니다. 네거티브, 포지티브, 그리고 로드센싱입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>공통점: 레버를 안 밀면<br><span class='hl'>최소 유량</span></div><div class='dim' style='text-align:center'>방식별 장단점 비교는 H04 에서</div></div>
+          <p>방식은 달라도 목적은 같습니다. 필요할 때만 기름을 내서 버리는 동력을 줄이는 것입니다. 자세한 비교는 H04 에서 봅니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ① 네거티브: 오리피스 압력</h3>
+        <div class="step">
+          <div class="vis"><svg class='fig' viewBox='0 0 600 260' role='img' aria-label='센터 바이패스 끝의 네거티브 오리피스'><line x1='20' y1='70' x2='580' y2='70' stroke='currentColor' stroke-width='4'/><line x1='20' y1='170' x2='580' y2='170' stroke='currentColor' stroke-width='4'/><rect x='380' y='70' width='26' height='35' fill='currentColor'/><rect x='380' y='135' width='26' height='35' fill='currentColor'/><line class='as' x1='40' y1='120' x2='540' y2='120' stroke-width='6'/><polygon class='af' points='540,106 568,120 540,134'/><text x='200' y='50' font-size='26' text-anchor='middle'>센터 바이패스 (남는 기름)</text><text x='393' y='210' font-size='26' text-anchor='middle'>오리피스</text><text class='af' x='300' y='245' font-size='28' text-anchor='middle'>앞 압력 Pn → 펌프로</text></svg></div>
+          <p>네거티브 방식은 MCV 를 그냥 지나 탱크로 가는 남는 기름을 오리피스에 통과시키고, 그 앞 압력을 펌프에 보냅니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>남는 기름 많다 → Pn ↑<br>→ 펌프 유량 <span class='hl'>↓</span></div></div>
+          <p>남는 기름이 많으면 오리피스 차압이 커져 신호 압력이 오르고, 펌프는 유량을 줄입니다. 그래서 이름이 네거티브입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ② 작은 쪽이 이긴다</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>유량 신호가 원하는 양<br>마력 제어가 허락하는 양</div><div class='big'>→ 작은 쪽</div></div>
+          <p>펌프는 유량 신호가 원하는 양과 마력 제어가 허락하는 양 중, 더 작은 쪽을 냅니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>저압: 신호가 정한다<br>고압: <span class='hl'>마력</span>이 정한다</div></div>
+          <p>그래서 압력이 낮을 때는 레버 신호가, 압력이 높을 때는 마력 제어가 펌프 유량을 정합니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ① 네거티브 신호 압력</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>오리피스 30 mm²<br>바이패스 100 → 20 L/min<br>Pn = ?</div></div>
+          <p>네거티브 오리피스 면적이 30 mm², 레버 중립에서 바이패스가 100리터, 레버를 밀어 20리터가 되면 신호 압력은 어떻게 바뀔까요?</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>ΔP = (Q ÷ 0.6A)²</div><div class='big'>31 → 1.2 bar</div><div class='dim' style='text-align:center'>H01-1 오리피스 식 그대로</div></div>
+          <p>오리피스 식을 거꾸로 풀면 약 31 bar 에서 1.2 bar 로 떨어집니다. 신호가 내려가니 펌프는 유량을 늘립니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ② 신호 vs 마력</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>신호 요구 150 L/min<br>p 250 bar · 한계 34 kW</div></div>
+          <p>레버를 끝까지 밀어 신호는 150리터를 원합니다. 압력이 250 bar, 유압 동력 한계가 34 kW 면 펌프는 얼마를 낼까요?</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>마력 한계 34 × 600 ÷ 250</div><div class='big'>= 81.6 L/min</div><div class='dim' style='text-align:center'>150 보다 작으니 마력이 이긴다</div></div>
+          <p>마력 한계는 81.6리터입니다. 150 보다 작으니 펌프는 81.6리터를 냅니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>실무와 연결 · 유량이 이상할 때</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>중립인데 유량이 많다<br>→ <span class='hl'>신호 압력</span>부터</div><div class='dim' style='text-align:center'>신호 라인 누설 · 오리피스 막힘 · 설정</div></div>
+          <p>레버 중립인데 펌프 유량이 많다면, 펌프보다 먼저 신호 압력이 제대로 가는지 봅니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>레버 끝까지인데 부족하다<br>→ <span class='hl'>마력 한계</span>인가?</div></div>
+          <p>레버를 끝까지 밀었는데 유량이 모자라면, 그 압력에서 마력 한계에 걸린 건 아닌지 계산부터 해 봅니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>한 줄 요약</h3>
+        <div class="step">
+          <div class="vis"><ol><li>유량 신호 3가지<br><span class='hl'>네거티브 · 포지티브 · 로드센싱</span></li></ol></div>
+          <p>정리합니다. 첫째, 펌프의 유량 신호는 네거티브, 포지티브, 로드센싱 세 가지입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='2'><li>네거티브<br>남는 기름 ↑ → Pn ↑ → 유량 ↓</li></ol></div>
+          <p>둘째, 네거티브는 남는 기름이 많으면 신호 압력이 올라 유량을 줄입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='3'><li>펌프 유량 = 신호와 마력 중 <b>작은 쪽</b></li></ol></div>
+          <p>셋째, 펌프는 신호와 마력 제어 중 작은 쪽을 따릅니다. 이제 강의실에서 퀴즈 세 문제를 풀어 보세요.</p>
+        </div>
+      </section>
+    </div>
+    <section class="quiz">
+      <h2 class="sec">퀴즈 3문제</h2>
+      <ol>
+        <li class="q" data-q="0" data-type="num" data-k="==QfzAjLwojIs9GdiwiNxojIhJye" data-show="MTYgYmFyICgoNjAgw7cgMTUpwrIgPSA0wrIp">
+          <div class="qtext">네거티브 오리피스 면적이 <b>25 mm²</b> 이고 바이패스 유량이 <b>60 L/min</b> 일 때, 신호 압력 Pn 은 약 몇 bar 일까요? (암산식 Q ≈ 0.6 · A · √ΔP)</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H02-3-0" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="1번 답">
+            <span class="unit">bar</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>암산식을 ΔP 로 풀면 ΔP = (Q ÷ (0.6 × A))² 입니다.</p></details><details><summary>더 큰 힌트</summary><p>0.6 × 25 = 15, 60 ÷ 15 = 4 입니다. 제곱하세요.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="1" data-type="num" data-k="==QfzAjLwojIs9GdiwCM5ojIhJye" data-show="OTAgTC9taW4gKOuniOugpSDtlZzqs4QgMzAgw5cgNjAwIMO3IDIwMCA9IDkwIOydtCAxNjAg67O064ukIOyekeuLpCk=">
+          <div class="qtext">레버 신호는 <b>160 L/min</b> 를 원하고, 압력은 <b>200 bar</b>, 유압 동력 한계는 <b>30 kW</b> 입니다. 펌프가 실제로 내는 유량은 몇 L/min 일까요?</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H02-3-1" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="2번 답">
+            <span class="unit">L/min</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>먼저 마력 한계 유량 = kW × 600 ÷ bar 를 구하세요.</p></details><details><summary>더 큰 힌트</summary><p>마력 한계는 90 L/min 입니다. 160 과 90 중 작은 쪽은?</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="2" data-type="choice" data-k="18im4e9whx5" data-show="67CU7J207Yyo7Iqk6rCAIOykhOyWtCBQbiDsnbQg64K066Ck6rCAIOycoOufieydtCDripTri6Q=">
+          <div class="qtext">네거티브 제어에서 레버를 많이 밀면 펌프 유량은 어떻게 될까요?</div>
+          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">바이패스가 늘어 Pn 이 올라 유량이 준다</button><button type="button" class="opt" data-o="1">바이패스가 줄어 Pn 이 내려가 유량이 는다</button><button type="button" class="opt" data-o="2">Pn 은 그대로이고 유량도 그대로다</button><button type="button" class="opt" data-o="3">릴리프가 열려 유량이 준다</button></div>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>레버를 밀면 기름이 액추에이터로 가고, 센터 바이패스로 남는 기름은 줄어듭니다.</p></details><details><summary>더 큰 힌트</summary><p>남는 기름이 줄면 오리피스 앞 압력 Pn 은? 네거티브는 Pn 이 낮을수록 유량을 늘립니다.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li></ol>
+      <p class="answer" data-summary>답을 적고 <b>확인</b>을 누르세요. 계산 문제는 반올림 차이를 인정해요. 틀리면 힌트가 차례로 열리고, 5번 틀리면 정답을 알려 드려요. 계산 문제는 답 칸을 누르면 <b>계산기</b>가 열려요.</p>
+    </section>
+  </article>
+
+  <article class="lesson" data-lesson="H02-4" hidden>
+    <a class="back" href="#">← 강의 목록</a>
+    <header class="lhead">
+      <div class="eyebrow"><span class="num">H02-4</span><span class="chip">안 봄</span></div>
+      <h2>엔진과 펌프 매칭</h2>
+      <p class="sub">펌프가 먹는 토크가 엔진 토크를 넘으면 회전수가 떨어진다</p>
+    </header>
+    <figure class="player">
+      <video controls playsinline preload="metadata" src="videos/H02-4-engine-matching.mp4"></video>
+      <figcaption>약 3분 · 한국어 내레이션과 자막. 소리 없이 자막만 봐도 돼요</figcaption>
+    </figure>
+    <div class="notes">
+      <h2 class="sec">정리 노트</h2>
+      <section class="note">
+        <h3>펌프가 먹는 토크</h3>
+        <div class="step">
+          <div class="vis"><div class='eq'>T = <span class='hl'>q × p</span> ÷ 20π</div><div class='dim' style='text-align:center'>T: N·m · q: cc/rev · p: bar<br>기계효율 η<sub>m</sub> 로 한 번 더 나눈다</div></div>
+          <p>펌프를 돌리는 데 드는 토크는 배제용적 곱하기 압력 나누기 20파이입니다. 기계효율로 한 번 더 나눕니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>토크는 <span class='hl'>회전수와 무관</span><br>q 와 p 로만 정해진다</div></div>
+          <p>중요한 점은 토크에 회전수가 없다는 것입니다. 사판각과 압력만으로 펌프가 먹는 토크가 정해집니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ① 엔진에도 토크 한계가 있다</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>T<sub>엔진</sub><br>= <span class='hl'>9549</span> × kW ÷ rpm</div></div>
+          <p>엔진이 낼 수 있는 토크는 9549 곱하기 킬로와트 나누기 rpm 입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>40 kW · 1800 rpm<br>→ 약 <span class='hl'>212 N·m</span></div><div class='dim' style='text-align:center'>교과서용 일반 값</div></div>
+          <p>엔진이 1800 rpm 에서 40 kW 를 펌프에 줄 수 있다면, 토크로는 약 212 N·m 입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ② 넘으면 회전수가 떨어진다</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>펌프 토크 > 엔진 토크<br>→ <span class='hl'>회전수 ↓</span> → 유량 ↓</div><div class='dim' style='text-align:center'>심하면 엔진 스톨</div></div>
+          <p>펌프가 먹는 토크가 엔진 토크보다 크면 회전수가 떨어집니다. 유량도 같이 줄고, 심하면 엔진이 꺼집니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>그래서 압력이 오르면<br><span class='hl'>사판각을 줄인다</span></div><div class='dim' style='text-align:center'>H02-2 마력 제어 = 토크를 엔진 아래로</div></div>
+          <p>그래서 압력이 오르면 사판각을 줄여 토크를 엔진 한계 아래로 맞춥니다. H02-2 마력 제어가 바로 이 매칭입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ① 최대 사판각 그대로면</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>q 100 cc · p 250 bar<br>η<sub>m</sub> 0.9 → T = ?</div></div>
+          <p>배제용적 100 cc 그대로 250 bar 를 내면, 기계효율 0.9 에서 펌프 토크는 얼마일까요?</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>100 × 250 ÷ 20π ÷ 0.9</div><div class='big'>≈ 442 N·m</div><div class='dim' style='text-align:center'>엔진 212 의 두 배 넘음 → 스톨</div></div>
+          <p>약 442 N·m 입니다. 엔진 212 의 두 배가 넘으니, 이대로면 엔진이 버티지 못합니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ② 허용 배제용적</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>250 bar · 엔진 212 N·m<br>허용 q = ?</div></div>
+          <p>250 bar 에서 엔진 토크 212 에 맞추려면, 배제용적을 얼마까지 줄여야 할까요?</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>212 × 20π × 0.9 ÷ 250</div><div class='big'>≈ 48 cc/rev</div><div class='dim' style='text-align:center'>최대의 약 절반 → 유량도 절반</div></div>
+          <p>약 48 cc, 최대의 절반 정도입니다. 레귤레이터가 사판을 여기까지 눕혀야 엔진이 버팁니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>실무와 연결 · 회전수가 떨어질 때</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>고부하에서 rpm 이 뚝<br>→ <span class='hl'>펌프 토크 > 엔진 토크</span></div></div>
+          <p>고부하에서 엔진 회전수가 크게 떨어진다면, 펌프가 엔진이 줄 수 있는 것보다 많은 토크를 먹고 있다는 뜻입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>펌프 쪽: 마력 설정 · 신호<br>엔진 쪽: 출력 저하 · 필터</div><div class='dim' style='text-align:center'>둘 중 어느 쪽이 바뀌었는지부터</div></div>
+          <p>펌프 쪽 마력 설정이 높아졌는지, 엔진 쪽 출력이 떨어졌는지 둘로 나눠 봅니다. 연료나 공기 필터 막힘도 엔진 출력을 떨어뜨립니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>한 줄 요약</h3>
+        <div class="step">
+          <div class="vis"><ol><li>펌프 토크 = <span class='hl'>q × p ÷ 20π</span> (÷ η<sub>m</sub>)</li></ol></div>
+          <p>정리합니다. 첫째, 펌프 토크는 배제용적 곱하기 압력 나누기 20파이, 회전수와 무관합니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='2'><li>엔진 토크 = 9549 × kW ÷ rpm</li></ol></div>
+          <p>둘째, 엔진 토크는 9549 곱하기 킬로와트 나누기 rpm 입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='3'><li>토크가 넘으면 <b>rpm ↓ · 스톨</b><br><span class='dim'>그래서 마력 제어로 맞춘다</span></li></ol></div>
+          <p>셋째, 펌프 토크가 엔진을 넘으면 회전수가 떨어지고, 그래서 마력 제어로 맞춥니다. 이제 강의실에서 퀴즈 세 문제를 풀어 보세요.</p>
+        </div>
+      </section>
+    </div>
+    <section class="quiz">
+      <h2 class="sec">퀴즈 3문제</h2>
+      <ol>
+        <li class="q" data-q="0" data-type="num" data-k="==QfzAjLwojIs9GdiwiNuQTNyojIhJye" data-show="7JW9IDI1NSBOwrdtICg4MCDDlyAyMDAgw7cgMjDPgCk=">
+          <div class="qtext">배제용적 <b>80 cc/rev</b> 펌프가 <b>200 bar</b> 를 낼 때 필요한 토크는 약 몇 N·m 일까요? (기계효율은 1 로 봅니다)</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H02-4-0" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="1번 답">
+            <span class="unit">N·m</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>T = q × p ÷ 20π 입니다.</p></details><details><summary>더 큰 힌트</summary><p>80 × 200 = 16000, 20π ≈ 62.8 로 나누세요.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="1" data-type="num" data-k="=03Mw4CM6ICbvRnIsETOxojIhJye" data-show="7JW9IDE5MSBOwrdtICg5NTQ5IMOXIDMwIMO3IDE1MDAp">
+          <div class="qtext">엔진이 <b>1500 rpm</b> 에서 펌프에 <b>30 kW</b> 를 줄 수 있다면, 토크로는 약 몇 N·m 일까요?</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H02-4-1" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="2번 답">
+            <span class="unit">N·m</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>엔진 토크 = 9549 × kW ÷ rpm 입니다.</p></details><details><summary>더 큰 힌트</summary><p>9549 × 30 ÷ 1500 을 계산하세요.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="2" data-type="choice" data-k="jwj1212g65" data-show="7JeU7KeEIO2ajOyghOyImOqwgCDrlqjslrTsp4Dqs6AsIOyLrO2VmOuptCDsl5Tsp4TsnbQg6rq87KeE64uk">
+          <div class="qtext">펌프가 먹는 토크가 엔진이 낼 수 있는 토크보다 크면 어떻게 될까요?</div>
+          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">펌프 압력이 자동으로 올라간다</button><button type="button" class="opt" data-o="1">엔진 회전수가 떨어지고, 심하면 엔진이 꺼진다</button><button type="button" class="opt" data-o="2">작동유 온도가 바로 떨어진다</button><button type="button" class="opt" data-o="3">릴리프 밸브가 닫힌다</button></div>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>엔진이 부족한 토크를 어디서 메울 수 있을까요?</p></details><details><summary>더 큰 힌트</summary><p>토크가 모자라면 엔진은 느려집니다. 회전수가 떨어지면 펌프 유량도 줄어듭니다.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li></ol>
+      <p class="answer" data-summary>답을 적고 <b>확인</b>을 누르세요. 계산 문제는 반올림 차이를 인정해요. 틀리면 힌트가 차례로 열리고, 5번 틀리면 정답을 알려 드려요. 계산 문제는 답 칸을 누르면 <b>계산기</b>가 열려요.</p>
+    </section>
+  </article>
+
+  <article class="lesson" data-lesson="H03-1" hidden>
+    <a class="back" href="#">← 강의 목록</a>
+    <header class="lhead">
+      <div class="eyebrow"><span class="num">H03-1</span><span class="chip">안 봄</span></div>
+      <h2>오픈센터 MCV</h2>
+      <p class="sub">센터 바이패스를 닫으면서 미터인을 연다</p>
+    </header>
+    <figure class="player">
+      <video controls playsinline preload="metadata" src="videos/H03-1-open-center.mp4"></video>
+      <figcaption>약 3분 · 한국어 내레이션과 자막. 소리 없이 자막만 봐도 돼요</figcaption>
+    </figure>
+    <div class="notes">
+      <h2 class="sec">정리 노트</h2>
+      <section class="note">
+        <h3>펌프 기름의 두 길</h3>
+        <div class="step">
+          <div class="vis"><svg class='fig' viewBox='0 0 600 280' role='img' aria-label='펌프 유량이 센터 바이패스와 미터인으로 나뉨'><line class='as' x1='30' y1='160' x2='240' y2='160' stroke-width='6'/><polygon class='af' points='230,146 256,160 230,174'/><text class='af' x='120' y='145' font-size='28' text-anchor='middle'>펌프 Q</text><circle cx='270' cy='160' r='12' fill='currentColor'/><line x1='270' y1='160' x2='270' y2='60' stroke='currentColor' stroke-width='4'/><line x1='270' y1='60' x2='520' y2='60' stroke='currentColor' stroke-width='4'/><polygon fill='currentColor' points='510,48 534,60 510,72'/><text x='395' y='45' font-size='26' text-anchor='middle'>미터인 → 실린더</text><line x1='270' y1='160' x2='520' y2='160' stroke='currentColor' stroke-width='4'/><polygon fill='currentColor' points='510,148 534,160 510,172'/><text x='395' y='195' font-size='26' text-anchor='middle'>센터 바이패스 → 탱크</text><text x='300' y='260' font-size='24' text-anchor='middle'>두 길 모두 스풀이 여는 오리피스</text></svg></div>
+          <p>오픈센터 MCV 에서 펌프 기름은 두 길로 갈 수 있습니다. 실린더로 가는 미터인과, 탱크로 돌아가는 센터 바이패스입니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>스풀을 밀면<br>바이패스 <span class='hl'>닫힘</span> · 미터인 <span class='hl'>열림</span></div></div>
+          <p>스풀을 밀수록 센터 바이패스는 좁아지고, 미터인은 넓어집니다. 한 스풀이 두 길을 동시에 조절합니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ① 펌프 압력은 바이패스가 만든다</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>중립: 바이패스 활짝<br>→ 펌프 압력 <span class='hl'>낮음</span></div></div>
+          <p>레버 중립에서는 바이패스가 활짝 열려 있어서, 펌프 압력은 낮게 유지됩니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>바이패스가 좁아질수록<br>펌프 압력 <span class='hl'>↑</span></div><div class='dim' style='text-align:center'>같은 유량을 좁은 구멍으로 → H01-1</div></div>
+          <p>스풀을 밀어 바이패스가 좁아지면, 같은 유량을 좁은 구멍으로 밀어야 하니 펌프 압력이 올라갑니다. H01-1 오리피스 식 그대로입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>핵심 ② 부하 압력을 넘어야 움직인다</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>펌프 압력 < 부하 압력<br>→ 바이패스로 · <span class='hl'>실린더 정지</span></div></div>
+          <p>펌프 압력이 아직 부하 압력보다 낮으면, 미터인이 열려 있어도 기름은 전부 바이패스로 빠지고 실린더는 서 있습니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>펌프 압력 > 부하 압력<br>→ 남는 차압만큼 <span class='hl'>실린더로</span></div></div>
+          <p>펌프 압력이 부하 압력을 넘는 순간부터, 넘은 만큼의 차압으로 실린더에 기름이 들어가기 시작합니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ① 중립 압력</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>중립 바이패스 60 mm²<br>펌프 100 L/min → P = ?</div></div>
+          <p>중립에서 바이패스 면적이 60 mm², 펌프 유량이 분당 100리터면 펌프 압력은 얼마일까요?</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>(100 ÷ (0.6 × 60))²</div><div class='big'>≈ 7.7 bar</div><div class='dim' style='text-align:center'>압력은 낮지만 100 L/min 이 그냥 돈다</div></div>
+          <p>약 7.7 bar 입니다. 압력은 낮지만 100리터가 일 없이 돌고 있어서, H02-3 의 유량 신호로 펌프를 줄입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>풀어 보기 ② 반쯤 민 레버</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>바이패스 8 · 미터인 20 mm²<br>부하 100 bar<br>펌프 100 L/min</div></div>
+          <p>레버를 반쯤 밀어 바이패스 8, 미터인 20 mm² 입니다. 부하는 100 bar 입니다. 두 오리피스를 함께 풀면 결과는 이렇습니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>펌프 약 116 bar</div><div class='big'>실린더 48 L/min</div><div class='dim' style='text-align:center'>나머지 52 L/min 은 바이패스로</div></div>
+          <p>펌프 압력은 약 116 bar, 실린더로 48리터, 나머지 52리터는 바이패스로 갑니다. 미터인 차압은 16 bar 뿐입니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>실무와 연결 · 부드럽지만 부하를 탄다</h3>
+        <div class="step">
+          <div class="vis"><div class='mid'>부하 100 → 30 bar<br>실린더 48 → <span class='hl'>약 64 L/min</span></div><div class='dim' style='text-align:center'>레버 위치는 그대로</div></div>
+          <p>같은 레버 위치에서 부하가 30 bar 로 가벼워지면, 실린더 유량은 48 에서 약 64리터로 늘어납니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><div class='mid'>조작감은 <span class='hl'>부드럽다</span><br>속도는 <span class='hl'>부하에 따라 변한다</span></div><div class='dim' style='text-align:center'>부하 의존성은 H03-4 에서</div></div>
+          <p>그래서 오픈센터는 조작감이 부드러운 대신, 같은 레버에도 부하에 따라 속도가 변합니다. 이 부하 의존성은 H03-4 에서 자세히 봅니다.</p>
+        </div>
+      </section>
+      <section class="note">
+        <h3>한 줄 요약</h3>
+        <div class="step">
+          <div class="vis"><ol><li>스풀: 바이패스 <span class='hl'>닫고</span> 미터인 <span class='hl'>연다</span></li></ol></div>
+          <p>정리합니다. 첫째, 오픈센터 스풀은 바이패스를 닫으면서 미터인을 엽니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='2'><li>펌프 압력은 바이패스가 만든다</li></ol></div>
+          <p>둘째, 펌프 압력은 바이패스가 얼마나 좁아졌는지로 정해집니다.</p>
+        </div>
+        <div class="step">
+          <div class="vis"><ol start='3'><li>부하를 넘은 <b>차압만큼</b> 실린더로</li></ol></div>
+          <p>셋째, 펌프 압력이 부하를 넘은 차압만큼 실린더로 갑니다. 이제 강의실에서 퀴즈 세 문제를 풀어 보세요.</p>
+        </div>
+      </section>
+    </div>
+    <section class="quiz">
+      <h2 class="sec">퀴즈 3문제</h2>
+      <ol>
+        <li class="q" data-q="0" data-type="num" data-k="==QfzAjLwojIs9GdiwiNxojIhJye" data-show="MTYgYmFyICgoMTIwIMO3IDMwKcKyID0gNMKyKQ==">
+          <div class="qtext">중립에서 센터 바이패스 면적이 <b>50 mm²</b>, 펌프 유량이 <b>120 L/min</b> 이면 펌프 압력은 약 몇 bar 일까요? (암산식 Q ≈ 0.6 · A · √ΔP)</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H03-1-0" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="1번 답">
+            <span class="unit">bar</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>ΔP = (Q ÷ (0.6 × A))² 입니다. 탱크 압력은 0 으로 봅니다.</p></details><details><summary>더 큰 힌트</summary><p>0.6 × 50 = 30, 120 ÷ 30 = 4 입니다. 제곱하세요.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="1" data-type="num" data-k="==QfzAjLwojIs9GdiwCO0ojIhJye" data-show="NDggTC9taW4gKDAuNiDDlyAyMCDDlyDiiJoxNik=">
+          <div class="qtext">펌프 압력 <b>116 bar</b>, 부하 압력 <b>100 bar</b>, 미터인 면적 <b>20 mm²</b> 일 때 실린더로 가는 유량은 약 몇 L/min 일까요?</div>
+          <form class="ans" autocomplete="off">
+            <input id="a-H03-1-1" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="2번 답">
+            <span class="unit">L/min</span><button type="submit">확인</button>
+          </form>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>미터인 차압 = 펌프 압력 − 부하 압력 입니다.</p></details><details><summary>더 큰 힌트</summary><p>차압 16 bar, √16 = 4. 0.6 × 20 × 4 를 계산하세요.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li>
+        <li class="q" data-q="2" data-type="choice" data-k="rn727qsp7j" data-show="7Y6M7ZSEIOyVleugpeydtCDslYTsp4Eg67aA7ZWYIOyVleugpeuztOuLpCDrgq7slYQg6riw66aE7J20IOuwlOydtO2MqOyKpOuhnCDruaDsp4Tri6Q=">
+          <div class="qtext">오픈센터에서 레버를 조금 밀었는데 실린더가 아직 움직이지 않습니다. 가장 알맞은 이유는?</div>
+          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">펌프 압력이 아직 부하 압력보다 낮아 기름이 바이패스로 빠진다</button><button type="button" class="opt" data-o="1">미터인이 완전히 닫혀 있다</button><button type="button" class="opt" data-o="2">릴리프 밸브가 열려 있다</button><button type="button" class="opt" data-o="3">펌프가 멈춰 있다</button></div>
+          <p class="fb" aria-live="polite"></p>
+          <div class="hints">
+            <details><summary>힌트</summary><p>미터인이 조금 열려도, 기름은 압력이 낮은 쪽으로 흐릅니다.</p></details><details><summary>더 큰 힌트</summary><p>펌프 압력이 부하 압력을 넘어야 실린더로 들어갑니다.</p></details>
+            <button type="button" class="reveal" hidden>정답 보기</button>
+          </div>
+        </li></ol>
+      <p class="answer" data-summary>답을 적고 <b>확인</b>을 누르세요. 계산 문제는 반올림 차이를 인정해요. 틀리면 힌트가 차례로 열리고, 5번 틀리면 정답을 알려 드려요. 계산 문제는 답 칸을 누르면 <b>계산기</b>가 열려요.</p>
+    </section>
+  </article>
+</main>
+<script>window.HYD_SITE = {"endpoint":""};</script>
+<script type="application/json" id="course">{"total":31,"lessons":[{"num":"H01-1","name":"오리피스 식","nq":3},{"num":"H01-2","name":"압축성과 압력 상승","nq":3},{"num":"H01-3","name":"유압 동력과 효율","nq":3},{"num":"H01-4","name":"압력 손실과 온도","nq":3},{"num":"H02-1","name":"가변 사판 펌프: 사판각과 토출량","nq":3},{"num":"H02-2","name":"마력 제어: 압력이 오르면 유량을 줄이는 이유 (P-Q 선도)","nq":3},{"num":"H02-3","name":"유량 제어 신호: 펌프는 무엇을 보고 토출량을 정하나","nq":3},{"num":"H02-4","name":"엔진과 펌프 매칭: 토크 한계와 엔진 스톨","nq":3},{"num":"H03-1","name":"오픈센터 MCV: 센터 바이패스와 미터인을 동시에 조절","nq":3}]}</script>
+<script>
+{
+  // ---- 강의실 페이지 동작 (build_page.js 가 페이지 맨 끝에 넣는다) ----
+  const C = JSON.parse(document.getElementById('course').textContent);
+  const home = document.querySelector('.home');
+  const arts = Array.prototype.slice.call(document.querySelectorAll('.lesson'));
+  const KEY = 'hydedu.v1';
+  let state = {}, myName = '';
+  try { const s = JSON.parse(localStorage.getItem(KEY) || '{}'); state = s.state || {}; myName = s.name || ''; } catch (e) {}
+  const keep = () => { try { localStorage.setItem(KEY, JSON.stringify({ name: myName, state: state })); } catch (e) {} };
+
+  // ---- 화면 전환: #H01-1 이면 그 강의, 아니면 목록 ----
+  function show() {
+    const id = (location.hash || '').slice(1); let found = null;
+    arts.forEach(a => { const on = a.dataset.lesson === id; a.hidden = !on; if (on) found = a;
+      else { const v = a.querySelector('video'); if (v) v.pause(); } });
+    home.hidden = !!found; document.body.classList.toggle('in-lesson', !!found); window.scrollTo(0, 0);
+    if (!found && window.calcClose) window.calcClose();
+  }
+  addEventListener('hashchange', show);
+
+  // ---- 채점 ----
+  function cyrb53(str, seed) { let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0, ch; i < str.length; i++) { ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36); }
+  const b64 = s => { try { return decodeURIComponent(escape(atob(s))); } catch (e) { return atob(s); } };
+  const norm = s => String(s).toLowerCase().replace(/[^0-9a-z가-힣]/g, '');
+  function numOf(s) {                        // "71.8 L/min", "약 72", "1,250" → 숫자
+    s = String(s).replace(/(\d),(?=\d{3}(\D|$))/g, '$1').replace(/(\d),(\d)/, '$1.$2');
+    const m = s.match(/-?\d*\.?\d+/); return m ? parseFloat(m[0]) : NaN;
+  }
+  function check(q, num, i, v) {             // true / false, 답으로 볼 수 없으면 null
+    const t = q.dataset.type, k = q.dataset.k;
+    if (t === 'num') { const o = JSON.parse(b64(k.split('').reverse().join(''))), x = numOf(v);
+      return isNaN(x) ? null : Math.abs(x - o.a) <= Math.max(o.tol * Math.abs(o.a), 1e-9); }
+    if (t === 'choice') return cyrb53(num + '#' + i + '#' + v, 7) === k;
+    const n = norm(v); return n ? k.split(' ').indexOf(cyrb53(num + '#' + i + '#' + n, 7)) >= 0 : null;
+  }
+  function status(num) {
+    const l = C.lessons.find(x => x.num === num), rec = state[num] || {}; let ok = 0, any = false;
+    for (let i = 0; i < l.nq; i++) { const r = rec[i]; if (r) any = true; if (r && r.result === 'correct') ok++; }
+    return { ok: ok, nq: l.nq, passed: l.nq > 0 && ok === l.nq, any: any };
+  }
+
+  // ---- 문제 한 개 그리기 ----
+  function paint(q, rec) {
+    const fb = q.querySelector('.fb'), d = q.querySelectorAll('.hints details'), rv = q.querySelector('.reveal');
+    const tries = rec ? rec.tries : 0, done = !!rec && rec.result !== 'trying';
+    for (let i = 1; i < d.length; i++) d[i].hidden = !(tries >= i + 1 || d[i - 1].open);
+    rv.hidden = !(tries >= d.length + 1) || done;
+    q.classList.toggle('solved', !!rec && rec.result === 'correct');
+    q.querySelectorAll('.opt').forEach(b => {
+      const k = b.dataset.o, wrong = !!rec && (rec.wrong || []).indexOf(k) >= 0, right = !!rec && rec.result === 'correct' && rec.answer === k;
+      b.classList.toggle('wrong', wrong); b.classList.toggle('right', right); b.disabled = wrong || (!!rec && rec.result === 'correct');
+    });
+    const inp = q.querySelector('input'); if (inp && rec && rec.result === 'correct' && !inp.value) inp.value = rec.answer || '';
+    if (!rec) { fb.textContent = ''; return; }
+    if (rec.result === 'correct') { fb.className = 'fb good'; fb.textContent = '정답! (' + (rec.tries === 1 ? '한 번에 맞혔어요' : rec.tries + '번째에 맞혔어요') + ')'; }
+    else if (rec.result === 'revealed') { fb.className = 'fb bad'; fb.textContent = (rec.auto ? MAXTRY + '번 틀려서 정답을 알려 드려요. ' : '') + '정답: ' + b64(q.dataset.show) + ' · 다시 풀어 보면 기록이 통과로 바뀌어요'; }
+    else { fb.className = 'fb bad'; fb.textContent = tries === 1 ? '아직 아니에요. 힌트를 열어 보세요.' : tries === 2 ? '조금만 더! 더 큰 힌트를 열어 보세요.' : '다시 해 보거나, 정답을 볼 수 있어요. ' + (MAXTRY - tries) + '번 더 틀리면 정답을 알려 드려요.';
+      if (tries >= 1 && d[0]) d[0].open = true; if (tries >= 2 && d[1]) d[1].open = true; }
+  }
+  const MAXTRY = 5;                          // 이만큼 틀리면 정답을 자동으로 보여 준다
+  function attempt(q, v) {
+    const num = q.closest('.lesson').dataset.lesson, i = q.dataset.q;
+    const lesson = state[num] = state[num] || {}, rec = lesson[i] || { tries: 0, result: 'trying' };
+    if (rec.result === 'correct') return;
+    const res = check(q, num, i, v), fb = q.querySelector('.fb');
+    if (res === null) { fb.className = 'fb bad'; fb.textContent = q.dataset.type === 'num' ? '숫자로 적어 주세요.' : '답을 적어 주세요.'; return; }
+    rec.tries++; rec.at = new Date().toISOString();
+    if (res) { rec.result = 'correct'; rec.answer = String(v); }
+    else { if (q.dataset.type === 'choice') rec.wrong = (rec.wrong || []).concat(String(v)); else rec.answer = String(v);
+      if (rec.result !== 'revealed') rec.result = 'trying';
+      if (rec.tries >= MAXTRY && rec.result !== 'revealed') { rec.result = 'revealed'; rec.auto = true; } }
+    lesson[i] = rec; changed(num); paint(q, rec);
+  }
+  document.querySelectorAll('.q').forEach(q => {
+    const num = q.closest('.lesson').dataset.lesson, i = q.dataset.q;
+    q.querySelectorAll('.hints details').forEach(x => x.addEventListener('toggle', () => paint(q, (state[num] || {})[i])));
+    const f = q.querySelector('form');
+    if (f) f.addEventListener('submit', e => { e.preventDefault(); attempt(q, q.querySelector('input').value); });
+    q.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => attempt(q, b.dataset.o)));
+    q.querySelector('.reveal').addEventListener('click', () => {
+      const lesson = state[num] = state[num] || {}, rec = lesson[i] || { tries: 0 };
+      rec.result = 'revealed'; rec.at = new Date().toISOString(); lesson[i] = rec; changed(num); paint(q, rec);
+    });
+  });
+
+  // ---- 진도 표시 (목록, 오늘 볼 강의, 진도 띠, 결과 글) ----
+  function chip(el, st) {
+    if (!el) return;
+    el.className = 'chip' + (st.passed ? ' ok' : st.any ? ' mid' : '');
+    el.textContent = st.passed ? '통과' : st.any ? '푸는 중 ' + st.ok + '/' + st.nq : '안 봄';
+  }
+  function resultText() {
+    const d = new Date(), day = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    const lines = ['[유압 강의실] ' + (myName || '이름 미입력') + ' · ' + day];
+    C.lessons.forEach(l => { const st = status(l.num); if (!st.any) return;
+      const first = Object.keys(state[l.num] || {}).filter(k => state[l.num][k].result === 'correct' && state[l.num][k].tries === 1).length;
+      lines.push(l.num + ' ' + l.name + ': ' + (st.passed ? '통과' : '푸는 중') + ' (' + st.ok + '/' + st.nq + ', 첫 시도 정답 ' + first + ')'); });
+    if (lines.length === 1) lines.push('아직 푼 퀴즈가 없어요');
+    return lines.join('\n');
+  }
+  function refresh() {
+    let passed = 0;
+    C.lessons.forEach(l => { const st = status(l.num); if (st.passed) passed++;
+      chip(document.querySelector('.item[href="#' + l.num + '"] .chip'), st);
+      chip(document.querySelector('.lesson[data-lesson="' + l.num + '"] .eyebrow .chip'), st);
+      const art = document.querySelector('.lesson[data-lesson="' + l.num + '"] [data-summary]');
+      if (art && st.passed) { art.className = 'answer done'; art.textContent = '퀴즈 통과! ' + st.nq + '문제 모두 맞혔어요.'; }
+      report(l.num); });
+    document.querySelectorAll('.strip i[data-n]').forEach(i => { const l = C.lessons.find(x => x.num === i.dataset.n);
+      i.classList.toggle('pass', !!l && status(l.num).passed); });
+    const next = C.lessons.find(l => !status(l.num).passed);
+    const cta = document.getElementById('cta'), ttl = document.getElementById('today-ttl');
+    if (next) { cta.href = '#' + next.num; cta.firstChild.textContent = next.num + ' 강의 보기 '; ttl.textContent = next.num + ' · ' + next.name; }
+    else { cta.href = '#' + C.lessons[C.lessons.length - 1].num; cta.firstChild.textContent = '복습하기 '; ttl.textContent = '공개된 강의를 모두 통과했어요'; }
+    document.getElementById('count').textContent = passed + ' / ' + C.lessons.length + '강 통과 · 전체 ' + C.total + '강 중 ' + C.lessons.length + '강 공개';
+    document.getElementById('result').value = resultText();
+  }
+
+  // ---- 강의를 마치면(퀴즈를 모두 맞히거나 정답을 봄) 교육 담당자에게 기록이 갔는지 알려 준다 ----
+  function finished(num) { const l = C.lessons.find(x => x.num === num), rec = state[num] || {};
+    for (let i = 0; i < l.nq; i++) { const r = rec[i]; if (!r || (r.result !== 'correct' && r.result !== 'revealed')) return false; } return l.nq > 0; }
+  function report(num) {
+    const quiz = document.querySelector('.lesson[data-lesson="' + num + '"] .quiz'); if (!quiz) return;
+    let el = quiz.querySelector('.report');
+    if (!finished(num)) { if (el) el.hidden = true; return; }
+    if (!el) { el = document.createElement('div'); el.className = 'report'; el.setAttribute('aria-live', 'polite');
+      el.innerHTML = '<p></p><button type="button" class="btn ghost" hidden>결과 복사</button>'; quiz.appendChild(el);
+      el.querySelector('button').addEventListener('click', e => copyResult(e.currentTarget)); }
+    el.hidden = false;
+    const p = el.querySelector('p'), b = el.querySelector('button');
+    if (recKind === 'account') { el.className = 'report good'; p.textContent = '강의 끝! 기록이 교육 담당자에게 자동으로 전달됐어요 (' + (myName || '이름 없음') + ').'; b.hidden = true; }
+    else if (recKind === 'saving') { el.className = 'report'; p.textContent = '강의 끝! 기록을 교육 담당자에게 보내는 중이에요…'; b.hidden = true; }
+    else if (recKind === 'webfail') { el.className = 'report bad'; p.textContent = '강의 끝! 지금은 기록을 보내지 못했어요 (인터넷 연결 확인). 결과를 복사해 교육 담당자에게 보내 주세요.'; b.hidden = false; }
+    else { el.className = 'report bad'; p.textContent = '강의 끝! 이 링크로는 기록이 자동 전달되지 않아요. 결과를 복사해 교육 담당자에게 보내 주세요.'; b.hidden = false; }
+  }
+
+  // ---- 저장: 이 기기 + (가능하면) 계정 ----
+  let db = null, uid = null, canSave = true, queue = Promise.resolve(), recKind = 'local';
+  const recEl = document.getElementById('rec');
+  function setRec(kind) {
+    recKind = kind;
+    const t = { local: '결과는 이 기기에 저장돼요. 아래 결과를 복사해 교육 담당자에게 보내 주세요.',
+      account: SITE ? '결과가 교육 담당자에게 자동으로 전달돼요.' : '결과가 계정에 저장돼요. 교육 담당자가 수강 현황에서 볼 수 있어요.',
+      webfail: '지금은 결과를 보내지 못했어요 (인터넷 연결 확인). 다음에 문제를 풀 때 다시 보내요. 급하면 아래 결과를 복사해 보내 주세요.',
+      saving: '결과를 교육 담당자에게 보내는 중이에요…',
+      refused: '이 링크로는 계정 기록이 안 돼요. 아래 결과를 복사해 교육 담당자에게 보내 주세요.' }[kind];
+    recEl.textContent = t; recEl.className = 'rec' + (kind === 'account' ? ' good' : '');
+    C.lessons.forEach(l => report(l.num));
+  }
+  function packed() {
+    const out = {};
+    Object.keys(state).forEach(num => { if (!C.lessons.some(l => l.num === num)) return;
+      const st = status(num), ats = Object.keys(state[num]).map(k => state[num][k].at || '').sort();
+      out[num] = { passed: st.passed, ok: st.ok, nq: st.nq, at: ats[ats.length - 1] || '', q: state[num] }; });
+    return out;
+  }
+  // ---- 웹사이트(GitHub Pages) 모드: 기록을 구글 시트 서버로 보낸다 ----
+  const SITE = window.HYD_SITE && window.HYD_SITE.endpoint ? window.HYD_SITE : null;
+  let WID = '', webTimer = null;
+  if (SITE) { try { WID = localStorage.getItem('hydedu.id') || ''; } catch (e) {}
+    if (!/^w_[a-z0-9]{8,40}$/.test(WID)) { WID = 'w_' + Array.from(crypto.getRandomValues(new Uint8Array(12)), b => (b % 36).toString(36)).join('');
+      try { localStorage.setItem('hydedu.id', WID); } catch (e) {} } }
+  function saveWeb() {
+    clearTimeout(webTimer);
+    webTimer = setTimeout(() => {
+      if (!myName) return;
+      const body = { id: WID, name: myName, lessons: packed(), updatedAt: new Date().toISOString() };
+      if (recKind !== 'account') setRec('saving');
+      fetch(SITE.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) })
+        .then(r => r.json()).then(j => setRec(j && j.ok ? 'account' : 'webfail'), () => setRec('webfail'));
+    }, 700);
+  }
+  function save() {
+    if (SITE) return saveWeb();
+    if (!db || !uid || !canSave) return;
+    const body = { name: myName, lessons: packed(), updatedAt: new Date().toISOString() };
+    if (recKind !== 'account') setRec('saving');
+    queue = queue.then(() => db.doc('results/' + uid).set(body)).then(() => setRec('account'), e => {
+      if (e && e.code === 'unavailable') return new Promise(r => setTimeout(r, 800 + Math.random() * 800))
+        .then(() => db.doc('results/' + uid).set(body)).then(() => setRec('account'), () => {});
+      canSave = false; setRec('refused');
+    });
+  }
+  function changed(num) { keep(); refresh(); save(); }
+  const rank = r => !r ? 0 : r.result === 'correct' ? 3 : r.result === 'revealed' ? 2 : 1;
+  function merge(remote) {
+    let localMore = false;
+    Object.keys(remote || {}).forEach(num => { const q = (remote[num] || {}).q || {}; state[num] = state[num] || {};
+      Object.keys(q).forEach(i => { const l = state[num][i], r = q[i];
+        if (rank(r) > rank(l) || (rank(r) === rank(l) && l && r.tries > l.tries)) state[num][i] = r; }); });
+    Object.keys(state).forEach(num => Object.keys(state[num]).forEach(i => {
+      const r = ((remote || {})[num] || {}).q; if (!r || rank(state[num][i]) > rank(r[i])) localMore = true; }));
+    return localMore;
+  }
+  function repaintAll() {
+    document.querySelectorAll('.q').forEach(q => paint(q, (state[q.closest('.lesson').dataset.lesson] || {})[q.dataset.q]));
+    refresh();
+  }
+
+  // ---- 이름과 결과 복사 ----
+  const nameIn = document.getElementById('myname');
+  nameIn.value = myName;
+  let nameTimer = null;
+  function setName(v) { myName = v.trim(); keep(); nameIn.value = myName; document.getElementById('result').value = resultText();
+    C.lessons.forEach(l => report(l.num)); clearTimeout(nameTimer); nameTimer = setTimeout(save, 800); }
+  nameIn.addEventListener('input', () => { myName = nameIn.value.trim(); keep(); document.getElementById('result').value = resultText();
+    clearTimeout(nameTimer); nameTimer = setTimeout(save, 800); });
+  nameIn.addEventListener('change', () => { if (!nameIn.value.trim()) openGate(); });
+
+  // ---- 처음 온 사람: 이름을 적어야 시작할 수 있다 ----
+  const gate = document.createElement('div');
+  gate.className = 'gate'; gate.hidden = true;
+  gate.innerHTML = '<form class="gate-box" role="dialog" aria-modal="true" aria-labelledby="gate-t">' +
+    '<h2 id="gate-t">이름을 적어 주세요</h2>' +
+    '<p>퀴즈 기록이 이 이름으로 교육 담당자에게 전달돼요.</p>' +
+    '<input type="text" id="gate-in" autocomplete="name" placeholder="예: 홍길동" aria-label="이름" maxlength="30">' +
+    '<button type="submit" class="btn" disabled>시작하기</button></form>';
+  document.body.appendChild(gate);
+  const gateIn = gate.querySelector('#gate-in'), gateBtn = gate.querySelector('button');
+  gateIn.addEventListener('input', () => { gateBtn.disabled = gateIn.value.trim().length < 2; });
+  gate.querySelector('form').addEventListener('submit', e => { e.preventDefault(); if (gateIn.value.trim().length < 2) return;
+    setName(gateIn.value); gate.hidden = true; document.body.classList.remove('gated'); });
+  function openGate(suggest) { if (suggest && !gateIn.value) gateIn.value = suggest; gateBtn.disabled = gateIn.value.trim().length < 2;
+    gate.hidden = false; document.body.classList.add('gated'); setTimeout(() => gateIn.focus(), 50); }
+  function copyResult(btn) {
+    const ta = document.getElementById('result'), label = btn.textContent;
+    ta.value = resultText();
+    const done = () => { btn.textContent = '복사됨'; setTimeout(() => { btn.textContent = label; }, 1600); };
+    const fallback = () => { location.hash = ''; setTimeout(() => { ta.scrollIntoView({ block: 'center' }); ta.focus(); ta.select(); }, 50); btn.textContent = '선택됨 · 길게 눌러 복사'; };
+    try { navigator.clipboard.writeText(ta.value).then(done, fallback); } catch (err) { fallback(); }
+  }
+  document.getElementById('copy').addEventListener('click', e => {
+    const ta = document.getElementById('result'), btn = e.currentTarget;
+    const done = () => { btn.textContent = '복사됨'; setTimeout(() => { btn.textContent = '결과 복사'; }, 1600); };
+    const fallback = () => { ta.focus(); ta.select(); btn.textContent = '선택됨 · 길게 눌러 복사'; };
+    try { navigator.clipboard.writeText(ta.value).then(done, fallback); } catch (err) { fallback(); }
+  });
+
+  // ---- 교육 담당자: 수강 현황 ----
+  function teacher(user) {
+    const box = document.getElementById('teacher'), out = document.getElementById('roster'), note = document.getElementById('roster-note');
+    box.hidden = false;
+    const load = () => {
+      note.textContent = '불러오는 중…';
+      let late = setTimeout(() => { note.textContent = '기록을 아직 불러오지 못했어요. 잠시 뒤 다시 눌러 보세요.'; }, 10000);
+      db.collection('results').get().then(snap => user.profiles(snap.docs.map(d => d.id)).then(ps => {
+        clearTimeout(late);
+        renderRoster(snap.docs.map(d => { const D = d.data() || {}; return { id: d.id, name: typeof D.name === 'string' ? D.name : '', lessons: D.lessons || {} }; }), ps);
+      })).catch(() => { clearTimeout(late); note.textContent = '기록을 불러오지 못했어요.'; });
+    };
+    document.getElementById('reload').addEventListener('click', load);
+    load();
+  }
+  function renderRoster(list, ps) {          // list: [{id, name, lessons}], ps: 계정 이름 (없으면 {})
+    const out = document.getElementById('roster'), note = document.getElementById('roster-note'); ps = ps || {};
+    {
+        if (!list.length) { out.innerHTML = ''; note.textContent = '아직 저장된 기록이 없어요.'; return; }
+        const rows = list.map(d => { const L = d.lessons || {}, ks = Object.keys(L);
+          return { id: d.id, L: L, name: d.name || '', pass: ks.filter(k => L[k].passed).length, at: ks.map(k => L[k].at || '').sort().pop() || '' }; })
+          .sort((a, b) => b.at.localeCompare(a.at));
+        const head = '<thead><tr><th>이름</th><th>통과</th><th>최근</th><th>강의별</th></tr></thead>';
+        out.innerHTML = head + '<tbody>' + rows.map(() => '<tr><td data-l="이름"></td><td class="n" data-l="통과"></td><td class="n" data-l="최근"></td><td data-l="강의별"><span class="dots"></span></td></tr>').join('') + '</tbody>';
+        out.querySelectorAll('tbody tr').forEach((tr, k) => { const r = rows[k], c = tr.children;
+          const pn = (ps[r.id] && ps[r.id].name) || '';
+          c[0].textContent = r.name ? r.name + (pn && pn !== r.name ? ' (' + pn + ')' : '') : (pn || '이름 없음');
+          c[1].textContent = r.pass + ' / ' + C.lessons.length;
+          c[2].textContent = r.at ? r.at.slice(5, 10).replace('-', '.') : '-';
+          c[3].firstChild.innerHTML = C.lessons.map(l => { const x = r.L[l.num];
+            return '<i class="' + (x && x.passed ? 'pass' : x ? 'mid' : '') + '" title="' + l.num + '"></i>'; }).join(''); });
+        note.textContent = rows.length + '명 · 칸 하나 = 강의 하나 (초록 통과, 테두리 푸는 중)';
+    }
+  }
+  // ---- 웹사이트 모드: 교육 담당자 비밀번호로 구글 시트 기록을 읽는다 ----
+  function teacherWeb(key) {
+    const box = document.getElementById('teacher'), note = document.getElementById('roster-note');
+    box.hidden = false;
+    const tip = box.querySelector('.rec:not(#roster-note)'); if (tip) tip.textContent = '후배가 퀴즈를 풀 때마다 자동으로 쌓여요. 같은 사람이 다른 기기에서 풀면 따로 한 줄씩 보여요. 원본은 구글 시트 \'기록\' 탭에 있어요.';
+    const load = () => {
+      note.textContent = '불러오는 중…';
+      fetch(SITE.endpoint + '?key=' + encodeURIComponent(key)).then(r => r.json()).then(j => {
+        if (!j || !j.ok) { note.textContent = '비밀번호가 맞지 않아요.'; try { localStorage.removeItem('hydedu.tkey'); } catch (e) {} return; }
+        try { localStorage.setItem('hydedu.tkey', key); } catch (e) {}
+        renderRoster(j.rows || [], {});
+      }, () => { note.textContent = '기록을 불러오지 못했어요 (인터넷 연결 확인).'; });
+    };
+    const rl = document.getElementById('reload'), nrl = rl.cloneNode(true); rl.replaceWith(nrl); nrl.addEventListener('click', load);
+    load(); box.scrollIntoView({ block: 'start' });
+  }
+  if (SITE) {
+    const tl = document.getElementById('tlogin');
+    if (tl) tl.addEventListener('click', () => { const k = window.prompt('교육 담당자 비밀번호'); if (k) teacherWeb(k.trim()); });
+    let k0 = ''; try { k0 = localStorage.getItem('hydedu.tkey') || ''; } catch (e) {}
+    if (k0) setTimeout(() => teacherWeb(k0), 0);
+  }
+
+  // ---- 시작 ----
+  repaintAll(); setRec('local'); show();
+  if (!myName) openGate();
+  if (SITE && myName && Object.keys(state).length) save();
+  if (window.claude && window.claude.use) {
+    Promise.all([window.claude.use('db').catch(() => null), window.claude.use('user').catch(() => null)]).then(([d, user]) => {
+      if (user && !myName) user.me().then(m => { if (m && m.name && !gate.hidden && !gateIn.value) openGate(m.name); }).catch(() => {});
+      db = d; if (!db || !user) return;
+      user.isOwner().then(own => { if (own) teacher(user); });
+      return user.id().then(id => {
+        uid = id; if (!uid) return;
+        return db.doc('results/' + uid).get().then(snap => {
+          const more = merge(snap.exists ? (snap.data() || {}).lessons : null);
+          repaintAll(); keep();
+          if (snap.exists) setRec('account');
+          if (more || !snap.exists && Object.keys(state).length) save();
+        }).catch(() => {});
+      });
+    }).catch(() => {});
+  }
+
+  // ---- 휴대폰: 강의 화면 왼쪽 끝을 오른쪽으로 밀면 목록으로 ----
+  const EDGE = 36, GO = 90, hint = document.createElement('div'); let drag = null;
+  hint.className = 'swipe-hint'; hint.setAttribute('aria-hidden', 'true'); hint.textContent = '← 목록'; document.body.appendChild(hint);
+  const current = () => arts.find(a => !a.hidden) || null;
+  function reset(art) {
+    hint.classList.add('back'); hint.classList.remove('ready'); hint.style.transform = 'translate(-100%,-50%)'; hint.style.opacity = '0';
+    if (art) { art.classList.add('settle'); art.style.transform = ''; }
+    setTimeout(() => { hint.classList.remove('back'); if (art) art.classList.remove('settle'); }, 220);
+  }
+  document.addEventListener('touchstart', e => { const art = current(); if (!art || e.touches.length !== 1) return;
+    const t = e.touches[0]; if (t.clientX > EDGE) return; drag = { art: art, x: t.clientX, y: t.clientY, dx: 0, on: false }; }, { passive: true });
+  document.addEventListener('touchmove', e => { if (!drag) return;
+    const t = e.touches[0], dx = t.clientX - drag.x, dy = Math.abs(t.clientY - drag.y);
+    if (!drag.on) { if (dy > 24 && dy > dx) { drag = null; return; } if (dx < 10) return; drag.on = true; }
+    drag.dx = Math.max(0, dx); const k = Math.min(drag.dx, GO * 1.4);
+    drag.art.style.transform = 'translateX(' + (k * 0.5) + 'px)'; hint.style.opacity = String(Math.min(1, k / GO));
+    hint.style.transform = 'translate(calc(-100% + ' + Math.min(k, GO) + 'px),-50%)'; hint.classList.toggle('ready', drag.dx >= GO); }, { passive: true });
+  document.addEventListener('touchend', () => { if (!drag) return; const d = drag; drag = null; reset(d.art); if (d.on && d.dx >= GO) location.hash = ''; }, { passive: true });
+  document.addEventListener('touchcancel', () => { if (drag) { reset(drag.art); drag = null; } }, { passive: true });
+
+  // ---- 계산기: 강의 화면 오른쪽 아래 버튼. 화면 버튼으로만 입력 (휴대폰 자판이 퀴즈를 가리지 않게) ----
+  {
+    const fab = document.createElement('button');
+    fab.type = 'button'; fab.className = 'calc-fab'; fab.textContent = '계산기'; fab.setAttribute('aria-expanded', 'false');
+    const pane = document.createElement('section');
+    pane.className = 'calc'; pane.hidden = true; pane.setAttribute('aria-label', '계산기');
+    const KEYS = [['(', '('], [')', ')'], ['√', '√'], ['x²', '²'], ['⌫', 'back'],
+      ['7', '7'], ['8', '8'], ['9', '9'], ['÷', '÷'], ['C', 'clear'],
+      ['4', '4'], ['5', '5'], ['6', '6'], ['×', '×'], ['π', 'π'],
+      ['1', '1'], ['2', '2'], ['3', '3'], ['−', '−'], ['xʸ', '^'],
+      ['0', '0'], ['.', '.'], ['Ans', 'Ans'], ['+', '+'], ['=', 'eq']];
+    pane.innerHTML = '<div class="calc-top"><b>계산기</b><span><button type="button" class="calc-kb" hidden>자판으로 입력</button> <button type="button" class="calc-x" aria-label="계산기 닫기">닫기</button></span></div>' +
+      '<div class="calc-scr"><div class="calc-ex" aria-live="polite"></div><div class="calc-res" aria-live="polite"></div></div>' +
+      '<div class="calc-keys">' + KEYS.map(k => '<button type="button" data-k="' + k[1] + '"' +
+        (/^[0-9.]$/.test(k[1]) ? ' class="n"' : k[1] === 'eq' ? ' class="eq"' : '') + '>' + k[0] + '</button>').join('') + '</div>' +
+      '<button type="button" class="calc-put">답 칸에 넣기</button>';
+    document.body.appendChild(fab); document.body.appendChild(pane);
+    const exEl = pane.querySelector('.calc-ex'), resEl = pane.querySelector('.calc-res'), put = pane.querySelector('.calc-put');
+    let ex = '', ans = null, done = false, target = null;
+    const value = () => done ? ans : calc(ex);   // "=" 뒤에는 저장한 결과 (Ans 가 바뀐 뒤 식을 다시 계산하지 않는다)
+
+    // 수식 계산 (eval 을 쓰지 않는 작은 계산기). + − × ÷ ^ √ ² π ( ) Ans, 곱하기 생략(2π, 3√2) 가능
+    function calc(src) {
+      const t = src.match(/Ans|\d*\.?\d+|[()+−×÷^√²π]/g) || []; let i = 0;
+      const peek = () => t[i], eat = () => t[i++];
+      const startsFactor = x => x !== undefined && /^(\d|\.|\(|π|√|Ans)/.test(x);
+      function expr() { let v = term(); while (peek() === '+' || peek() === '−') v = eat() === '+' ? v + term() : v - term(); return v; }
+      function term() { let v = unary();
+        for (;;) { if (peek() === '×') { eat(); v *= unary(); } else if (peek() === '÷') { eat(); v /= unary(); }
+          else if (startsFactor(peek())) v *= unary(); else return v; } }
+      function unary() { if (peek() === '−') { eat(); return -unary(); } if (peek() === '+') { eat(); return unary(); } return power(); }
+      function power() { const b = post(); if (peek() === '^') { eat(); return Math.pow(b, unary()); } return b; }
+      function post() { let v = root(); while (peek() === '²') { eat(); v = v * v; } return v; }
+      function root() { if (peek() === '√') { eat(); return Math.sqrt(root()); } return prim(); }
+      function prim() { const x = eat();
+        if (x === undefined) throw 0;
+        if (x === '(') { const v = expr(); if (peek() === ')') eat(); return v; }   // 닫는 괄호는 빠져도 된다
+        if (x === 'π') return Math.PI;
+        if (x === 'Ans') { if (ans === null) throw 0; return ans; }
+        if (/^\d*\.?\d+$/.test(x)) return parseFloat(x);
+        throw 0; }
+      const v = expr(); if (i < t.length) throw 0; return v;
+    }
+    const fmt = v => { if (!isFinite(v)) return '계산할 수 없어요';
+      const a = Math.abs(v); return (a !== 0 && (a >= 1e9 || a < 1e-6)) ? v.toExponential(4) : String(parseFloat(v.toPrecision(10))); };
+    function draw() {
+      exEl.textContent = ex || '0';
+      let r = ''; if (ex) { try { r = fmt(value()); } catch (e) { r = ''; } }
+      resEl.textContent = r ? (done ? '= ' + r : r) : (done ? '' : ' ');
+      resEl.classList.toggle('final', done);
+      put.disabled = !target || !/^-?[\d.]+(e[+-]?\d+)?$/.test(r);
+      put.textContent = target ? '답 칸에 넣기 (' + target.getAttribute('aria-label') + ')' : '답 칸을 먼저 누르세요';
+    }
+    function press(k) {
+      if (k === 'clear') { ex = ''; done = false; }
+      else if (k === 'back') { if (done) done = false; ex = ex.replace(/(Ans|.)$/, ''); }
+      else if (k === 'eq') { try { const v = calc(ex); if (isFinite(v)) { ans = v; done = true; } } catch (e) { resEl.textContent = '식을 확인해 주세요'; return; } }
+      else { if (done) { ex = /^[+−×÷^²]$/.test(k) ? 'Ans' : ''; done = false; } ex += k; }
+      draw();
+    }
+    pane.querySelector('.calc-keys').addEventListener('click', e => { const b = e.target.closest('button'); if (b) press(b.dataset.k); });
+    // 계산 문제 답 칸을 누르면 휴대폰 자판 대신 계산기가 열린다 ("자판으로 입력"을 누르면 그 칸만 자판)
+    const kb = pane.querySelector('.calc-kb'); let quiet = false;
+    const numInputs = () => document.querySelectorAll('.q[data-type="num"] input');
+    numInputs().forEach(i => { i.dataset.mode = i.getAttribute('inputmode') || 'decimal'; i.setAttribute('inputmode', 'none'); });
+    let used = null;                          // 계산기 식을 마지막으로 쓴 답 칸. 다른 칸으로 가면 식을 비운다
+    function fresh() { if (target !== used) { ex = ''; done = false; used = target; } }
+    function onAnswer(e) {
+      const i = e.target; if (!i.matches || !i.matches('.q input')) return;
+      target = i; if (!pane.hidden) { fresh(); draw(); }
+      if (quiet || !i.matches('.q[data-type="num"] input') || i.getAttribute('inputmode') !== 'none' || i.closest('.q').classList.contains('solved')) return;
+      if (pane.hidden) calcOpen(); else lift();
+    }
+    document.addEventListener('focusin', onAnswer);
+    document.addEventListener('click', e => { if (e.target.matches && e.target.matches('.q[data-type="num"] input') && pane.hidden) onAnswer(e); });
+    kb.addEventListener('click', () => { if (!target) return; const i = target;
+      i.setAttribute('inputmode', i.dataset.mode || 'decimal'); calcClose(); quiet = true; i.blur(); i.focus(); quiet = false; });
+    put.addEventListener('click', () => { let r; try { r = fmt(value()); } catch (e) { return; }
+      if (!target) return; const i = target; i.value = r; ex = ''; done = false; calcClose();
+      quiet = true; i.focus({ preventScroll: true }); quiet = false; i.scrollIntoView({ block: 'center' }); });
+    function lift() {                         // 답 칸이 계산판에 가리지 않게 화면을 올린다
+      document.body.style.paddingBottom = pane.offsetHeight + 'px';
+      if (!target) return; const r = target.getBoundingClientRect(), top = pane.getBoundingClientRect().top;
+      if (r.bottom > top - 12) window.scrollBy(0, r.bottom - top + 24); else if (r.top < 8) window.scrollBy(0, r.top - 24);
+    }
+    function calcOpen() { pane.hidden = false; fab.setAttribute('aria-expanded', 'true'); fab.hidden = true;
+      const art = current(); if (target && art && !art.contains(target)) target = null;
+      fresh();
+      kb.hidden = !(target && target.matches('.q[data-type="num"] input')); draw(); requestAnimationFrame(lift); }
+    function calcClose() { pane.hidden = true; fab.setAttribute('aria-expanded', 'false'); fab.hidden = false; document.body.style.paddingBottom = ''; }
+    window.calcClose = calcClose;
+    fab.addEventListener('click', calcOpen);
+    pane.querySelector('.calc-x').addEventListener('click', calcClose);
+    document.addEventListener('keydown', e => { if (pane.hidden) return;
+      if (e.target.matches('input, textarea')) return;
+      const m = { '*': '×', '/': '÷', '-': '−', '+': '+', 'Enter': 'eq', '=': 'eq', 'Backspace': 'back', 'Escape': 'close' }[e.key] ||
+        (/^[0-9.()^]$/.test(e.key) ? e.key : null);
+      if (!m) return; e.preventDefault(); if (m === 'close') calcClose(); else press(m); });
+    draw();
+  }
+}
+</script>
+</body></html>
