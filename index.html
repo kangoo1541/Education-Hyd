@@ -1719,7 +1719,7 @@ body.gated .calc-fab{display:none!important}
   function saveWeb() {
     clearTimeout(webTimer);
     webTimer = setTimeout(() => {
-      if (!myName) return;
+      if (!myName || !Object.keys(packed()).length) return;   // 푼 퀴즈가 없으면 보내지 않는다 (빈 줄 방지)
       const body = { id: WID, name: myName, lessons: packed(), updatedAt: new Date().toISOString() };
       if (recKind !== 'account') setRec('saving');
       fetch(SITE.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) })
@@ -1810,15 +1810,21 @@ body.gated .calc-fab{display:none!important}
   function renderRoster(list, ps) {          // list: [{id, name, lessons}], ps: 계정 이름 (없으면 {})
     const out = document.getElementById('roster'), note = document.getElementById('roster-note'); ps = ps || {};
     {
-        if (!list.length) { out.innerHTML = ''; note.textContent = '아직 저장된 기록이 없어요.'; return; }
-        const rows = list.map(d => { const L = d.lessons || {}, ks = Object.keys(L);
-          return { id: d.id, L: L, name: d.name || '', pass: ks.filter(k => L[k].passed).length, at: ks.map(k => L[k].at || '').sort().pop() || '' }; })
+        // 이름이 같은 줄(같은 사람의 다른 기기)은 한 사람으로 합친다: 강의마다 더 좋은 결과, 더 최근 날짜
+        const better = (a, b) => !a ? b : !b ? a : (a.passed !== b.passed ? (a.passed ? a : b) : (a.ok !== b.ok ? (a.ok > b.ok ? a : b) : ((a.at || '') >= (b.at || '') ? a : b)));
+        const groups = {}, order = [];
+        list.forEach(d => { const L = d.lessons || {}, key = (d.name || '').trim() ? 'n:' + d.name.trim() : 'i:' + d.id;
+          if (!groups[key]) { groups[key] = { id: d.id, name: (d.name || '').trim(), L: {}, n: 0 }; order.push(key); }
+          const g = groups[key]; g.n++; Object.keys(L).forEach(k => { g.L[k] = better(g.L[k], L[k]); }); });
+        const rows = order.map(k => groups[k]).filter(g => Object.keys(g.L).length || !g.name).map(g => { const ks = Object.keys(g.L);
+          return { id: g.id, L: g.L, name: g.name, n: g.n, pass: ks.filter(k => g.L[k].passed).length, at: ks.map(k => g.L[k].at || '').sort().pop() || '' }; })
           .sort((a, b) => b.at.localeCompare(a.at));
+        if (!rows.length) { out.innerHTML = ''; note.textContent = '아직 저장된 기록이 없어요.'; return; }
         const head = '<thead><tr><th>이름</th><th>통과</th><th>최근</th><th>강의별</th></tr></thead>';
         out.innerHTML = head + '<tbody>' + rows.map(() => '<tr><td data-l="이름"></td><td class="n" data-l="통과"></td><td class="n" data-l="최근"></td><td data-l="강의별"><span class="dots"></span></td></tr>').join('') + '</tbody>';
         out.querySelectorAll('tbody tr').forEach((tr, k) => { const r = rows[k], c = tr.children;
           const pn = (ps[r.id] && ps[r.id].name) || '';
-          c[0].textContent = r.name ? r.name + (pn && pn !== r.name ? ' (' + pn + ')' : '') : (pn || '이름 없음');
+          c[0].textContent = (r.name ? r.name + (pn && pn !== r.name ? ' (' + pn + ')' : '') : (pn || '이름 없음')) + (r.n > 1 ? ' · 기기 ' + r.n + '대' : '');
           c[1].textContent = r.pass + ' / ' + C.lessons.length;
           c[2].textContent = r.at ? r.at.slice(5, 10).replace('-', '.') : '-';
           c[3].firstChild.innerHTML = C.lessons.map(l => { const x = r.L[l.num];
@@ -1830,7 +1836,7 @@ body.gated .calc-fab{display:none!important}
   function teacherWeb(key) {
     const box = document.getElementById('teacher'), note = document.getElementById('roster-note');
     box.hidden = false;
-    const tip = box.querySelector('.rec:not(#roster-note)'); if (tip) tip.textContent = '후배가 퀴즈를 풀 때마다 자동으로 쌓여요. 같은 사람이 다른 기기에서 풀면 따로 한 줄씩 보여요. 원본은 구글 시트 \'기록\' 탭에 있어요.';
+    const tip = box.querySelector('.rec:not(#roster-note)'); if (tip) tip.textContent = '후배가 퀴즈를 풀 때마다 자동으로 쌓여요. 이름이 같으면 여러 기기 기록을 한 사람으로 합쳐 보여요. 원본은 구글 시트 \'기록\' 탭에 있어요.';
     const load = () => {
       note.textContent = '불러오는 중…';
       fetch(SITE.endpoint + '?key=' + encodeURIComponent(key)).then(r => r.json()).then(j => {
