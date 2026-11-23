@@ -191,6 +191,13 @@ body.gated .calc-fab{display:none!important}
 .report.bad p{color:var(--ink)}
 
 .linkbtn{font:inherit;font-size:inherit;color:inherit;background:none;border:0;padding:4px 2px;text-decoration:underline;cursor:pointer}
+
+/* claude.ai 강의실: 이사 안내 */
+.moved{background:var(--surface);border:2px solid var(--r);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.moved b{font-size:1.1rem;color:var(--r)}
+.moved span{font-size:.92rem;color:var(--muted)}
+.moved .cta{background:var(--r);color:var(--surface)}
+.moved code{font-size:.82rem;overflow-wrap:anywhere;align-self:flex-start}
 </style></head><body>
 <main class="wrap">
   <section class="home">
@@ -1830,7 +1837,7 @@ body.gated .calc-fab{display:none!important}
 
   // ---- 시작 ----
   repaintAll(); setRec('local'); show();
-  if (!myName) openGate();
+  if (!myName && !document.querySelector('.moved')) openGate();   // 이사 안내가 있는 옛 강의실은 이름을 묻지 않는다
   if (SITE && myName && Object.keys(state).length) save();
   if (window.claude && window.claude.use) {
     Promise.all([window.claude.use('db').catch(() => null), window.claude.use('user').catch(() => null)]).then(([d, user]) => {
