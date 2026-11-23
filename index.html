@@ -200,6 +200,10 @@ body.gated .calc-fab{display:none!important}
 .moved code{font-size:.82rem;overflow-wrap:anywhere;align-self:flex-start}
 .tbox{display:flex;justify-content:center}
 .tbox .btn{min-width:min(100%,280px)}
+.movecode,.paste{font-size:.9rem}
+.movecode summary,.paste summary{font-size:.9rem}
+.movecode p{margin:8px 0;color:var(--muted)}
+.movecode textarea,.paste textarea{font-family:ui-monospace,monospace;font-size:.75rem;margin:6px 0}
 </style></head><body>
 <main class="wrap">
   <section class="home">
@@ -261,6 +265,11 @@ body.gated .calc-fab{display:none!important}
       <div class="row"><label for="myname">이름</label><input type="text" id="myname" placeholder="이름 (교육 담당자에게 보이는 이름)" autocomplete="name"></div>
       <textarea id="result" rows="4" readonly aria-label="보낼 결과 글"></textarea>
       <div class="row"><button type="button" class="btn ghost" id="copy">결과 복사</button></div>
+      <details class="paste"><summary>이전 강의실 진도 붙여넣기</summary>
+        <p class="rec">이전 강의실(claude.ai)에서 복사한 진도 코드를 붙여 넣으세요.</p>
+        <textarea id="pastecode" rows="3" aria-label="이전 강의실 진도 코드" placeholder="진도 코드"></textarea>
+        <div class="row"><button type="button" class="btn ghost" id="pastego">가져오기</button></div>
+      </details>
     </section>
     <section class="card" id="teacher" hidden>
       <h2>수강 현황 <span class="muted" style="font-weight:400;font-size:.85rem">· 교육 담당자에게만 보여요</span></h2>
@@ -1659,6 +1668,7 @@ body.gated .calc-fab{display:none!important}
     else { cta.href = '#' + C.lessons[C.lessons.length - 1].num; cta.firstChild.textContent = '복습하기 '; ttl.textContent = '공개된 강의를 모두 통과했어요'; }
     document.getElementById('count').textContent = passed + ' / ' + C.lessons.length + '강 통과 · 전체 ' + C.total + '강 중 ' + C.lessons.length + '강 공개';
     document.getElementById('result').value = resultText();
+    if (window.__updateMove) window.__updateMove();
   }
 
   // ---- 강의를 마치면(퀴즈를 모두 맞히거나 정답을 봄) 교육 담당자에게 기록이 갔는지 알려 준다 ----
@@ -1851,31 +1861,55 @@ body.gated .calc-fab{display:none!important}
   const b64u = o => btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const unb64u = t => JSON.parse(decodeURIComponent(escape(atob(t.replace(/-/g, '+').replace(/_/g, '/')))));
   const moveto = document.getElementById('moveto');
-  if (moveto) moveto.addEventListener('click', () => {
-    const base = moveto.getAttribute('href').split('#')[0];
-    moveto.href = Object.keys(state).length || myName ? base + '#import=' + b64u({ v: 1, name: myName, state: state }) : base;
-  });
-  let imported = 0;
-  if (SITE && /^#import=/.test(location.hash)) {
+  // 진도 코드를 미리 주소에 붙여 둔다 (claude.ai 가 링크를 가로채 원래 주소로 열어도 진도가 실리도록).
+  // ?v= 는 매번 달라서 휴대폰에 남은 옛 화면 대신 새 화면을 받는다.
+  function updateMove() {
+    if (!moveto) return;
+    const base = moveto.getAttribute('href').split(/[?#]/)[0], has = Object.keys(state).length || myName;
+    const code = has ? b64u({ v: 1, name: myName, state: state }) : '';
+    moveto.setAttribute('href', base + '?v=' + Date.now().toString(36) + (code ? '#import=' + code : ''));
+    const box = document.getElementById('movecode'); if (box) box.value = code;
+  }
+  window.__updateMove = updateMove;
+  if (moveto) {
+    updateMove(); moveto.addEventListener('click', updateMove);
+    const cb = document.getElementById('copycode');
+    if (cb) cb.addEventListener('click', () => { updateMove(); const box = document.getElementById('movecode');
+      const done = () => { cb.textContent = '복사됨 · 새 강의실에 붙여 넣으세요'; };
+      const fallback = () => { box.focus(); box.select(); cb.textContent = '선택됨 · 길게 눌러 복사'; };
+      try { navigator.clipboard.writeText(box.value).then(done, fallback); } catch (e) { fallback(); } });
+  }
+  function importCode(code) {                 // 진도 코드 → 이 기기 기록에 합치기. 합친 강의 수, 실패하면 -1
     try {
-      const d = unb64u(location.hash.slice(8)), inc = {};
-      Object.keys((d && d.state) || {}).forEach(num => { if (!/^H\d\d-\d+$/.test(num)) return; const q = {};
+      const d = unb64u(String(code).trim().replace(/^.*#import=/, '')), inc = {}; let n = 0;
+      if (!d || typeof d !== 'object') return -1;
+      Object.keys(d.state || {}).forEach(num => { if (!/^H\d\d-\d+$/.test(num)) return; const q = {};
         Object.keys(d.state[num] || {}).forEach(i => { const r = d.state[num][i];
           if (!/^\d{1,2}$/.test(i) || !r || ['correct', 'revealed', 'trying'].indexOf(r.result) < 0) return;
           q[i] = { result: r.result, tries: Math.max(0, Math.min(99, Number(r.tries) || 0)), at: String(r.at || '').slice(0, 30),
             answer: r.answer == null ? undefined : String(r.answer).slice(0, 40), wrong: Array.isArray(r.wrong) ? r.wrong.slice(0, 4).map(String) : undefined }; });
-        if (Object.keys(q).length) { inc[num] = { q: q }; imported++; } });
+        if (Object.keys(q).length) { inc[num] = { q: q }; n++; } });
       merge(inc);
-      const nm = String((d && d.name) || '').trim().slice(0, 30);
+      const nm = String(d.name || '').trim().slice(0, 30);
       if (!myName && nm.length >= 2) { myName = nm; nameIn.value = myName; }
-      keep(); repaintAll();
-    } catch (e) { imported = -1; }
-    history.replaceState(null, '', location.pathname + location.search);
-    const note = document.createElement('aside'); note.className = 'moved'; note.setAttribute('role', 'status');
-    note.innerHTML = imported >= 0 ? '<b>이전 강의실 진도를 가져왔어요</b><span></span>' : '<b>이전 강의실 진도를 가져오지 못했어요</b><span>이전 강의실에서 버튼을 다시 눌러 주세요.</span>';
-    if (imported >= 0) note.querySelector('span').textContent = (myName ? myName + ' · ' : '') + imported + '강의 기록을 합쳤어요. 교육 담당자에게도 전달돼요.';
-    document.querySelector('.wrap').prepend(note);
+      keep(); repaintAll(); return n;
+    } catch (e) { return -1; }
   }
+  function showImported(n) {
+    const old = document.querySelector('.imported'); if (old) old.remove();
+    const note = document.createElement('aside'); note.className = 'moved imported'; note.setAttribute('role', 'status');
+    note.innerHTML = n >= 0 ? '<b>이전 강의실 진도를 가져왔어요</b><span></span>' : '<b>이전 강의실 진도를 가져오지 못했어요</b><span>이전 강의실에서 진도 코드를 다시 복사해 붙여 넣어 주세요.</span>';
+    if (n >= 0) note.querySelector('span').textContent = (myName ? myName + ' · ' : '') + n + '강의 기록을 합쳤어요. 교육 담당자에게도 전달돼요.';
+    document.querySelector('.wrap').prepend(note); window.scrollTo(0, 0);
+  }
+  if (SITE && /^#import=/.test(location.hash)) {
+    const n = importCode(location.hash.slice(8));
+    history.replaceState(null, '', location.pathname);
+    showImported(n);
+  }
+  const pg = document.getElementById('pastego');
+  if (pg) pg.addEventListener('click', () => { const t = document.getElementById('pastecode'); if (!t.value.trim()) return;
+    const n = importCode(t.value); showImported(n); if (n >= 0) { t.value = ''; if (myName) { gate.hidden = true; document.body.classList.remove('gated'); save(); } } });
   if (!myName && !moveto) openGate();   // 이사 안내가 있는 옛 강의실은 이름을 묻지 않는다
   if (SITE && myName && Object.keys(state).length) save();
   if (window.claude && window.claude.use) {
@@ -1887,6 +1921,8 @@ body.gated .calc-fab{display:none!important}
         uid = id; if (!uid) return;
         return db.doc('results/' + uid).get().then(snap => {
           const more = merge(snap.exists ? (snap.data() || {}).lessons : null);
+          const rn = snap.exists ? String((snap.data() || {}).name || '').trim() : '';
+          if (!myName && rn) { myName = rn.slice(0, 30); nameIn.value = myName; }   // 계정 기록의 이름 (진도 옮길 때 함께 간다)
           repaintAll(); keep();
           if (snap.exists) setRec('account');
           if (more || !snap.exists && Object.keys(state).length) save();
