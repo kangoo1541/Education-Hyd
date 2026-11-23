@@ -198,6 +198,8 @@ body.gated .calc-fab{display:none!important}
 .moved span{font-size:.92rem;color:var(--muted)}
 .moved .cta{background:var(--r);color:var(--surface)}
 .moved code{font-size:.82rem;overflow-wrap:anywhere;align-self:flex-start}
+.tbox{display:flex;justify-content:center}
+.tbox .btn{min-width:min(100%,280px)}
 </style></head><body>
 <main class="wrap">
   <section class="home">
@@ -267,7 +269,8 @@ body.gated .calc-fab{display:none!important}
       <p class="rec">기록이 비어 있으면 후배에게 이 강의실의 쓰기 권한이 있는지 확인하세요. 권한이 없으면 후배가 '결과 복사'로 보낸 글로 확인합니다.</p>
       <div class="row"><button type="button" class="btn ghost" id="reload">다시 불러오기</button></div>
     </section>
-    <p class="foot">제작 Seunghwan.Kim · 교과서 수준의 일반값으로 만든 교육 자료입니다 · <button type="button" class="linkbtn" id="tlogin">교육 담당자</button></p>
+    <div class="tbox"><button type="button" class="btn ghost" id="tlogin">교육 담당자 · 수강 현황 보기</button></div>
+    <p class="foot">제작 Seunghwan.Kim · 교과서 수준의 일반값으로 만든 교육 자료입니다</p>
   </section>
 
   <article class="lesson" data-lesson="H01-1" hidden>
@@ -1671,7 +1674,7 @@ body.gated .calc-fab{display:none!important}
     el.hidden = false;
     const p = el.querySelector('p'), b = el.querySelector('button');
     if (recKind === 'account') { el.className = 'report good'; p.textContent = '강의 끝! 기록이 교육 담당자에게 자동으로 전달됐어요 (' + (myName || '이름 없음') + ').'; b.hidden = true; }
-    else if (recKind === 'saving') { el.className = 'report'; p.textContent = '강의 끝! 기록을 교육 담당자에게 보내는 중이에요…'; b.hidden = true; }
+    else if (recKind === 'saving' || recKind === 'webready') { el.className = 'report'; p.textContent = '강의 끝! 기록을 교육 담당자에게 보내는 중이에요…'; b.hidden = true; }
     else if (recKind === 'webfail') { el.className = 'report bad'; p.textContent = '강의 끝! 지금은 기록을 보내지 못했어요 (인터넷 연결 확인). 결과를 복사해 교육 담당자에게 보내 주세요.'; b.hidden = false; }
     else { el.className = 'report bad'; p.textContent = '강의 끝! 이 링크로는 기록이 자동 전달되지 않아요. 결과를 복사해 교육 담당자에게 보내 주세요.'; b.hidden = false; }
   }
@@ -1683,6 +1686,7 @@ body.gated .calc-fab{display:none!important}
     recKind = kind;
     const t = { local: '결과는 이 기기에 저장돼요. 아래 결과를 복사해 교육 담당자에게 보내 주세요.',
       account: SITE ? '결과가 교육 담당자에게 자동으로 전달돼요.' : '결과가 계정에 저장돼요. 교육 담당자가 수강 현황에서 볼 수 있어요.',
+      webready: '퀴즈를 풀면 결과가 교육 담당자에게 자동으로 전달돼요.',
       webfail: '지금은 결과를 보내지 못했어요 (인터넷 연결 확인). 다음에 문제를 풀 때 다시 보내요. 급하면 아래 결과를 복사해 보내 주세요.',
       saving: '결과를 교육 담당자에게 보내는 중이에요…',
       refused: '이 링크로는 계정 기록이 안 돼요. 아래 결과를 복사해 교육 담당자에게 보내 주세요.' }[kind];
@@ -1830,14 +1834,49 @@ body.gated .calc-fab{display:none!important}
   }
   if (SITE) {
     const tl = document.getElementById('tlogin');
-    if (tl) tl.addEventListener('click', () => { const k = window.prompt('교육 담당자 비밀번호'); if (k) teacherWeb(k.trim()); });
-    let k0 = ''; try { k0 = localStorage.getItem('hydedu.tkey') || ''; } catch (e) {}
-    if (k0) setTimeout(() => teacherWeb(k0), 0);
+    const ask = () => { let k0 = ''; try { k0 = localStorage.getItem('hydedu.tkey') || ''; } catch (e) {}
+      if (k0) return teacherWeb(k0); const k = window.prompt('교육 담당자 비밀번호'); if (k) teacherWeb(k.trim()); };
+    if (tl) tl.addEventListener('click', ask);
+    // 주소 끝에 #teacher 를 붙여 열면 바로 수강 현황 (교육 담당자 즐겨찾기용)
+    const fromHash = () => { if (location.hash === '#teacher') { history.replaceState(null, '', location.pathname + location.search); show(); setTimeout(ask, 50); } };
+    addEventListener('hashchange', fromHash); fromHash();
+    let k1 = ''; try { k1 = localStorage.getItem('hydedu.tkey') || ''; } catch (e) {}
+    if (k1) setTimeout(() => teacherWeb(k1), 0);
   }
 
   // ---- 시작 ----
-  repaintAll(); setRec('local'); show();
-  if (!myName && !document.querySelector('.moved')) openGate();   // 이사 안내가 있는 옛 강의실은 이름을 묻지 않는다
+  repaintAll(); setRec(SITE ? 'webready' : 'local'); show();
+  // ---- 강의실 이사: 옛 강의실(claude.ai) → 새 강의실(웹사이트)로 진도 옮기기 ----
+  // 옛 강의실의 "새 강의실 열기" 버튼이 주소 끝(#import=…)에 이름과 퀴즈 기록을 실어 보낸다.
+  const b64u = o => btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const unb64u = t => JSON.parse(decodeURIComponent(escape(atob(t.replace(/-/g, '+').replace(/_/g, '/')))));
+  const moveto = document.getElementById('moveto');
+  if (moveto) moveto.addEventListener('click', () => {
+    const base = moveto.getAttribute('href').split('#')[0];
+    moveto.href = Object.keys(state).length || myName ? base + '#import=' + b64u({ v: 1, name: myName, state: state }) : base;
+  });
+  let imported = 0;
+  if (SITE && /^#import=/.test(location.hash)) {
+    try {
+      const d = unb64u(location.hash.slice(8)), inc = {};
+      Object.keys((d && d.state) || {}).forEach(num => { if (!/^H\d\d-\d+$/.test(num)) return; const q = {};
+        Object.keys(d.state[num] || {}).forEach(i => { const r = d.state[num][i];
+          if (!/^\d{1,2}$/.test(i) || !r || ['correct', 'revealed', 'trying'].indexOf(r.result) < 0) return;
+          q[i] = { result: r.result, tries: Math.max(0, Math.min(99, Number(r.tries) || 0)), at: String(r.at || '').slice(0, 30),
+            answer: r.answer == null ? undefined : String(r.answer).slice(0, 40), wrong: Array.isArray(r.wrong) ? r.wrong.slice(0, 4).map(String) : undefined }; });
+        if (Object.keys(q).length) { inc[num] = { q: q }; imported++; } });
+      merge(inc);
+      const nm = String((d && d.name) || '').trim().slice(0, 30);
+      if (!myName && nm.length >= 2) { myName = nm; nameIn.value = myName; }
+      keep(); repaintAll();
+    } catch (e) { imported = -1; }
+    history.replaceState(null, '', location.pathname + location.search);
+    const note = document.createElement('aside'); note.className = 'moved'; note.setAttribute('role', 'status');
+    note.innerHTML = imported >= 0 ? '<b>이전 강의실 진도를 가져왔어요</b><span></span>' : '<b>이전 강의실 진도를 가져오지 못했어요</b><span>이전 강의실에서 버튼을 다시 눌러 주세요.</span>';
+    if (imported >= 0) note.querySelector('span').textContent = (myName ? myName + ' · ' : '') + imported + '강의 기록을 합쳤어요. 교육 담당자에게도 전달돼요.';
+    document.querySelector('.wrap').prepend(note);
+  }
+  if (!myName && !moveto) openGate();   // 이사 안내가 있는 옛 강의실은 이름을 묻지 않는다
   if (SITE && myName && Object.keys(state).length) save();
   if (window.claude && window.claude.use) {
     Promise.all([window.claude.use('db').catch(() => null), window.claude.use('user').catch(() => null)]).then(([d, user]) => {
