@@ -220,6 +220,21 @@ body.gated .calc-fab{display:none!important}
 .concepts .qtag{margin:0}
 td.wk{font-size:.82rem;color:var(--p)}
 .btn.del{min-height:36px;padding:4px 12px;font-size:.85rem;color:var(--p)}
+
+/* 알림 문자 */
+.gate-sub{display:flex;flex-direction:column;gap:6px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;font-size:.9rem}
+.gate-sub small,.subbox small{color:var(--muted);font-size:.8rem}
+.gate-sub label{display:flex;gap:6px;align-items:center}
+.gate-sub input[type=checkbox]{width:20px;height:20px}
+.subbox{display:flex;flex-direction:column;gap:6px;padding:12px;border:1px solid var(--line);border-radius:12px}
+.subbox .rec{margin:0}
+.sms{margin-top:6px;padding:12px;border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;gap:8px}
+.sms h3{margin:0;font-size:1rem}
+.sms-to{gap:14px}.sms-to label{display:flex;gap:6px;align-items:center;font-size:.92rem;color:var(--ink)}
+.sms-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.sms-list li{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.9rem}
+.sms-list li.sent span{color:var(--muted);text-decoration:line-through}
+.sms-list .btn,.sms .sms-group{min-height:36px;padding:6px 12px;font-size:.85rem;text-decoration:none;display:inline-flex;align-items:center}
 </style></head><body>
 <main class="wrap">
   <section class="home">
@@ -294,6 +309,14 @@ td.wk{font-size:.82rem;color:var(--p)}
       <div class="row"><label for="myname">이름</label><input type="text" id="myname" placeholder="이름 (교육 담당자에게 보이는 이름)" autocomplete="name"></div>
       <textarea id="result" rows="4" readonly aria-label="보낼 결과 글"></textarea>
       <div class="row"><button type="button" class="btn ghost" id="copy">결과 복사</button></div>
+      <div class="subbox">
+        <b>새 강의 알림 문자</b>
+        <p class="rec" id="sub-state"></p>
+        <div class="row"><input type="tel" id="sub-phone" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000" aria-label="휴대폰 번호" maxlength="13"><button type="button" class="btn ghost" id="sub-on">받기</button></div>
+        <div class="row"><button type="button" class="btn ghost" id="sub-off" hidden>그만 받기</button></div>
+        <p class="rec" id="sub-msg" aria-live="polite"></p>
+        <small class="muted">번호는 교육 담당자만 보고, 강의 알림에만 써요.</small>
+      </div>
       <details class="paste"><summary>이전 강의실 진도 붙여넣기</summary>
         <p class="rec">이전 강의실(claude.ai)에서 복사한 진도 코드를 붙여 넣으세요.</p>
         <textarea id="pastecode" rows="3" aria-label="이전 강의실 진도 코드" placeholder="진도 코드"></textarea>
@@ -2952,10 +2975,11 @@ td.wk{font-size:.82rem;color:var(--p)}
   const nameIn = document.getElementById('myname');
   nameIn.value = myName;
   let nameTimer = null;
+  const afterName = () => { save(); if (window.__subPhone && window.__subPhone() && myName) window.__subscribe(window.__subPhone(), true); };
   function setName(v) { myName = v.trim(); keep(); nameIn.value = myName; document.getElementById('result').value = resultText();
-    C.lessons.forEach(l => report(l.num)); clearTimeout(nameTimer); nameTimer = setTimeout(save, 800); }
+    C.lessons.forEach(l => report(l.num)); clearTimeout(nameTimer); nameTimer = setTimeout(afterName, 800); }
   nameIn.addEventListener('input', () => { myName = nameIn.value.trim(); keep(); document.getElementById('result').value = resultText();
-    clearTimeout(nameTimer); nameTimer = setTimeout(save, 800); });
+    clearTimeout(nameTimer); nameTimer = setTimeout(afterName, 800); });
   nameIn.addEventListener('change', () => { if (!nameIn.value.trim()) openGate(); });
 
   // ---- 처음 온 사람: 이름을 적어야 시작할 수 있다 ----
@@ -2965,13 +2989,24 @@ td.wk{font-size:.82rem;color:var(--p)}
     '<h2 id="gate-t">이름을 적어 주세요</h2>' +
     '<p>퀴즈 기록이 이 이름으로 교육 담당자에게 전달돼요.</p>' +
     '<input type="text" id="gate-in" autocomplete="name" placeholder="예: 홍길동" aria-label="이름" maxlength="30">' +
+    (window.HYD_SITE && window.HYD_SITE.endpoint ? '<div class="gate-sub"><b>새 강의 알림 문자 (선택)</b>' +
+      '<input type="tel" id="gate-phone" inputmode="tel" autocomplete="tel" placeholder="010-0000-0000" aria-label="휴대폰 번호" maxlength="13">' +
+      '<label><input type="checkbox" id="gate-ok"> 새 강의 알림 문자를 받을게요</label>' +
+      '<small>번호는 교육 담당자만 보고, 강의 알림에만 써요. 내 기록에서 언제든 그만 받을 수 있어요.</small></div>' : '') +
     '<button type="submit" class="btn" disabled>시작하기</button></form>';
   document.body.appendChild(gate);
-  const gateIn = gate.querySelector('#gate-in'), gateBtn = gate.querySelector('button');
-  gateIn.addEventListener('input', () => { gateBtn.disabled = gateIn.value.trim().length < 2; });
-  gate.querySelector('form').addEventListener('submit', e => { e.preventDefault(); if (gateIn.value.trim().length < 2) return;
-    setName(gateIn.value); gate.hidden = true; document.body.classList.remove('gated'); });
-  function openGate(suggest) { if (suggest && !gateIn.value) gateIn.value = suggest; gateBtn.disabled = gateIn.value.trim().length < 2;
+  const gateIn = gate.querySelector('#gate-in'), gateBtn = gate.querySelector('button[type=submit]');
+  const gPhone = gate.querySelector('#gate-phone'), gOk = gate.querySelector('#gate-ok');
+  const phoneOk = v => /^01[016789]\d{7,8}$/.test(String(v || '').replace(/\D/g, ''));
+  const gateValid = () => gateIn.value.trim().length >= 2 && (!gPhone || !gPhone.value.trim() || phoneOk(gPhone.value));   // 번호를 적었다면 형식이 맞아야 (받을지는 동의 칸으로)
+  [gateIn, gPhone, gOk].forEach(x => x && x.addEventListener('input', () => { gateBtn.disabled = !gateValid(); }));
+  if (gOk) gOk.addEventListener('change', () => { gateBtn.disabled = !gateValid(); });
+  if (gPhone) gPhone.addEventListener('input', () => { if (phoneOk(gPhone.value) && !gOk.dataset.touched) { gOk.checked = true; gateBtn.disabled = !gateValid(); } });   // 번호를 맞게 적으면 동의 칸을 켜 둔다 (끌 수 있음)
+  if (gOk) gOk.addEventListener('click', () => { gOk.dataset.touched = '1'; });
+  gate.querySelector('form').addEventListener('submit', e => { e.preventDefault(); if (!gateValid()) return;
+    setName(gateIn.value); gate.hidden = true; document.body.classList.remove('gated');
+    if (gPhone && gPhone.value.trim() && gOk.checked && window.__subscribe) window.__subscribe(gPhone.value, true); });
+  function openGate(suggest) { if (suggest && !gateIn.value) gateIn.value = suggest; gateBtn.disabled = !gateValid();
     gate.hidden = false; document.body.classList.add('gated'); setTimeout(() => gateIn.focus(), 50); }
   function copyResult(btn) {
     const ta = document.getElementById('result'), label = btn.textContent;
@@ -3029,6 +3064,88 @@ td.wk{font-size:.82rem;color:var(--p)}
         note.textContent = rows.length + '명 · 칸 하나 = 강의 하나 (초록 통과, 테두리 푸는 중)';
     }
   }
+  // ---- 웹사이트 모드: 새 강의 알림 문자 구독 (번호는 기록 서버의 '연락처' 시트에만) ----
+  const fmtPhone = p => String(p).replace(/^(\d{3})(\d{3,4})(\d{4})$/, '$1-$2-$3');
+  const subPhone = () => { try { return localStorage.getItem('hydedu.phone') || ''; } catch (e) { return ''; } };
+  function paintSub() {
+    const st = document.getElementById('sub-state'); if (!st) return;
+    const p = subPhone();
+    st.textContent = p ? '알림 문자를 받는 중이에요 · ' + fmtPhone(p).replace(/-(\d{3,4})-/, '-****-') : '알림 문자를 받지 않아요.';
+    document.getElementById('sub-off').hidden = !p;
+  }
+  function subscribe(phone, on) {
+    const p = String(phone || '').replace(/\D/g, '');
+    if (!SITE) return Promise.resolve({ ok: false });
+    if (on && !/^01[016789]\d{7,8}$/.test(p)) return Promise.resolve({ ok: false, error: 'phone' });
+    return fetch(SITE.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'subscribe', id: WID, name: myName, phone: p, on: !!on }) })
+      .then(r => r.json()).then(j => { if (j && j.ok) { try { on ? localStorage.setItem('hydedu.phone', p) : localStorage.removeItem('hydedu.phone'); } catch (e) {} }
+        paintSub(); return j || { ok: false }; }, () => ({ ok: false, error: 'net' }));
+  }
+  window.__subscribe = subscribe; window.__subPhone = subPhone;
+  if (SITE && document.getElementById('sub-on')) {
+    const inp = document.getElementById('sub-phone'), msg = document.getElementById('sub-msg');
+    document.getElementById('sub-on').addEventListener('click', () => {
+      if (!myName) { msg.textContent = '이름을 먼저 적어 주세요.'; return; }
+      if (!/^01[016789]\d{7,8}$/.test(inp.value.replace(/\D/g, ''))) { msg.textContent = '휴대폰 번호를 확인해 주세요. 예: 010-1234-5678'; return; }
+      msg.textContent = '저장하는 중…';
+      subscribe(inp.value, true).then(j => { msg.textContent = j.ok ? '알림 문자 받기로 했어요.' : (j.error === 'phone' ? '휴대폰 번호를 확인해 주세요.' : '저장하지 못했어요. 잠시 뒤 다시 해 주세요.'); if (j.ok) inp.value = ''; });
+    });
+    document.getElementById('sub-off').addEventListener('click', () => {
+      msg.textContent = '해지하는 중…';
+      subscribe('', false).then(j => { msg.textContent = j.ok ? '알림 문자를 그만 받기로 했어요.' : '해지하지 못했어요. 잠시 뒤 다시 해 주세요.'; });
+    });
+    paintSub();
+  }
+  // 교육 담당자: 문자앱을 받는 사람·내용이 채워진 채로 연다 (휴대폰 요금제로 보냄)
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  function smsUrl(nums, body) {
+    const b = encodeURIComponent(body);
+    if (isIOS) return nums.length === 1 ? 'sms:' + nums[0] + '&body=' + b : 'sms:/open?addresses=' + nums.join(',') + '&body=' + b;
+    return 'sms:' + nums.join(',') + '?body=' + b;
+  }
+  function smsPanel(box, rows, contacts) {
+    let el = box.querySelector('.sms');
+    if (!el) { el = document.createElement('section'); el.className = 'sms';
+      el.innerHTML = '<h3>알림 문자 보내기</h3><p class="rec sms-count"></p>' +
+        '<div class="row sms-to"><label><input type="radio" name="smsto" value="all" checked> 구독자 전체</label><label><input type="radio" name="smsto" value="idle"> 7일 넘게 안 푼 사람</label></div>' +
+        '<textarea class="sms-body" rows="4" aria-label="보낼 내용"></textarea>' +
+        '<p class="rec">한 명씩 보내면 문자 앞에 "이름님," 이 붙고, 다른 사람 번호가 보이지 않아요. 휴대폰에서 누르면 문자앱이 내용이 채워진 채로 열려요. 보내기만 누르세요.</p>' +
+        '<ul class="sms-list"></ul>' +
+        '<details class="sms-all"><summary>한 번에 보내기 (주의)</summary><p class="rec">여러 명에게 한 번에 보내면 단체 대화방(MMS)이 되어 서로 번호가 보이고 답장이 모두에게 갈 수 있어요. 아이폰은 설정 → 메시지 → 그룹 메시지를 끄면 개별 문자로 가요.</p>' +
+        '<div class="row"><a class="btn ghost sms-group" href="#">문자앱 열기</a><button type="button" class="btn ghost sms-copy">번호 복사</button></div></details>';
+      box.insertBefore(el, box.querySelector('.row:last-child'));
+      el.querySelectorAll('input[name=smsto]').forEach(r => r.addEventListener('change', () => { el.querySelector('.sms-body').value = ''; draw(); }));
+      el.querySelector('.sms-body').addEventListener('input', () => draw(true));
+      el.querySelector('.sms-copy').addEventListener('click', e => { const t = el.dataset.nums.split(',').map(fmtPhone).join(', ');
+        try { navigator.clipboard.writeText(t).then(() => { e.target.textContent = '복사됨'; }); } catch (err) {} });
+    }
+    const url = location.origin + location.pathname, last = C.lessons.slice(-2).map(l => l.num + ' ' + l.name).join(', ');
+    const lastAt = c => { const mine = rows.filter(r => r.id === c.id || (c.name && (r.name || '').trim() === c.name.trim()));
+      return mine.map(r => Object.keys(r.lessons || {}).map(k => r.lessons[k].at || '').sort().pop() || '').sort().pop() || ''; };
+    const idle = c => { const a = lastAt(c); return !a || (Date.now() - Date.parse(a)) > 7 * 864e5; };
+    // 같은 번호는 한 번만
+    const seen = {}; contacts = contacts.filter(c => !seen[c.phone] && (seen[c.phone] = 1));
+    function draw(keepText) {
+      const mode = el.querySelector('input[name=smsto]:checked').value, ta = el.querySelector('.sms-body');
+      const list = mode === 'idle' ? contacts.filter(idle) : contacts;
+      if (!keepText && !ta.value) ta.value = mode === 'idle'
+        ? '[유압 강의실] 지난 강의가 기다리고 있어요. 하루 한 편, 3분이면 돼요.\n' + url
+        : '[유압 강의실] 새 강의가 올라왔어요: ' + last + '\n' + url;
+      el.querySelector('.sms-count').textContent = '구독자 ' + contacts.length + '명' + (mode === 'idle' ? ' · 그중 7일 넘게 안 푼 사람 ' + list.length + '명' : '');
+      const ul = el.querySelector('.sms-list'); ul.innerHTML = '';
+      list.forEach(c => { const li = document.createElement('li'), a = document.createElement('a'), sp = document.createElement('span');
+        sp.textContent = (c.name || '이름 없음') + ' · ' + fmtPhone(c.phone);
+        a.className = 'btn ghost'; a.textContent = '보내기'; a.href = smsUrl([c.phone], (c.name ? c.name + '님, ' : '') + ta.value);
+        a.addEventListener('click', () => { li.classList.add('sent'); a.textContent = '보냄 ✔'; });
+        li.appendChild(sp); li.appendChild(a); ul.appendChild(li); });
+      if (!list.length) { const li = document.createElement('li'); li.textContent = mode === 'idle' ? '7일 넘게 안 푼 구독자가 없어요.' : '아직 알림을 신청한 사람이 없어요.'; ul.appendChild(li); }
+      el.dataset.nums = list.map(c => c.phone).join(',');
+      const g = el.querySelector('.sms-group'); g.href = list.length ? smsUrl(list.map(c => c.phone), ta.value) : '#';
+    }
+    draw();
+  }
+
   // ---- 웹사이트 모드: 교육 담당자 비밀번호로 구글 시트 기록을 읽는다 ----
   function teacherWeb(key) {
     const box = document.getElementById('teacher'), note = document.getElementById('roster-note');
@@ -3039,6 +3156,7 @@ td.wk{font-size:.82rem;color:var(--p)}
       fetch(SITE.endpoint + '?key=' + encodeURIComponent(key)).then(r => r.json()).then(j => {
         if (!j || !j.ok) { note.textContent = '비밀번호가 맞지 않아요.'; try { localStorage.removeItem('hydedu.tkey'); } catch (e) {} return; }
         try { localStorage.setItem('hydedu.tkey', key); } catch (e) {}
+        smsPanel(box, j.rows || [], j.contacts || []);
         renderRoster(j.rows || [], {}, (ids, name, btn) => {
           if (!window.confirm("'" + name + "' 의 기록 " + ids.length + "줄을 구글 시트에서 지울까요?\n되돌릴 수 없어요. (그 사람이 다시 퀴즈를 풀면 새로 생겨요)")) return;
           btn.disabled = true; btn.textContent = '지우는 중…';
