@@ -219,6 +219,7 @@ body.gated .calc-fab{display:none!important}
 .concepts .cn{flex:1}
 .concepts .qtag{margin:0}
 td.wk{font-size:.82rem;color:var(--p)}
+.btn.del{min-height:36px;padding:4px 12px;font-size:.85rem;color:var(--p)}
 </style></head><body>
 <main class="wrap">
   <section class="home">
@@ -2686,26 +2687,27 @@ td.wk{font-size:.82rem;color:var(--p)}
     document.getElementById('reload').addEventListener('click', load);
     load();
   }
-  function renderRoster(list, ps) {          // list: [{id, name, lessons}], ps: 계정 이름 (없으면 {})
+  function renderRoster(list, ps, onDelete) {   // list: [{id, name, lessons}], ps: 계정 이름 (없으면 {}), onDelete(ids, 이름): 삭제 버튼
     const out = document.getElementById('roster'), note = document.getElementById('roster-note'); ps = ps || {};
     {
         // 이름이 같은 줄(같은 사람의 다른 기기)은 한 사람으로 합친다: 강의마다 더 좋은 결과, 더 최근 날짜
         const better = (a, b) => !a ? b : !b ? a : (a.passed !== b.passed ? (a.passed ? a : b) : (a.ok !== b.ok ? (a.ok > b.ok ? a : b) : ((a.at || '') >= (b.at || '') ? a : b)));
         const groups = {}, order = [];
         list.forEach(d => { const L = d.lessons || {}, key = (d.name || '').trim() ? 'n:' + d.name.trim() : 'i:' + d.id;
-          if (!groups[key]) { groups[key] = { id: d.id, name: (d.name || '').trim(), L: {}, n: 0 }; order.push(key); }
-          const g = groups[key]; g.n++; Object.keys(L).forEach(k => { g.L[k] = better(g.L[k], L[k]); }); });
-        const rows = order.map(k => groups[k]).filter(g => Object.keys(g.L).length || !g.name).map(g => { const ks = Object.keys(g.L);
-          return { id: g.id, L: g.L, name: g.name, n: g.n, pass: ks.filter(k => g.L[k].passed).length, at: ks.map(k => g.L[k].at || '').sort().pop() || '' }; })
+          if (!groups[key]) { groups[key] = { id: d.id, ids: [], name: (d.name || '').trim(), L: {}, n: 0 }; order.push(key); }
+          const g = groups[key]; g.n++; g.ids.push(d.id); Object.keys(L).forEach(k => { g.L[k] = better(g.L[k], L[k]); }); });
+        const rows = order.map(k => groups[k]).filter(g => Object.keys(g.L).length || !g.name || onDelete).map(g => { const ks = Object.keys(g.L);
+          return { id: g.id, ids: g.ids, L: g.L, name: g.name, n: g.n, pass: ks.filter(k => g.L[k].passed).length, at: ks.map(k => g.L[k].at || '').sort().pop() || '' }; })
           .sort((a, b) => b.at.localeCompare(a.at));
         if (!rows.length) { out.innerHTML = ''; note.textContent = '아직 저장된 기록이 없어요.'; return; }
-        const head = '<thead><tr><th>이름</th><th>통과</th><th>최근</th><th>강의별</th><th>다시 볼 개념</th></tr></thead>';
-        out.innerHTML = head + '<tbody>' + rows.map(() => '<tr><td data-l="이름"></td><td class="n" data-l="통과"></td><td class="n" data-l="최근"></td><td data-l="강의별"><span class="dots"></span></td><td data-l="다시 볼 개념" class="wk"></td></tr>').join('') + '</tbody>';
+        const head = '<thead><tr><th>이름</th><th>통과</th><th>최근</th><th>강의별</th><th>다시 볼 개념</th>' + (onDelete ? '<th>관리</th>' : '') + '</tr></thead>';
+        out.innerHTML = head + '<tbody>' + rows.map(() => '<tr><td data-l="이름"></td><td class="n" data-l="통과"></td><td class="n" data-l="최근"></td><td data-l="강의별"><span class="dots"></span></td><td data-l="다시 볼 개념" class="wk"></td>' + (onDelete ? '<td data-l="관리"><button type="button" class="btn ghost del">삭제</button></td>' : '') + '</tr>').join('') + '</tbody>';
         out.querySelectorAll('tbody tr').forEach((tr, k) => { const r = rows[k], c = tr.children;
           const pn = (ps[r.id] && ps[r.id].name) || '';
           c[0].textContent = (r.name ? r.name + (pn && pn !== r.name ? ' (' + pn + ')' : '') : (pn || '이름 없음')) + (r.n > 1 ? ' · 기기 ' + r.n + '대' : '');
           c[1].textContent = r.pass + ' / ' + C.lessons.length;
           c[2].textContent = r.at ? r.at.slice(5, 10).replace('-', '.') : '-';
+          if (onDelete) c[5].firstChild.addEventListener('click', () => onDelete(r.ids, c[0].textContent, c[5].firstChild));
           c[4].textContent = C.lessons.map(l => { const x = r.L[l.num]; return x ? weakConcepts(l.num, x.q).map(w => l.num + ' ' + w) : []; }).reduce((a, b) => a.concat(b), []).join(' · ');
           c[3].firstChild.innerHTML = C.lessons.map(l => { const x = r.L[l.num];
             return '<i class="' + (x && x.passed ? 'pass' : x ? 'mid' : '') + '" title="' + l.num + '"></i>'; }).join(''); });
@@ -2722,7 +2724,15 @@ td.wk{font-size:.82rem;color:var(--p)}
       fetch(SITE.endpoint + '?key=' + encodeURIComponent(key)).then(r => r.json()).then(j => {
         if (!j || !j.ok) { note.textContent = '비밀번호가 맞지 않아요.'; try { localStorage.removeItem('hydedu.tkey'); } catch (e) {} return; }
         try { localStorage.setItem('hydedu.tkey', key); } catch (e) {}
-        renderRoster(j.rows || [], {});
+        renderRoster(j.rows || [], {}, (ids, name, btn) => {
+          if (!window.confirm("'" + name + "' 의 기록 " + ids.length + "줄을 구글 시트에서 지울까요?\n되돌릴 수 없어요. (그 사람이 다시 퀴즈를 풀면 새로 생겨요)")) return;
+          btn.disabled = true; btn.textContent = '지우는 중…';
+          fetch(SITE.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'delete', key: key, ids: ids }) })
+            .then(r => r.json()).then(x => {
+              if (x && x.ok) { note.textContent = "'" + name + "' 기록 " + x.deleted + "줄을 지웠어요."; setTimeout(load, 600); }
+              else { btn.disabled = false; btn.textContent = '삭제'; window.alert(x && x.error === 'key' ? '비밀번호가 맞지 않거나, 기록 서버가 아직 새 버전으로 배포되지 않았어요.' : '지우지 못했어요.'); }
+            }, () => { btn.disabled = false; btn.textContent = '삭제'; window.alert('지우지 못했어요 (인터넷 연결 확인).'); });
+        });
       }, () => { note.textContent = '기록을 불러오지 못했어요 (인터넷 연결 확인).'; });
     };
     const rl = document.getElementById('reload'), nrl = rl.cloneNode(true); rl.replaceWith(nrl); nrl.addEventListener('click', load);
