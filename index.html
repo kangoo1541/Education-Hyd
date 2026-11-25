@@ -237,6 +237,11 @@ td.wk{font-size:.82rem;color:var(--p)}
 .sms-list .btn,.sms .sms-group{min-height:36px;padding:6px 12px;font-size:.85rem;text-decoration:none;display:inline-flex;align-items:center}
 .gate-ok{display:flex;gap:8px;align-items:center;font-size:.92rem}.gate-ok input{width:20px;height:20px}
 .gate-err{margin:0;color:var(--p);font-size:.88rem}.gate-err:empty{display:none}
+.btn.smsone{min-height:36px;padding:4px 12px;font-size:.85rem}
+.btn.smsone:disabled{opacity:.45}
+#smsdlg textarea{width:100%;font:inherit;font-size:.95rem}
+.smsdlg-to{gap:14px;font-size:.92rem}
+#smsdlg .smsdlg-go{text-decoration:none;display:inline-flex;align-items:center;background:var(--p);color:var(--p-ink)}
 </style></head><body>
 <main class="wrap">
   <section class="home">
@@ -3047,7 +3052,7 @@ td.wk{font-size:.82rem;color:var(--p)}
     document.getElementById('reload').addEventListener('click', load);
     load();
   }
-  function renderRoster(list, ps, onDelete) {   // list: [{id, name, lessons}], ps: 계정 이름 (없으면 {}), onDelete(ids, 이름): 삭제 버튼
+  function renderRoster(list, ps, onDelete, onSms) {   // onSms(사람, 표시 이름): 사람별 문자 버튼   // list: [{id, name, lessons}], ps: 계정 이름 (없으면 {}), onDelete(ids, 이름): 삭제 버튼
     const out = document.getElementById('roster'), note = document.getElementById('roster-note'); ps = ps || {};
     {
         // 이름이 같은 줄(같은 사람의 다른 기기)은 한 사람으로 합친다: 강의마다 더 좋은 결과, 더 최근 날짜
@@ -3061,13 +3066,15 @@ td.wk{font-size:.82rem;color:var(--p)}
           .sort((a, b) => b.at.localeCompare(a.at));
         if (!rows.length) { out.innerHTML = ''; note.textContent = '아직 저장된 기록이 없어요.'; return; }
         const head = '<thead><tr><th>이름</th><th>통과</th><th>최근</th><th>강의별</th><th>다시 볼 개념</th>' + (onDelete ? '<th>관리</th>' : '') + '</tr></thead>';
-        out.innerHTML = head + '<tbody>' + rows.map(() => '<tr><td data-l="이름"></td><td class="n" data-l="통과"></td><td class="n" data-l="최근"></td><td data-l="강의별"><span class="dots"></span></td><td data-l="다시 볼 개념" class="wk"></td>' + (onDelete ? '<td data-l="관리"><button type="button" class="btn ghost del">삭제</button></td>' : '') + '</tr>').join('') + '</tbody>';
+        out.innerHTML = head + '<tbody>' + rows.map(() => '<tr><td data-l="이름"></td><td class="n" data-l="통과"></td><td class="n" data-l="최근"></td><td data-l="강의별"><span class="dots"></span></td><td data-l="다시 볼 개념" class="wk"></td>' + (onDelete ? '<td data-l="관리">' + (onSms ? '<button type="button" class="btn ghost smsone">문자</button> ' : '') + '<button type="button" class="btn ghost del">삭제</button></td>' : '') + '</tr>').join('') + '</tbody>';
         out.querySelectorAll('tbody tr').forEach((tr, k) => { const r = rows[k], c = tr.children;
           const pn = (ps[r.id] && ps[r.id].name) || '';
           c[0].textContent = (r.name ? r.name + (pn && pn !== r.name ? ' (' + pn + ')' : '') : (pn || '이름 없음')) + (r.n > 1 ? ' · 기기 ' + r.n + '대' : '');
           c[1].textContent = r.pass + ' / ' + C.lessons.length;
           c[2].textContent = r.at ? r.at.slice(5, 10).replace('-', '.') : '-';
-          if (onDelete) c[5].firstChild.addEventListener('click', () => onDelete(r.ids, c[0].textContent, c[5].firstChild));
+          if (onDelete) { const d = c[5].querySelector('.del'); d.addEventListener('click', () => onDelete(r.ids, c[0].textContent, d)); }
+          if (onSms) { const sb = c[5].querySelector('.smsone'), has = onSms(r, null); sb.disabled = !has; if (!has) sb.textContent = '번호 없음';
+            sb.addEventListener('click', () => onSms(r, c[0].textContent)); }
           c[4].textContent = C.lessons.map(l => { const x = r.L[l.num]; return x ? weakConcepts(l.num, x.q).map(w => l.num + ' ' + w) : []; }).reduce((a, b) => a.concat(b), []).join(' · ');
           c[3].firstChild.innerHTML = C.lessons.map(l => { const x = r.L[l.num];
             return '<i class="' + (x && x.passed ? 'pass' : x ? 'mid' : '') + '" title="' + l.num + '"></i>'; }).join(''); });
@@ -3090,7 +3097,8 @@ td.wk{font-size:.82rem;color:var(--p)}
     return fetch(SITE.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({ action: 'subscribe', id: WID, name: myName, phone: p, on: !!on }) })
       .then(r => r.json()).then(j => {
-        if (j && j.ok && j.on === undefined) { save(); j = { ok: true, old: true }; }   // 옛 서버(새 버전 배포 전): 번호는 저장되지 않음 → 다음에 다시 묻는다
+        if (j && j.ok && j.on === undefined) { save(); j = { ok: true, old: true };   // 옛 서버(새 버전 배포 전): 번호는 저장되지 않음
+          try { localStorage.setItem('hydedu.subwait', String(Date.now())); } catch (e) {} }   // → 12시간 동안 다시 묻지 않는다
         else if (j && j.ok) { try { on ? localStorage.setItem('hydedu.phone', p) : localStorage.removeItem('hydedu.phone'); } catch (e) {} }
         paintSub(); return j || { ok: false }; }, () => ({ ok: false, error: 'net' }));
   }
@@ -3155,6 +3163,45 @@ td.wk{font-size:.82rem;color:var(--p)}
     draw();
   }
 
+  // 교육 담당자: 한 사람에게 맞춤 문자 (진도·다음 강의·다시 볼 개념을 채운 문구 → 고쳐 쓰고 문자앱 열기)
+  // shown 이 null 이면 번호가 있는지만 알려 준다
+  function smsOne(r, shown, contacts) {
+    const nm = (r.name || '').trim(), phones = [];
+    contacts.forEach(c => { if ((r.ids || [r.id]).indexOf(c.id) >= 0 || (nm && (c.name || '').trim() === nm)) if (phones.indexOf(c.phone) < 0) phones.push(c.phone); });
+    if (shown === null) return phones.length > 0;
+    let dlg = document.getElementById('smsdlg');
+    if (!dlg) { dlg = document.createElement('div'); dlg.id = 'smsdlg'; dlg.className = 'gate'; dlg.hidden = true;
+      dlg.innerHTML = '<div class="gate-box" role="dialog" aria-modal="true" aria-labelledby="smsdlg-t"><h2 id="smsdlg-t"></h2>' +
+        '<div class="row smsdlg-to"></div><textarea rows="7" aria-label="보낼 내용"></textarea>' +
+        '<p class="rec">문자앱이 이 내용으로 열려요. 보내기만 누르세요.</p>' +
+        '<div class="row"><a class="btn smsdlg-go" href="#">문자앱 열기</a><button type="button" class="btn ghost smsdlg-x">닫기</button></div></div>';
+      document.body.appendChild(dlg);
+      const close = () => { dlg.hidden = true; document.body.classList.remove('gated'); };
+      dlg.querySelector('.smsdlg-x').addEventListener('click', close);
+      dlg.addEventListener('click', e => { if (e.target === dlg) close(); });
+      dlg.querySelector('textarea').addEventListener('input', () => dlg.upd());
+      dlg.querySelector('.smsdlg-go').addEventListener('click', () => setTimeout(close, 300));
+    }
+    const url = location.origin + location.pathname, total = C.lessons.length;
+    const passN = C.lessons.filter(l => r.L[l.num] && r.L[l.num].passed).length;
+    const next = C.lessons.find(l => !(r.L[l.num] && r.L[l.num].passed));
+    const weak = C.lessons.map(l => { const x = r.L[l.num]; return x ? weakConcepts(l.num, x.q).map(w => l.num + ' ' + w) : []; }).reduce((a, b) => a.concat(b), []).slice(0, 2);
+    const body = (nm ? nm + '님, ' : '') + '유압 강의실이에요.\n' +
+      '지금 공개된 ' + total + '강 중 ' + passN + '강을 통과했어요.' +
+      (next ? '\n다음 강의: ' + next.num + ' ' + next.name : '\n공개된 강의를 모두 통과했어요. 수고했어요!') +
+      (weak.length ? '\n다시 보면 좋은 개념: ' + weak.join(', ') : '') + '\n' + url;
+    dlg.querySelector('h2').textContent = (shown || nm || '수강생') + '에게 문자';
+    const to = dlg.querySelector('.smsdlg-to'); to.innerHTML = '';
+    let sel = phones[0];
+    phones.forEach((p, i) => { const lb = document.createElement('label'), rb = document.createElement('input');
+      rb.type = 'radio'; rb.name = 'smsdlg-p'; rb.checked = i === 0; rb.addEventListener('change', () => { sel = p; dlg.upd(); });
+      lb.appendChild(rb); lb.appendChild(document.createTextNode(' ' + fmtPhone(p))); to.appendChild(lb); });
+    const ta = dlg.querySelector('textarea'); ta.value = body;
+    dlg.upd = () => { dlg.querySelector('.smsdlg-go').href = smsUrl([sel], ta.value); };
+    dlg.upd(); dlg.hidden = false; document.body.classList.add('gated');
+    return true;
+  }
+
   // ---- 웹사이트 모드: 교육 담당자 비밀번호로 구글 시트 기록을 읽는다 ----
   function teacherWeb(key) {
     const box = document.getElementById('teacher'), note = document.getElementById('roster-note');
@@ -3166,6 +3213,7 @@ td.wk{font-size:.82rem;color:var(--p)}
         if (!j || !j.ok) { note.textContent = '비밀번호가 맞지 않아요.'; try { localStorage.removeItem('hydedu.tkey'); } catch (e) {} return; }
         try { localStorage.setItem('hydedu.tkey', key); } catch (e) {}
         smsPanel(box, j.rows || [], j.contacts || []);
+        const onSms = (r, shown) => smsOne(r, shown, j.contacts || []);
         renderRoster(j.rows || [], {}, (ids, name, btn) => {
           if (!window.confirm("'" + name + "' 의 기록 " + ids.length + "줄을 구글 시트에서 지울까요?\n되돌릴 수 없어요. (그 사람이 다시 퀴즈를 풀면 새로 생겨요)")) return;
           btn.disabled = true; btn.textContent = '지우는 중…';
@@ -3174,7 +3222,7 @@ td.wk{font-size:.82rem;color:var(--p)}
               if (x && x.ok) { note.textContent = "'" + name + "' 기록 " + x.deleted + "줄을 지웠어요."; setTimeout(load, 600); }
               else { btn.disabled = false; btn.textContent = '삭제'; window.alert(x && x.error === 'key' ? '비밀번호가 맞지 않거나, 기록 서버가 아직 새 버전으로 배포되지 않았어요.' : '지우지 못했어요.'); }
             }, () => { btn.disabled = false; btn.textContent = '삭제'; window.alert('지우지 못했어요 (인터넷 연결 확인).'); });
-        });
+        }, onSms);
       }, () => { note.textContent = '기록을 불러오지 못했어요 (인터넷 연결 확인).'; });
     };
     const rl = document.getElementById('reload'), nrl = rl.cloneNode(true); rl.replaceWith(nrl); nrl.addEventListener('click', load);
@@ -3249,7 +3297,8 @@ td.wk{font-size:.82rem;color:var(--p)}
   if (pg) pg.addEventListener('click', () => { const t = document.getElementById('pastecode'); if (!t.value.trim()) return;
     const n = importCode(t.value); showImported(n); if (n >= 0) { t.value = ''; if (myName) save(); if (!needGate()) closeGate(); else openGate(); } });
   // 이름이 없거나, 웹사이트에서 휴대폰 번호가 등록되지 않았으면 묻는다 (이사 안내가 있는 옛 강의실은 묻지 않는다)
-  const needGate = () => !moveto && (!myName || (SITEW && !window.__subPhone()));
+  const subWaiting = () => { try { return Date.now() - Number(localStorage.getItem('hydedu.subwait') || 0) < 12 * 3600e3; } catch (e) { return false; } };
+  const needGate = () => !moveto && (!myName || (SITEW && !window.__subPhone() && !subWaiting()));
   if (needGate()) openGate();
   if (SITE && myName && Object.keys(state).length) save();
   if (window.claude && window.claude.use) {
