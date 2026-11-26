@@ -242,6 +242,18 @@ td.wk{font-size:.82rem;color:var(--p)}
 #smsdlg textarea{width:100%;font:inherit;font-size:.95rem}
 .smsdlg-to{gap:14px;font-size:.92rem}
 #smsdlg .smsdlg-go{text-decoration:none;display:inline-flex;align-items:center;background:var(--p);color:var(--p-ink)}
+
+/* 동료에게 강의실 알려 주기 */
+.share-row{display:flex;gap:14px;align-items:center}
+.qrbtn{flex:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;font:inherit;font-size:.75rem;color:#59626b}
+.qrbtn img{display:block;width:120px;height:120px;image-rendering:pixelated}
+.share-btns{display:flex;flex-direction:column;gap:8px;flex:1}
+.share-btns .btn{text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center}
+#share-go{background:var(--p);color:var(--p-ink)}
+.share-url{font-size:.8rem;overflow-wrap:anywhere;align-self:flex-start}
+.qr-box{align-items:center;text-align:center;background:#fff;color:#15191d}
+.qr-box img{width:min(78vw,340px);height:auto;image-rendering:pixelated}
+.qr-box p{color:#59626b}
 </style></head><body>
 <main class="wrap">
   <section class="home">
@@ -310,6 +322,20 @@ td.wk{font-size:.82rem;color:var(--p)}
         <span class="ibody"><span class="iname">전자 펌프 제어</span><span class="isub">준비 중</span></span>
         <span class="chip">예정</span></div></li></ul></section>
     <details class="more"><summary>앞으로 열릴 단원 4개</summary><ul><li>H05 복합 동작과 유량 분배 · 4강</li><li>H06 재생과 에너지 · 3강</li><li>H07 전자 유압과 제어 기초 · 4강</li><li>H08 시험 데이터 읽기 · 4강</li></ul></details>
+
+    <section class="card share" id="share">
+      <h2>동료에게 강의실 알려 주기</h2>
+      <p class="rec">로그인 없이 휴대폰으로 바로 볼 수 있어요. 함께 공부할 동료에게 보내 주세요.</p>
+      <div class="share-row">
+        <button type="button" class="qrbtn" id="qr-big" aria-label="QR 코드 크게 보기"><img src="data:image/png;base64,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" alt="강의실 주소 QR 코드" width="120" height="120"><span>눌러서 크게</span></button>
+        <div class="share-btns">
+          <button type="button" class="btn" id="share-go">공유하기</button>
+          <a class="btn ghost" id="share-sms" href="#">문자로 보내기</a>
+          <button type="button" class="btn ghost" id="share-copy">링크 복사</button>
+        </div>
+      </div>
+      <code class="share-url">https://kangoo1541.github.io/Education-Hyd/</code>
+    </section>
     <section class="card" id="mine">
       <h2>내 기록</h2>
       <p class="rec" id="rec"></p>
@@ -2746,7 +2772,7 @@ td.wk{font-size:.82rem;color:var(--p)}
     </section>
   </article>
 </main>
-<script>window.HYD_SITE = {"endpoint":"https://script.google.com/macros/s/AKfycbzr3h9MTUzHiSR0hUGL7I0QvMNwi3Q6Lu4k04TEmJNXN9V3BEZtOYnT-zhiONHQhKk/exec"};</script>
+<script>window.HYD_SITE = {"endpoint":"https://script.google.com/macros/s/AKfycbzr3h9MTUzHiSR0hUGL7I0QvMNwi3Q6Lu4k04TEmJNXN9V3BEZtOYnT-zhiONHQhKk/exec","url":"https://kangoo1541.github.io/Education-Hyd/"};</script>
 <script type="application/json" id="course">{"total":31,"lessons":[{"num":"H01-1","name":"오리피스 식","nq":5,"concepts":["차압 배수 = 유량 배수의 제곱","현장 암산식 Q ≈ 0.6·A·√ΔP","압력 보상: 차압 고정 → 유량은 면적에 비례","면적 효과와 차압 효과는 곱해진다","목표 속도 → 필요 유량 → 필요 면적 (암산식 거꾸로)"]},{"num":"H01-2","name":"압축성과 압력 상승","nq":5,"concepts":["체적탄성계수로 압축량 → 압력","상승 속도 dP/dt = β/V × 남는 유량","공기 혼입 = 실제 β 저하","V 와 β 가 응답 속도에 미치는 방향","공기로 β 가 반이 되면 응답 시간은 두 배"]},{"num":"H01-3","name":"유압 동력과 효율","nq":5,"concepts":["유압 동력 kW = bar × L/min ÷ 600","입력 동력 = 유압 동력 ÷ 효율","릴리프로 버린 동력은 모두 열","버린 동력 → 열 에너지 → 기름 온도 상승","스풀에서 깎은 차압 × 유량 = 열"]},{"num":"H01-4","name":"압력 손실과 온도","nq":5,"concepts":["층류 배관 손실 ∝ 점도","틈새 누설 ∝ 1 / 점도","오리피스 손실은 점도와 거의 무관","뜨거워지면 층류 손실은 줄어든다 (방향)","온도별 증상의 원인 구분"]},{"num":"H02-1","name":"가변 사판 펌프: 사판각과 토출량","nq":5,"concepts":["펌프 유량 = q × N × ηv","유량은 회전수에 비례","레귤레이터는 사판각을 바꾼다","목표 속도 → 필요 유량 → 필요 배제용적","용적효율 = 실측 ÷ 이론 (누설 진단)"]},{"num":"H02-2","name":"마력 제어: 압력이 오르면 유량을 줄이는 이유 (P-Q 선도)","nq":5,"concepts":["유량 한계 = kW × 600 ÷ bar","마력 구간에서 압력 ×2 → 유량 ×½","마력 제어의 목적 = 엔진 동력 보호","고부하에서 속도가 줄어드는 비율","마력 곡선 = 엔진 동력 한계 (선도 해석)"]},{"num":"H02-3","name":"유량 제어 신호: 펌프는 무엇을 보고 토출량을 정하나","nq":5,"concepts":["네거티브 신호 압력 = 오리피스 차압","펌프 유량 = 신호와 마력 중 작은 쪽","네거티브: 바이패스 ↓ → Pn ↓ → 유량 ↑","신호 압력에서 바이패스 유량 거꾸로 구하기","신호와 마력이 바뀌는 경계 압력"]},{"num":"H02-4","name":"엔진과 펌프 매칭: 토크 한계와 엔진 스톨","nq":5,"concepts":["펌프 토크 = q × p ÷ 20π","엔진 토크 = 9549 × kW ÷ rpm","토크가 넘치면 회전수 하락·스톨","토크 식을 압력으로 풀기 (최대 사판각 유지 한계)","펌프 여러 대는 토크가 더해진다"]},{"num":"H03-1","name":"오픈센터 MCV: 센터 바이패스와 미터인을 동시에 조절","nq":5,"concepts":["중립 펌프 압력 = 바이패스 오리피스 차압","미터인 유량 = 0.6 × A × √(펌프압 − 부하압)","부하압을 넘어야 실린더가 움직인다","펌프 유량이 모자라면 부하압까지 못 오른다","오픈센터 펌프 압력은 펌프 유량에 의존"]},{"num":"H03-2","name":"스풀 노치와 개구면적 선도","nq":5,"concepts":["개구면적 → 유량 (오리피스 식)","선도 기울기 = 조작 감도","오버랩(겹침) 구간의 역할","목표 속도 → 유량 → 면적 → 스트로크 (선도 거꾸로 읽기)","감도 = 면적 기울기 × √ΔP (차압의 영향)"]},{"num":"H03-3","name":"미터인·미터아웃: 속도 제어와 캐비테이션","nq":5,"concepts":["면적비로 나오는 유량 구하기","미터아웃 유량 = 오리피스 식 (부하가 만든 압력)","끌려가는 부하는 미터아웃이 잡는다","미터아웃 유량 → 속도 → 반대편 필요 유량 (캐비테이션 한계)","증상 → 원인: 하강 중 반대편 공급 부족"]},{"num":"H03-4","name":"부하 의존성: 같은 레버인데 속도가 다른 이유","nq":5,"concepts":["미터인 유량 = 0.6 · A · √(펌프압 − 부하압)","차압 비율 → 속도 비율 (제곱근)","부하 의존성을 없애려면 차압을 묶는다","목표 유량 → 필요 차압 → 필요 펌프 압력","운전자의 보상 = 면적을 키워 차압 감소를 메운다"]},{"num":"H04-1","name":"네거티브 컨트롤","nq":5,"concepts":["신호 압력 = 바이패스가 만드는 오리피스 차압","펌프 특성: 신호 압력 ↑ → 유량 ↓","레버 → 바이패스 ↓ → 신호 ↓ → 펌프 ↑ (순서)","두 관계의 균형점 찾기 (중립 대기 유량)","네거티브 방식의 에너지 손실이 생기는 곳"]},{"num":"H04-2","name":"포지티브 컨트롤","nq":5,"concepts":["포지티브 펌프 특성: 파일럿 ↑ → 유량 ↑","포지티브가 보는 신호 = 레버 파일럿 압력","여러 레버 = 가장 큰 파일럿 압력 (셔틀)","원하는 유량 → 필요한 파일럿 압력 (특성 거꾸로)","포지티브의 약점: 실린더가 못 받은 기름은 손실"]},{"num":"H04-3","name":"로드센싱 (LS)","nq":5,"concepts":["LS 펌프 압력 = 최대 부하 압력 + 여유","차압이 묶이면 유량은 면적으로만 정해진다","부하 의존성이 사라지는 이유 = 스풀 차압 고정","LS 손실 = 여유 차압 × 유량 (동력 식 연결)","복합 동작: 가벼운 쪽 보상기가 깎는 압력 × 유량"]}]}</script>
 <script>
 {
@@ -3200,6 +3226,32 @@ td.wk{font-size:.82rem;color:var(--p)}
     dlg.upd = () => { dlg.querySelector('.smsdlg-go').href = smsUrl([sel], ta.value); };
     dlg.upd(); dlg.hidden = false; document.body.classList.add('gated');
     return true;
+  }
+
+  // ---- 웹사이트 모드: 동료에게 강의실 알려 주기 (공유하기 · 문자 · 링크 복사 · QR 크게) ----
+  if (document.getElementById('share')) {
+    const surl = (window.HYD_SITE && window.HYD_SITE.url) || (location.origin + location.pathname);
+    const stext = '유압 시스템 강의실 · 3분 강의 + 퀴즈로 펌프·MCV·유량 제어를 시스템으로 배워요. 휴대폰으로 바로 볼 수 있어요.';
+    const sms = document.getElementById('share-sms');
+    sms.href = (isIOS ? 'sms:&body=' : 'sms:?body=') + encodeURIComponent(stext + '\n' + surl);
+    const copyLink = btn => { const done = () => { btn.textContent = '복사됨 ✔'; setTimeout(() => { btn.textContent = '링크 복사'; }, 1600); };
+      try { navigator.clipboard.writeText(surl).then(done, () => window.prompt('이 주소를 복사하세요', surl)); } catch (e) { window.prompt('이 주소를 복사하세요', surl); } };
+    document.getElementById('share-copy').addEventListener('click', e => copyLink(e.currentTarget));
+    document.getElementById('share-go').addEventListener('click', e => {
+      if (navigator.share) navigator.share({ title: '유압 시스템 강의실', text: stext, url: surl }).catch(() => {});
+      else copyLink(document.getElementById('share-copy'));
+    });
+    const qb = document.getElementById('qr-big');
+    if (qb) {
+      const ov = document.createElement('div'); ov.className = 'gate qr-ov'; ov.hidden = true;
+      ov.innerHTML = '<div class="gate-box qr-box" role="dialog" aria-modal="true" aria-label="강의실 QR 코드"><b>유압 시스템 강의실</b>' +
+        '<img alt="강의실 주소 QR 코드"><p>동료 휴대폰 카메라로 이 화면을 비추게 하세요</p><button type="button" class="btn ghost">닫기</button></div>';
+      ov.querySelector('img').src = qb.querySelector('img').src;
+      document.body.appendChild(ov);
+      const close = () => { ov.hidden = true; document.body.classList.remove('gated'); };
+      qb.addEventListener('click', () => { ov.hidden = false; document.body.classList.add('gated'); });
+      ov.addEventListener('click', e => { if (e.target === ov || e.target.tagName === 'BUTTON') close(); });
+    }
   }
 
   // ---- 웹사이트 모드: 교육 담당자 비밀번호로 구글 시트 기록을 읽는다 ----
