@@ -118,18 +118,33 @@ ul.legend b{display:inline-block;min-width:3.2em;color:var(--p)}
 code{font-size:.92em;background:var(--off);border-radius:6px;padding:1px 6px}
 
 /* 퀴즈 */
-.quiz{background:var(--surface);border:2px solid var(--p);border-radius:14px;padding:16px}
-.quiz ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:18px}
+.quiz{background:var(--surface);border:2px solid var(--p);border-radius:14px;padding:16px 12px}
+.quiz ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:16px}
+/* 문제 한 개 = 카드 한 장: 테두리·머리줄로 다음 문제와 확실히 나눈다 */
+.quiz .q{background:var(--bg);border:1px solid var(--line);border-left:5px solid var(--r);border-radius:12px;padding:12px 12px 14px}
+.quiz .q.bonus{border-left-color:var(--muted)}
+.quiz .q.solved{border-color:var(--ok);border-left-color:var(--ok)}
+.qhead{display:flex;align-items:center;gap:8px;padding-bottom:8px;margin-bottom:10px;border-bottom:1px dashed var(--line)}
+.qno{font-weight:700;color:var(--r);font-variant-numeric:tabular-nums}
+.qno small{font-weight:400;color:var(--muted);font-size:.8rem}
+.qhead .qtag{margin:0}
+.qtag.base{background:var(--off);color:var(--muted)}
+.q.bonus .qtag{background:var(--off);color:var(--ink)}
+.qdone{display:none;margin-left:auto;font-size:.85rem;font-weight:700;color:var(--ok)}
+.q.solved .qdone{display:inline}
+.q.solved .qno{color:var(--ok)}
 .qtext{font-weight:600}
 .ans{display:flex;gap:8px;margin-top:8px;align-items:center}
 .ans .unit{color:var(--muted);font-size:.9rem;white-space:nowrap}
 .ans button{font:inherit;font-weight:700;min-height:44px;border:0;border-radius:10px;padding:8px 16px;background:var(--p);color:var(--p-ink);cursor:pointer}
 .opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}
-.opt{font:inherit;min-height:48px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);cursor:pointer;text-align:center}
+.opts.long{grid-template-columns:1fr}
+.opts.long .opt{text-align:left;padding:10px 12px}
+.opt{font:inherit;min-height:48px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);cursor:pointer;text-align:center}
 .opt.wrong{opacity:.45;text-decoration:line-through}
 .opt.right{border-color:var(--ok);background:var(--okbg);color:var(--ok);font-weight:700}
 .hints{display:flex;flex-direction:column;gap:4px;margin-top:8px}
-.hints details{border-radius:8px;background:var(--bg);padding:6px 10px}
+.hints details{border-radius:8px;background:var(--surface);padding:6px 10px}
 .hints details p{margin:6px 0 2px;font-size:.92rem}
 .reveal{font:inherit;font-size:.85rem;font-weight:700;align-self:flex-start;min-height:36px;border:0;border-radius:10px;padding:6px 12px;background:var(--off);color:var(--ink);cursor:pointer}
 .fb{margin:6px 0 0;font-size:.92rem}
@@ -207,7 +222,6 @@ body.gated .calc-fab{display:none!important}
 
 /* 응용 문제, 개념 점검 */
 .qtag{display:inline-block;font-size:.72rem;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--r);color:var(--surface);margin-bottom:4px}
-.q.apply .qtext{margin-top:2px}
 .concepts{margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
 .concepts h3{margin:0 0 6px;font-size:1rem}
 .concepts .cw{margin:0 0 8px;font-size:.92rem;font-weight:600}
@@ -504,6 +518,7 @@ td.wk{font-size:.82rem;color:var(--p)}
       <h2 class="sec">퀴즈 5문제 <span class="muted" style="font-weight:400">· 개념 4 + 보너스 계산 1</span></h2>
       <ol>
         <li class="q" data-q="0" data-type="choice" data-k="1mj59tduxd9" data-show="w5c0IOKAlCDsnKDrn4kgw5cyIOyXkOuKlCDssKjslZUgw5c0" data-concept="유량 배수 → 차압 배수 (제곱 관계)">
+          <div class="qhead"><span class="qno">문제 1<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">면적은 그대로 두고 유량을 <b>2배</b>로 늘리려면 차압은 몇 배가 필요할까요?</div>
           <div class="opts" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">×1.41</button><button type="button" class="opt" data-o="1">×2</button><button type="button" class="opt" data-o="2">×4</button><button type="button" class="opt" data-o="3">×8</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -513,6 +528,7 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q" data-q="1" data-type="choice" data-k="9teldnepek" data-show="w5cy" data-concept="면적은 유량에 그대로 비례">
+          <div class="qhead"><span class="qno">문제 2<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">차압은 그대로 두고 스풀의 열린 면적만 <b>2배</b>로 하면 유량은?</div>
           <div class="opts" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">×1.41</button><button type="button" class="opt" data-o="1">×2</button><button type="button" class="opt" data-o="2">×4</button><button type="button" class="opt" data-o="3">그대로</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -522,7 +538,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="2" data-type="choice" data-k="nhdh1nmgqx" data-show="w5cy" data-concept="부하 변화 → 차압 변화 → 속도 변화">
-          <span class="qtag">응용</span><div class="qtext">같은 레버 위치에서 부하가 가벼워져 스풀 차압이 <b>4배</b>가 되었습니다. 실린더 속도는?</div>
+          <div class="qhead"><span class="qno">문제 3<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">같은 레버 위치에서 부하가 가벼워져 스풀 차압이 <b>4배</b>가 되었습니다. 실린더 속도는?</div>
           <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">그대로</button><button type="button" class="opt" data-o="1">×4</button><button type="button" class="opt" data-o="2">×2</button><button type="button" class="opt" data-o="3">절반</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
@@ -531,7 +548,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="3" data-type="choice" data-k="1ghxmdijwsf" data-show="7Iqk7ZKA7J20IOyXsCDrqbTsoIE=" data-concept="압력 보상: 차압을 묶으면 유량은 면적만 따른다">
-          <span class="qtag">응용</span><div class="qtext">압력 보상 밸브가 스풀 앞뒤 차압을 일정하게 유지하면, 액추에이터로 가는 유량은 무엇에 비례할까요?</div>
+          <div class="qhead"><span class="qno">문제 4<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">압력 보상 밸브가 스풀 앞뒤 차압을 일정하게 유지하면, 액추에이터로 가는 유량은 무엇에 비례할까요?</div>
           <div class="opts" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">부하 압력</button><button type="button" class="opt" data-o="1">차압의 제곱근</button><button type="button" class="opt" data-o="2">스풀이 연 면적</button><button type="button" class="opt" data-o="3">펌프 토출 압력</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
@@ -540,7 +558,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q bonus" data-q="4" data-type="num" data-k="=03Mw4CM6ICbvRnIsAjMxojIhJye" data-show="MTIwIEwvbWluICgwLjYgw5cgMjAgw5cg4oiaMTAwKQ==" data-concept="현장 암산식 Q ≈ 0.6 · A · √ΔP">
-          <span class="qtag">보너스</span><div class="qtext"><b>보너스</b> 암산식 Q ≈ 0.6 · A · √ΔP 로, 열린 면적 <b>20 mm²</b>, 차압 <b>100 bar</b> 일 때 유량은 몇 L/min 일까요?</div>
+          <div class="qhead"><span class="qno">문제 5<small> / 5</small></span><span class="qtag">보너스 · 선택</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">암산식 Q ≈ 0.6 · A · √ΔP 로, 열린 면적 <b>20 mm²</b>, 차압 <b>100 bar</b> 일 때 유량은 몇 L/min 일까요?</div>
           <form class="ans" autocomplete="off">
             <input id="a-H01-1-4" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="5번 답">
             <span class="unit">L/min</span><button type="submit">확인</button>
@@ -665,6 +684,7 @@ td.wk{font-size:.82rem;color:var(--p)}
       <h2 class="sec">퀴즈 5문제 <span class="muted" style="font-weight:400">· 개념 4 + 보너스 계산 1</span></h2>
       <ol>
         <li class="q" data-q="0" data-type="choice" data-k="oo5d0ie2er" data-show="w5fCvQ==" data-concept="부피 ↑ → 압력 상승 속도 ↓ (반비례)">
+          <div class="qhead"><span class="qno">문제 1<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">같은 유량이 들어오는데 갇힌 부피가 <b>2배</b>(호스가 길어짐)가 되면 압력이 오르는 속도는?</div>
           <div class="opts" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">×2</button><button type="button" class="opt" data-o="1">×½</button><button type="button" class="opt" data-o="2">×4</button><button type="button" class="opt" data-o="3">그대로</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -674,8 +694,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q" data-q="1" data-type="choice" data-k="21r5vibm31q" data-show="7JWV66Cl7J20IOuKkOumrOqyjCDsmKTrpbTqs6Ag66y866CB7ZW07KeE64uk" data-concept="공기 혼입 = 실제 β 저하 → 물렁한 응답">
+          <div class="qhead"><span class="qno">문제 2<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">작동유에 공기가 섞이면 압력 응답은 어떻게 될까요?</div>
-          <div class="opts" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">압력이 더 빨리 오른다</button><button type="button" class="opt" data-o="1">아무 변화가 없다</button><button type="button" class="opt" data-o="2">압력이 느리게 오르고 물렁해진다</button><button type="button" class="opt" data-o="3">유량이 늘어난다</button></div>
+          <div class="opts long" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">압력이 더 빨리 오른다</button><button type="button" class="opt" data-o="1">아무 변화가 없다</button><button type="button" class="opt" data-o="2">압력이 느리게 오르고 물렁해진다</button><button type="button" class="opt" data-o="3">유량이 늘어난다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>공기는 기름보다 훨씬 잘 줄어듭니다. 실제 β 는 커질까요, 작아질까요?</p></details><details><summary>더 큰 힌트</summary><p>β 가 작아지면 dP/dt 도 작아집니다.</p></details>
@@ -683,8 +704,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="2" data-type="choice" data-k="18xb9p31swg" data-show="7Ken7J2AIOuwsOq0gCArIOqzteq4sCDsl4bsnYw=" data-concept="V 와 β 가 응답 속도에 미치는 방향">
-          <span class="qtag">응용</span><div class="qtext">같은 유량을 넣을 때 압력이 <b>가장 빨리</b> 오르는 경우는?</div>
-          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">긴 호스 + 공기 혼입</button><button type="button" class="opt" data-o="1">짧은 배관 + 공기 없음</button><button type="button" class="opt" data-o="2">큰 실린더 + 공기 없음</button><button type="button" class="opt" data-o="3">긴 호스 + 공기 없음</button></div>
+          <div class="qhead"><span class="qno">문제 3<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">같은 유량을 넣을 때 압력이 <b>가장 빨리</b> 오르는 경우는?</div>
+          <div class="opts long" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">긴 호스 + 공기 혼입</button><button type="button" class="opt" data-o="1">짧은 배관 + 공기 없음</button><button type="button" class="opt" data-o="2">큰 실린더 + 공기 없음</button><button type="button" class="opt" data-o="3">긴 호스 + 공기 없음</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>빨리 오르려면 β 와 V 는 각각 커야 할까요, 작아야 할까요?</p></details><details><summary>더 큰 힌트</summary><p>β 는 크게(공기 없음), V 는 작게(짧은 배관).</p></details>
@@ -692,8 +714,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="3" data-type="choice" data-k="2c7q5gthckx" data-show="7Zi47Iqk6rCAIOq4uOyImOuhnSDslZXroKUg7J2R64u17J20IOu5qOudvOynhOuLpCDigJQg7Zi47Iqk6rCAIOq4uOuptCBWIOqwgCDsu6TsoLgg7J2R64u17J20IOuKkOugpOynhOuLpA==" data-concept="압축성 종합: 틀린 설명 찾기">
-          <span class="qtag">응용</span><div class="qtext">다음 중 <b>틀린</b> 설명은?</div>
-          <div class="opts" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">기름도 압력을 받으면 조금 줄어든다</button><button type="button" class="opt" data-o="1">체적탄성계수 β 가 클수록 덜 줄어든다</button><button type="button" class="opt" data-o="2">호스가 길수록 압력 응답이 빨라진다</button><button type="button" class="opt" data-o="3">작은 부피에서 흐름이 갑자기 막히면 압력 서지가 생긴다</button></div>
+          <div class="qhead"><span class="qno">문제 4<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">다음 중 <b>틀린</b> 설명은?</div>
+          <div class="opts long" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">기름도 압력을 받으면 조금 줄어든다</button><button type="button" class="opt" data-o="1">체적탄성계수 β 가 클수록 덜 줄어든다</button><button type="button" class="opt" data-o="2">호스가 길수록 압력 응답이 빨라진다</button><button type="button" class="opt" data-o="3">작은 부피에서 흐름이 갑자기 막히면 압력 서지가 생긴다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>호스가 길면 갇힌 부피 V 가 커집니다.</p></details><details><summary>더 큰 힌트</summary><p>V 가 크면 압력은 천천히 오릅니다.</p></details>
@@ -701,7 +724,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q bonus" data-q="4" data-type="num" data-k="==QfzAjLwojIs9GdiwCM3ojIhJye" data-show="NzAgYmFyICgxNDAwIE1QYSDDlyAwLjAwNSA9IDcgTVBhKQ==" data-concept="체적탄성계수로 압축량 → 압력">
-          <span class="qtag">보너스</span><div class="qtext"><b>보너스</b> β 가 1400 MPa 일 때 갇힌 기름의 부피를 <b>0.5%</b> 줄이면 압력은 약 몇 bar 오를까요?</div>
+          <div class="qhead"><span class="qno">문제 5<small> / 5</small></span><span class="qtag">보너스 · 선택</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">β 가 1400 MPa 일 때 갇힌 기름의 부피를 <b>0.5%</b> 줄이면 압력은 약 몇 bar 오를까요?</div>
           <form class="ans" autocomplete="off">
             <input id="a-H01-2-4" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="5번 답">
             <span class="unit">bar</span><button type="submit">확인</button>
@@ -826,6 +850,7 @@ td.wk{font-size:.82rem;color:var(--p)}
       <h2 class="sec">퀴즈 5문제 <span class="muted" style="font-weight:400">· 개념 4 + 보너스 계산 1</span></h2>
       <ol>
         <li class="q" data-q="0" data-type="choice" data-k="l33hgx62ok" data-show="w5cy" data-concept="동력 = p × Q (각각 비례)">
+          <div class="qhead"><span class="qno">문제 1<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">압력은 그대로 두고 유량을 <b>2배</b>로 하면 유압 동력은?</div>
           <div class="opts" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">×½</button><button type="button" class="opt" data-o="1">×1.41</button><button type="button" class="opt" data-o="2">×2</button><button type="button" class="opt" data-o="3">×4</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -835,8 +860,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q" data-q="1" data-type="choice" data-k="102sxlxmf3" data-show="7Je07J20IOuQmOyWtCDquLDrpoQg7Jio64+E66W8IOyYrOumsOuLpA==" data-concept="버린 동력은 모두 열">
+          <div class="qhead"><span class="qno">문제 2<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">릴리프 밸브로 기름이 계속 빠져나갈 때, 그 압력 × 유량 만큼의 동력은 어떻게 될까요?</div>
-          <div class="opts" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">실린더를 미는 일로 바뀐다</button><button type="button" class="opt" data-o="1">탱크로 돌아가 회수된다</button><button type="button" class="opt" data-o="2">펌프로 되돌아가 재사용된다</button><button type="button" class="opt" data-o="3">열이 되어 기름 온도를 올린다</button></div>
+          <div class="opts long" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">실린더를 미는 일로 바뀐다</button><button type="button" class="opt" data-o="1">탱크로 돌아가 회수된다</button><button type="button" class="opt" data-o="2">펌프로 되돌아가 재사용된다</button><button type="button" class="opt" data-o="3">열이 되어 기름 온도를 올린다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>릴리프로 빠진 기름은 액추에이터를 움직이지 않습니다.</p></details><details><summary>더 큰 힌트</summary><p>일을 하지 못한 에너지는 결국 무엇이 될까요?</p></details>
@@ -844,7 +870,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="2" data-type="choice" data-k="15svg6mbni9" data-show="7JW9IDUwJQ==" data-concept="스풀에서 깎은 차압 × 유량 = 열">
-          <span class="qtag">응용</span><div class="qtext">펌프는 <b>200 bar</b> 로 내는데 실린더 부하는 <b>100 bar</b> 입니다. 펌프 동력 중 대략 얼마가 스풀에서 열로 버려질까요?</div>
+          <div class="qhead"><span class="qno">문제 3<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">펌프는 <b>200 bar</b> 로 내는데 실린더 부하는 <b>100 bar</b> 입니다. 펌프 동력 중 대략 얼마가 스풀에서 열로 버려질까요?</div>
           <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">약 10%</button><button type="button" class="opt" data-o="1">약 25%</button><button type="button" class="opt" data-o="2">약 50%</button><button type="button" class="opt" data-o="3">약 75%</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
@@ -853,8 +880,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="3" data-type="choice" data-k="7nghwacm3h" data-show="66a066as7ZSE6rCAIOyekOyjvCDsl7TroKQg6riw66aE7J20IOydvCDsl4bsnbQg7Z2Q66W464uk" data-concept="증상 → 원인: 버린 동력 찾기">
-          <span class="qtag">응용</span><div class="qtext">작업 중 오일 온도가 계속 높습니다. 가장 먼저 의심할 것은?</div>
-          <div class="opts" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">작동유 밀도가 낮다</button><button type="button" class="opt" data-o="1">릴리프가 자주 열려 기름이 일 없이 흐른다</button><button type="button" class="opt" data-o="2">실린더가 너무 크다</button><button type="button" class="opt" data-o="3">엔진 회전수가 낮다</button></div>
+          <div class="qhead"><span class="qno">문제 4<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">작업 중 오일 온도가 계속 높습니다. 가장 먼저 의심할 것은?</div>
+          <div class="opts long" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">작동유 밀도가 낮다</button><button type="button" class="opt" data-o="1">릴리프가 자주 열려 기름이 일 없이 흐른다</button><button type="button" class="opt" data-o="2">실린더가 너무 크다</button><button type="button" class="opt" data-o="3">엔진 회전수가 낮다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>온도가 오른다 = 어딘가에서 동력이 열로 버려지고 있다.</p></details><details><summary>더 큰 힌트</summary><p>압력 × 유량을 일 없이 버리는 대표적인 곳은?</p></details>
@@ -862,7 +890,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q bonus" data-q="4" data-type="num" data-k="==QfzAjLwojIs9GdiwCMyojIhJye" data-show="MjAga1cgKDIwMCDDlyA2MCDDtyA2MDAp" data-concept="유압 동력 kW = bar × L/min ÷ 600">
-          <span class="qtag">보너스</span><div class="qtext"><b>보너스</b> 압력 <b>200 bar</b>, 유량 <b>60 L/min</b> 의 유압 동력은 몇 kW 일까요?</div>
+          <div class="qhead"><span class="qno">문제 5<small> / 5</small></span><span class="qtag">보너스 · 선택</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">압력 <b>200 bar</b>, 유량 <b>60 L/min</b> 의 유압 동력은 몇 kW 일까요?</div>
           <form class="ans" autocomplete="off">
             <input id="a-H01-3-4" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="5번 답">
             <span class="unit">kW</span><button type="submit">확인</button>
@@ -976,6 +1005,7 @@ td.wk{font-size:.82rem;color:var(--p)}
       <h2 class="sec">퀴즈 5문제 <span class="muted" style="font-weight:400">· 개념 4 + 보너스 계산 1</span></h2>
       <ol>
         <li class="q" data-q="0" data-type="choice" data-k="1k47i27krum" data-show="64qY7Ja064Kc64uk" data-concept="층류 배관 손실 ∝ 점도 (차가우면 ↑)">
+          <div class="qhead"><span class="qno">문제 1<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">기름이 차가워져 점도가 커지면 (층류) 배관 압력 손실은?</div>
           <div class="opts" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">줄어든다</button><button type="button" class="opt" data-o="1">늘어난다</button><button type="button" class="opt" data-o="2">그대로다</button><button type="button" class="opt" data-o="3">0 이 된다</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -985,6 +1015,7 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q" data-q="1" data-type="choice" data-k="j5yxfj0l1u" data-show="64qY7Ja064Kc64uk" data-concept="틈새 누설 ∝ 1/점도 (뜨거우면 ↑)">
+          <div class="qhead"><span class="qno">문제 2<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">기름이 뜨거워져 점도가 작아지면 펌프·스풀의 틈새 누설은?</div>
           <div class="opts" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">줄어든다</button><button type="button" class="opt" data-o="1">그대로다</button><button type="button" class="opt" data-o="2">늘어난다</button><button type="button" class="opt" data-o="3">0 이 된다</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -994,8 +1025,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="2" data-type="choice" data-k="19gulvxp4c4" data-show="64OJ6rCEOiDrsLDqtIAg7IaQ7IukIOKGkSAvIOqzoOyYqDog64iE7ISkIOKGkQ==" data-concept="온도별 증상의 원인 구분">
-          <span class="qtag">응용</span><div class="qtext">아침(냉간)에는 동작이 굼뜨고, 오후(고온)에는 실린더가 저절로 조금씩 내려옵니다. 각각의 주된 원인은?</div>
-          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">냉간: 누설 ↑ / 고온: 배관 손실 ↑</button><button type="button" class="opt" data-o="1">냉간: 오리피스 손실 ↑ / 고온: 오리피스 손실 ↓</button><button type="button" class="opt" data-o="2">둘 다 릴리프 설정 문제</button><button type="button" class="opt" data-o="3">냉간: 배관 손실 ↑ / 고온: 누설 ↑</button></div>
+          <div class="qhead"><span class="qno">문제 3<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">아침(냉간)에는 동작이 굼뜨고, 오후(고온)에는 실린더가 저절로 조금씩 내려옵니다. 각각의 주된 원인은?</div>
+          <div class="opts long" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">냉간: 누설 ↑ / 고온: 배관 손실 ↑</button><button type="button" class="opt" data-o="1">냉간: 오리피스 손실 ↑ / 고온: 오리피스 손실 ↓</button><button type="button" class="opt" data-o="2">둘 다 릴리프 설정 문제</button><button type="button" class="opt" data-o="3">냉간: 배관 손실 ↑ / 고온: 누설 ↑</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>차가우면 점도 ↑, 뜨거우면 점도 ↓.</p></details><details><summary>더 큰 힌트</summary><p>점도가 크면 배관 손실, 작으면 틈새 누설이 커집니다.</p></details>
@@ -1003,8 +1035,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="3" data-type="choice" data-k="1cv6ytvb336" data-show="7KCQ64+E7JmAIOqxsOydmCDsg4HqtIDsl4bri6Q=" data-concept="오리피스 손실은 점도와 거의 무관">
-          <span class="qtag">응용</span><div class="qtext">스풀 노치(오리피스)를 지날 때의 압력 손실은 기름 온도에 따라 어떻게 될까요?</div>
-          <div class="opts" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">점도에 비례해 크게 바뀐다</button><button type="button" class="opt" data-o="1">점도에 반비례해 크게 바뀐다</button><button type="button" class="opt" data-o="2">점도와 거의 상관없다</button><button type="button" class="opt" data-o="3">온도가 오르면 항상 두 배가 된다</button></div>
+          <div class="qhead"><span class="qno">문제 4<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">스풀 노치(오리피스)를 지날 때의 압력 손실은 기름 온도에 따라 어떻게 될까요?</div>
+          <div class="opts long" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">점도에 비례해 크게 바뀐다</button><button type="button" class="opt" data-o="1">점도에 반비례해 크게 바뀐다</button><button type="button" class="opt" data-o="2">점도와 거의 상관없다</button><button type="button" class="opt" data-o="3">온도가 오르면 항상 두 배가 된다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>H01-1 오리피스 식에 점도가 있나요?</p></details><details><summary>더 큰 힌트</summary><p>식에는 밀도 ρ 만 있고 점도는 없습니다.</p></details>
@@ -1012,7 +1045,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q bonus" data-q="4" data-type="num" data-k="==QfzAjLwojIs9GdiwCMxojIhJye" data-show="MTAgYmFy" data-concept="층류 손실 ∝ 점도">
-          <span class="qtag">보너스</span><div class="qtext"><b>보너스</b> 층류 배관 손실이 <b>1 bar</b> 였는데, 같은 유량에서 점도가 <b>10배</b>가 되면 손실은 몇 bar 일까요?</div>
+          <div class="qhead"><span class="qno">문제 5<small> / 5</small></span><span class="qtag">보너스 · 선택</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">층류 배관 손실이 <b>1 bar</b> 였는데, 같은 유량에서 점도가 <b>10배</b>가 되면 손실은 몇 bar 일까요?</div>
           <form class="ans" autocomplete="off">
             <input id="a-H01-4-4" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="5번 답">
             <span class="unit">bar</span><button type="submit">확인</button>
@@ -1126,6 +1160,7 @@ td.wk{font-size:.82rem;color:var(--p)}
       <h2 class="sec">퀴즈 5문제 <span class="muted" style="font-weight:400">· 개념 4 + 보너스 계산 1</span></h2>
       <ol>
         <li class="q" data-q="0" data-type="choice" data-k="1gtcgummqbv" data-show="w5fCvQ==" data-concept="펌프 유량 ∝ 회전수">
+          <div class="qhead"><span class="qno">문제 1<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">사판각은 그대로 두고 엔진 회전수를 <b>1800 → 900 rpm</b> 으로 낮추면 펌프 유량은?</div>
           <div class="opts" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">×2</button><button type="button" class="opt" data-o="1">×½</button><button type="button" class="opt" data-o="2">그대로</button><button type="button" class="opt" data-o="3">×¼</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -1135,6 +1170,7 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q" data-q="1" data-type="choice" data-k="fxgb21p086" data-show="7IKs7YyQ6rCB" data-concept="레귤레이터는 사판각을 바꾼다">
+          <div class="qhead"><span class="qno">문제 2<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">가변 펌프의 레귤레이터가 유량을 바꾸기 위해 직접 바꾸는 것은?</div>
           <div class="opts" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">엔진 회전수</button><button type="button" class="opt" data-o="1">릴리프 설정 압력</button><button type="button" class="opt" data-o="2">작동유 점도</button><button type="button" class="opt" data-o="3">사판각</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -1144,8 +1180,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="2" data-type="choice" data-k="1mbjyyeovfe" data-show="7IKs7YyQ7J20IOuNnCDshLDqsbDrgpgg7Y6M7ZSEIOuIhOyEpOydtCDtgazri6Q=" data-concept="증상 → 원인: 회전수인가 사판각인가">
-          <span class="qtag">응용</span><div class="qtext">엔진 회전수는 정상인데 최대 속도가 안 나옵니다. 가장 먼저 의심할 것은?</div>
-          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">엔진 회전수가 낮다</button><button type="button" class="opt" data-o="1">사판이 덜 섰거나 펌프 누설이 크다</button><button type="button" class="opt" data-o="2">작동유 밀도가 높다</button><button type="button" class="opt" data-o="3">실린더가 너무 짧다</button></div>
+          <div class="qhead"><span class="qno">문제 3<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">엔진 회전수는 정상인데 최대 속도가 안 나옵니다. 가장 먼저 의심할 것은?</div>
+          <div class="opts long" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">엔진 회전수가 낮다</button><button type="button" class="opt" data-o="1">사판이 덜 섰거나 펌프 누설이 크다</button><button type="button" class="opt" data-o="2">작동유 밀도가 높다</button><button type="button" class="opt" data-o="3">실린더가 너무 짧다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>회전수가 정상이면 Q = q × N 에서 남는 것은?</p></details><details><summary>더 큰 힌트</summary><p>q(사판각)가 작거나, 이론 유량을 누설로 잃고 있습니다.</p></details>
@@ -1153,8 +1190,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="3" data-type="choice" data-k="1yoq2s1ud79" data-show="7J2066GgIOycoOufieydmCA5MCUg66eMIOuCmOyYpOqzoCDrgpjrqLjsp4DripQg64K067aAIOuIhOyEpOydtOuLpA==" data-concept="용적효율 = 실측 ÷ 이론 (누설)">
-          <span class="qtag">응용</span><div class="qtext">펌프의 용적효율이 <b>0.9</b> 라는 것은 무슨 뜻일까요?</div>
-          <div class="opts" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">압력이 이론의 90% 로 나온다</button><button type="button" class="opt" data-o="1">회전수가 90% 로 떨어진다</button><button type="button" class="opt" data-o="2">이론 유량의 90% 만 나오고 나머지는 내부 누설이다</button><button type="button" class="opt" data-o="3">입력 동력의 90% 가 열이 된다</button></div>
+          <div class="qhead"><span class="qno">문제 4<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">펌프의 용적효율이 <b>0.9</b> 라는 것은 무슨 뜻일까요?</div>
+          <div class="opts long" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">압력이 이론의 90% 로 나온다</button><button type="button" class="opt" data-o="1">회전수가 90% 로 떨어진다</button><button type="button" class="opt" data-o="2">이론 유량의 90% 만 나오고 나머지는 내부 누설이다</button><button type="button" class="opt" data-o="3">입력 동력의 90% 가 열이 된다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>용적효율 = 실제 유량 ÷ 이론 유량 입니다.</p></details><details><summary>더 큰 힌트</summary><p>나머지 10% 는 어디로 갔을까요?</p></details>
@@ -1162,7 +1200,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q bonus" data-q="4" data-type="num" data-k="=03Mw4CM6ICbvRnIsADMyojIhJye" data-show="MjAwIEwvbWlu" data-concept="L/min = cc/rev × rpm ÷ 1000">
-          <span class="qtag">보너스</span><div class="qtext"><b>보너스</b> 배제용적 <b>100 cc/rev</b> 펌프를 <b>2000 rpm</b> 으로 돌리면 이론 유량은 몇 L/min 일까요?</div>
+          <div class="qhead"><span class="qno">문제 5<small> / 5</small></span><span class="qtag">보너스 · 선택</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">배제용적 <b>100 cc/rev</b> 펌프를 <b>2000 rpm</b> 으로 돌리면 이론 유량은 몇 L/min 일까요?</div>
           <form class="ans" autocomplete="off">
             <input id="a-H02-1-4" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="5번 답">
             <span class="unit">L/min</span><button type="submit">확인</button>
@@ -1276,8 +1315,9 @@ td.wk{font-size:.82rem;color:var(--p)}
       <h2 class="sec">퀴즈 5문제 <span class="muted" style="font-weight:400">· 개념 4 + 보너스 계산 1</span></h2>
       <ol>
         <li class="q" data-q="0" data-type="choice" data-k="iblepy21rr" data-show="7JeU7KeE7J20IOuCvCDsiJgg7J6I64qUIOuPmeugpeydhCDrhJjsp4Ag7JWK7Jy866Ck6rOg" data-concept="마력 제어의 목적 = 엔진 동력 보호">
+          <div class="qhead"><span class="qno">문제 1<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">마력 제어가 압력이 오를 때 펌프 유량을 줄이는 가장 큰 이유는?</div>
-          <div class="opts" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">엔진이 낼 수 있는 동력을 넘지 않으려고</button><button type="button" class="opt" data-o="1">작동유 온도를 낮추려고</button><button type="button" class="opt" data-o="2">릴리프 밸브를 보호하려고</button><button type="button" class="opt" data-o="3">실린더 속도를 일정하게 하려고</button></div>
+          <div class="opts long" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">엔진이 낼 수 있는 동력을 넘지 않으려고</button><button type="button" class="opt" data-o="1">작동유 온도를 낮추려고</button><button type="button" class="opt" data-o="2">릴리프 밸브를 보호하려고</button><button type="button" class="opt" data-o="3">실린더 속도를 일정하게 하려고</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>펌프를 돌리는 동력은 어디서 오나요?</p></details><details><summary>더 큰 힌트</summary><p>p × Q 가 엔진 동력을 넘으면 회전수가 떨어집니다.</p></details>
@@ -1285,6 +1325,7 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q" data-q="1" data-type="choice" data-k="13951w7fbni" data-show="w5fCvQ==" data-concept="마력 구간: 압력 ×2 → 유량 ×½">
+          <div class="qhead"><span class="qno">문제 2<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">마력 제어 구간에서 압력이 <b>2배</b>가 되면 펌프 유량은?</div>
           <div class="opts" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">×2</button><button type="button" class="opt" data-o="1">그대로</button><button type="button" class="opt" data-o="2">×½</button><button type="button" class="opt" data-o="3">×¼</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -1294,8 +1335,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="2" data-type="choice" data-k="127amfd4mad" data-show="7LWc64yAIOycoOufiSDqtazqsITsnYAg6re464yA66GcLCDrp4jroKUg6rOh7ISg7J20IOuCtOugpOqwgCDqs6DslZUg7Jyg65+J7J20IOykgOuLpA==" data-concept="마력 곡선 = 엔진 동력 한계 (선도 해석)">
-          <span class="qtag">응용</span><div class="qtext">높은 지대에서 엔진 출력이 약 10% 떨어졌습니다. 엔진 회전수는 같습니다. P-Q 선도는 어떻게 바뀔까요?</div>
-          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">최대 유량 구간이 내려가고 마력 곡선은 그대로다</button><button type="button" class="opt" data-o="1">최대 유량 구간은 그대로, 마력 곡선이 내려가 고압 유량이 준다</button><button type="button" class="opt" data-o="2">두 구간 모두 그대로다</button><button type="button" class="opt" data-o="3">최대 압력이 10% 올라간다</button></div>
+          <div class="qhead"><span class="qno">문제 3<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">높은 지대에서 엔진 출력이 약 10% 떨어졌습니다. 엔진 회전수는 같습니다. P-Q 선도는 어떻게 바뀔까요?</div>
+          <div class="opts long" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">최대 유량 구간이 내려가고 마력 곡선은 그대로다</button><button type="button" class="opt" data-o="1">최대 유량 구간은 그대로, 마력 곡선이 내려가 고압 유량이 준다</button><button type="button" class="opt" data-o="2">두 구간 모두 그대로다</button><button type="button" class="opt" data-o="3">최대 압력이 10% 올라간다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>평평한 최대 유량은 배제용적 × 회전수로 정해집니다.</p></details><details><summary>더 큰 힌트</summary><p>마력 곡선은 p × Q = 쓸 수 있는 동력입니다.</p></details>
@@ -1303,8 +1345,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="3" data-type="choice" data-k="23gxggenlo5" data-show="66eI66ClIOygnOyWtOqwgCDsl5Tsp4TsnYQg7KeA7YKk66Ck6rOgIOycoOufieydhCDspITsnbgg7KCV7IOBIOuPmeyekeydtOuLpA==" data-concept="증상 해석: 고부하에서 느려지는 것은 정상">
-          <span class="qtag">응용</span><div class="qtext">단단한 땅을 팔 때 굴착기가 눈에 띄게 느려집니다. 맞는 설명은?</div>
-          <div class="opts" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">펌프가 고장 났다</button><button type="button" class="opt" data-o="1">릴리프 밸브가 고장 났다</button><button type="button" class="opt" data-o="2">작동유가 부족하다</button><button type="button" class="opt" data-o="3">마력 제어가 엔진을 지키려고 유량을 줄인 정상 동작이다</button></div>
+          <div class="qhead"><span class="qno">문제 4<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">단단한 땅을 팔 때 굴착기가 눈에 띄게 느려집니다. 맞는 설명은?</div>
+          <div class="opts long" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">펌프가 고장 났다</button><button type="button" class="opt" data-o="1">릴리프 밸브가 고장 났다</button><button type="button" class="opt" data-o="2">작동유가 부족하다</button><button type="button" class="opt" data-o="3">마력 제어가 엔진을 지키려고 유량을 줄인 정상 동작이다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>압력이 오르면 마력 제어는 무엇을 줄이나요?</p></details><details><summary>더 큰 힌트</summary><p>유량이 줄면 속도가 줄어듭니다. 엔진을 지키는 동작입니다.</p></details>
@@ -1312,7 +1355,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q bonus" data-q="4" data-type="num" data-k="==QfzAjLwojIs9GdiwCM2ojIhJye" data-show="NjAgTC9taW4=" data-concept="유량 한계 = kW × 600 ÷ bar">
-          <span class="qtag">보너스</span><div class="qtext"><b>보너스</b> 유압 동력 한계가 <b>30 kW</b> 인 펌프가 <b>300 bar</b> 에서 낼 수 있는 최대 유량은 몇 L/min 일까요?</div>
+          <div class="qhead"><span class="qno">문제 5<small> / 5</small></span><span class="qtag">보너스 · 선택</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">유압 동력 한계가 <b>30 kW</b> 인 펌프가 <b>300 bar</b> 에서 낼 수 있는 최대 유량은 몇 L/min 일까요?</div>
           <form class="ans" autocomplete="off">
             <input id="a-H02-2-4" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="5번 답">
             <span class="unit">L/min</span><button type="submit">확인</button>
@@ -1426,8 +1470,9 @@ td.wk{font-size:.82rem;color:var(--p)}
       <h2 class="sec">퀴즈 5문제 <span class="muted" style="font-weight:400">· 개념 4 + 보너스 계산 1</span></h2>
       <ol>
         <li class="q" data-q="0" data-type="choice" data-k="cwzgad7t37" data-show="67CU7J207Yyo7Iqk6rCAIOykhOyWtCBQbiDsnbQg64K066Ck6rCAIOycoOufieydtCDripTri6Q=" data-concept="네거티브: 바이패스 ↓ → Pn ↓ → 유량 ↑">
+          <div class="qhead"><span class="qno">문제 1<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">네거티브 제어에서 레버를 많이 밀면 펌프 유량은 어떻게 될까요?</div>
-          <div class="opts" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">바이패스가 늘어 Pn 이 올라 유량이 준다</button><button type="button" class="opt" data-o="1">바이패스가 줄어 Pn 이 내려가 유량이 는다</button><button type="button" class="opt" data-o="2">Pn 은 그대로이고 유량도 그대로다</button><button type="button" class="opt" data-o="3">릴리프가 열려 유량이 준다</button></div>
+          <div class="opts long" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">바이패스가 늘어 Pn 이 올라 유량이 준다</button><button type="button" class="opt" data-o="1">바이패스가 줄어 Pn 이 내려가 유량이 는다</button><button type="button" class="opt" data-o="2">Pn 은 그대로이고 유량도 그대로다</button><button type="button" class="opt" data-o="3">릴리프가 열려 유량이 준다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>레버를 밀면 센터 바이패스로 남는 기름은?</p></details><details><summary>더 큰 힌트</summary><p>네거티브는 Pn 이 낮을수록 유량을 늘립니다.</p></details>
@@ -1435,6 +1480,7 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q" data-q="1" data-type="choice" data-k="f4fh5d98k1" data-show="7J6R7J2AIOyqvQ==" data-concept="펌프 유량 = 신호와 마력 중 작은 쪽">
+          <div class="qhead"><span class="qno">문제 2<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">펌프는 유량 신호가 원하는 양과 마력 제어가 허락하는 양 중 어느 것을 낼까요?</div>
           <div class="opts" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">큰 쪽</button><button type="button" class="opt" data-o="1">두 값의 평균</button><button type="button" class="opt" data-o="2">작은 쪽</button><button type="button" class="opt" data-o="3">두 값의 합</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -1444,8 +1490,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="2" data-type="choice" data-k="1mne7m0pviw" data-show="7Iug7Zi4IOyVleugpeydtCDsoJzrjIDroZwg7Y6M7ZSE66GcIOqwgOuKlOyngCAo7Iug7Zi4IOudvOyduMK37Jik66as7ZS87IqkKQ==" data-concept="증상 → 원인: 중립 유량이 많을 때">
-          <span class="qtag">응용</span><div class="qtext">레버 중립인데 펌프 유량이 많습니다(대기 손실이 큼). 가장 먼저 볼 것은?</div>
-          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">신호 압력이 제대로 펌프로 가는지 (신호 라인·오리피스)</button><button type="button" class="opt" data-o="1">실린더 실 마모</button><button type="button" class="opt" data-o="2">버킷 핀 마모</button><button type="button" class="opt" data-o="3">엔진 오일 양</button></div>
+          <div class="qhead"><span class="qno">문제 3<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">레버 중립인데 펌프 유량이 많습니다(대기 손실이 큼). 가장 먼저 볼 것은?</div>
+          <div class="opts long" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">신호 압력이 제대로 펌프로 가는지 (신호 라인·오리피스)</button><button type="button" class="opt" data-o="1">실린더 실 마모</button><button type="button" class="opt" data-o="2">버킷 핀 마모</button><button type="button" class="opt" data-o="3">엔진 오일 양</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>네거티브에서 펌프를 줄이는 것은 무엇인가요?</p></details><details><summary>더 큰 힌트</summary><p>신호 압력이 새거나 낮으면 펌프는 유량을 줄이지 못합니다.</p></details>
@@ -1453,8 +1500,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="3" data-type="choice" data-k="gzxymgcbrj" data-show="6re4IOyVleugpeyXkOyEnOydmCDrp4jroKUg7ZWc6rOEIOycoOufiQ==" data-concept="고압 유량 부족 → 먼저 마력 한계 계산">
-          <span class="qtag">응용</span><div class="qtext">레버를 끝까지 밀었는데 고압 작업에서 유량이 부족합니다. 가장 먼저 확인할 것은?</div>
-          <div class="opts" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">네거티브 오리피스 면적</button><button type="button" class="opt" data-o="1">작동유 점도</button><button type="button" class="opt" data-o="2">신호 라인 길이</button><button type="button" class="opt" data-o="3">그 압력에서의 마력 한계 유량</button></div>
+          <div class="qhead"><span class="qno">문제 4<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">레버를 끝까지 밀었는데 고압 작업에서 유량이 부족합니다. 가장 먼저 확인할 것은?</div>
+          <div class="opts long" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">네거티브 오리피스 면적</button><button type="button" class="opt" data-o="1">작동유 점도</button><button type="button" class="opt" data-o="2">신호 라인 길이</button><button type="button" class="opt" data-o="3">그 압력에서의 마력 한계 유량</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>고압에서는 신호와 마력 중 누가 유량을 정하나요?</p></details><details><summary>더 큰 힌트</summary><p>마력 한계 = kW × 600 ÷ bar 로 정상 범위인지 먼저 계산합니다.</p></details>
@@ -1462,7 +1510,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q bonus" data-q="4" data-type="num" data-k="9NDMuAjOiw2b0JCL0ojIhJye" data-show="NCBiYXIgKCgzMCDDtyAxNSnCsik=" data-concept="신호 압력 = 오리피스 차압">
-          <span class="qtag">보너스</span><div class="qtext"><b>보너스</b> 네거티브 오리피스 면적 <b>25 mm²</b> 에 바이패스 <b>30 L/min</b> 이 흐르면 신호 압력 Pn 은 몇 bar 일까요?</div>
+          <div class="qhead"><span class="qno">문제 5<small> / 5</small></span><span class="qtag">보너스 · 선택</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">네거티브 오리피스 면적 <b>25 mm²</b> 에 바이패스 <b>30 L/min</b> 이 흐르면 신호 압력 Pn 은 몇 bar 일까요?</div>
           <form class="ans" autocomplete="off">
             <input id="a-H02-3-4" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="5번 답">
             <span class="unit">bar</span><button type="submit">확인</button>
@@ -1576,6 +1625,7 @@ td.wk{font-size:.82rem;color:var(--p)}
       <h2 class="sec">퀴즈 5문제 <span class="muted" style="font-weight:400">· 개념 4 + 보너스 계산 1</span></h2>
       <ol>
         <li class="q" data-q="0" data-type="choice" data-k="218nxn6hz9u" data-show="67Cw7KCc7Jqp7KCB6rO8IOyVleugpQ==" data-concept="펌프 토크는 배제용적과 압력으로 정해진다">
+          <div class="qhead"><span class="qno">문제 1<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">펌프가 먹는 토크를 정하는 두 가지는?</div>
           <div class="opts" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">회전수와 압력</button><button type="button" class="opt" data-o="1">배제용적과 압력</button><button type="button" class="opt" data-o="2">회전수만</button><button type="button" class="opt" data-o="3">유량만</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -1585,6 +1635,7 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q" data-q="1" data-type="choice" data-k="3782lj58iz" data-show="w5cy" data-concept="압력 ×2 → 펌프 토크 ×2">
+          <div class="qhead"><span class="qno">문제 2<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">배제용적은 그대로인데 압력이 <b>2배</b>가 되면 펌프 토크는?</div>
           <div class="opts" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">그대로</button><button type="button" class="opt" data-o="1">×½</button><button type="button" class="opt" data-o="2">×2</button><button type="button" class="opt" data-o="3">×4</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -1594,8 +1645,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="2" data-type="choice" data-k="jwj1212g65" data-show="7JeU7KeEIO2ajOyghOyImOqwgCDrlqjslrTsp4Dqs6AsIOyLrO2VmOuptCDsl5Tsp4TsnbQg6rq87KeE64uk" data-concept="토크 부족 → 회전수 하락·스톨">
-          <span class="qtag">응용</span><div class="qtext">펌프가 먹는 토크가 엔진이 낼 수 있는 토크보다 크면 어떻게 될까요?</div>
-          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">펌프 압력이 자동으로 올라간다</button><button type="button" class="opt" data-o="1">엔진 회전수가 떨어지고, 심하면 엔진이 꺼진다</button><button type="button" class="opt" data-o="2">작동유 온도가 바로 떨어진다</button><button type="button" class="opt" data-o="3">릴리프 밸브가 닫힌다</button></div>
+          <div class="qhead"><span class="qno">문제 3<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">펌프가 먹는 토크가 엔진이 낼 수 있는 토크보다 크면 어떻게 될까요?</div>
+          <div class="opts long" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">펌프 압력이 자동으로 올라간다</button><button type="button" class="opt" data-o="1">엔진 회전수가 떨어지고, 심하면 엔진이 꺼진다</button><button type="button" class="opt" data-o="2">작동유 온도가 바로 떨어진다</button><button type="button" class="opt" data-o="3">릴리프 밸브가 닫힌다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>엔진이 부족한 토크를 어디서 메울 수 있을까요?</p></details><details><summary>더 큰 힌트</summary><p>토크가 모자라면 엔진은 느려집니다.</p></details>
@@ -1603,8 +1655,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="3" data-type="choice" data-k="2ehqr10sr53" data-show="7JeU7KeEIOy2nOugpSDsoIDtlZgo7ZWE7YSwIOunie2emCDrk7EpIC8g66eI66ClIOyEpOygleydtCDrhIjrrLQg64aS64uk" data-concept="증상 → 원인: 고부하 rpm 하락">
-          <span class="qtag">응용</span><div class="qtext">고부하에서 엔진 회전수가 크게 떨어집니다. 원인으로 맞는 조합은?</div>
-          <div class="opts" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">작동유가 차갑다 / 버킷이 크다</button><button type="button" class="opt" data-o="1">릴리프 압력이 낮다 / 실린더가 짧다</button><button type="button" class="opt" data-o="2">엔진 출력 저하(필터 막힘 등) / 마력 설정이 너무 높다</button><button type="button" class="opt" data-o="3">배관이 길다 / 오일이 많다</button></div>
+          <div class="qhead"><span class="qno">문제 4<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">고부하에서 엔진 회전수가 크게 떨어집니다. 원인으로 맞는 조합은?</div>
+          <div class="opts long" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">작동유가 차갑다 / 버킷이 크다</button><button type="button" class="opt" data-o="1">릴리프 압력이 낮다 / 실린더가 짧다</button><button type="button" class="opt" data-o="2">엔진 출력 저하(필터 막힘 등) / 마력 설정이 너무 높다</button><button type="button" class="opt" data-o="3">배관이 길다 / 오일이 많다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>펌프 토크 > 엔진 토크 가 된 이유를 두 쪽에서 찾습니다.</p></details><details><summary>더 큰 힌트</summary><p>엔진 쪽은 출력 저하, 펌프 쪽은 마력(토크) 설정.</p></details>
@@ -1612,7 +1665,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q bonus" data-q="4" data-type="num" data-k="==QfzAjLwojIs9GdiwSNuADMyojIhJye" data-show="7JW9IDIwMCBOwrdt" data-concept="펌프 토크 = q × p ÷ 20π">
-          <span class="qtag">보너스</span><div class="qtext"><b>보너스</b> 배제용적 <b>63 cc/rev</b> 펌프가 <b>200 bar</b> 를 낼 때 토크는 약 몇 N·m 일까요? (20π ≈ 63)</div>
+          <div class="qhead"><span class="qno">문제 5<small> / 5</small></span><span class="qtag">보너스 · 선택</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">배제용적 <b>63 cc/rev</b> 펌프가 <b>200 bar</b> 를 낼 때 토크는 약 몇 N·m 일까요? (20π ≈ 63)</div>
           <form class="ans" autocomplete="off">
             <input id="a-H02-4-4" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="5번 답">
             <span class="unit">N·m</span><button type="submit">확인</button>
@@ -1726,8 +1780,9 @@ td.wk{font-size:.82rem;color:var(--p)}
       <h2 class="sec">퀴즈 5문제 <span class="muted" style="font-weight:400">· 개념 4 + 보너스 계산 1</span></h2>
       <ol>
         <li class="q" data-q="0" data-type="choice" data-k="uts6aoeo4u" data-show="67CU7J207Yyo7IqkIOuLq+2emCDCtyDrr7jthLDsnbgg7Je066a8" data-concept="스풀: 바이패스 닫고 미터인 연다">
+          <div class="qhead"><span class="qno">문제 1<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">오픈센터 MCV 에서 스풀을 밀면 두 통로는 어떻게 될까요?</div>
-          <div class="opts" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">바이패스 열림 · 미터인 닫힘</button><button type="button" class="opt" data-o="1">바이패스 닫힘 · 미터인 열림</button><button type="button" class="opt" data-o="2">둘 다 열림</button><button type="button" class="opt" data-o="3">둘 다 닫힘</button></div>
+          <div class="opts long" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">바이패스 열림 · 미터인 닫힘</button><button type="button" class="opt" data-o="1">바이패스 닫힘 · 미터인 열림</button><button type="button" class="opt" data-o="2">둘 다 열림</button><button type="button" class="opt" data-o="3">둘 다 닫힘</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>스풀을 밀수록 실린더로 가는 길이 넓어집니다.</p></details><details><summary>더 큰 힌트</summary><p>대신 탱크로 바로 가는 길은?</p></details>
@@ -1735,8 +1790,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q" data-q="1" data-type="choice" data-k="29be4wayo8j" data-show="7Y6M7ZSEIOyVleugpeydtCDslYTsp4Eg67aA7ZWYIOyVleugpeuztOuLpCDrgq7slYQg6riw66aE7J20IOuwlOydtO2MqOyKpOuhnCDruaDsp4Tri6Q=" data-concept="부하 압력을 넘어야 움직인다">
+          <div class="qhead"><span class="qno">문제 2<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">오픈센터에서 레버를 조금 밀었는데 실린더가 아직 움직이지 않습니다. 가장 알맞은 이유는?</div>
-          <div class="opts" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">미터인이 완전히 닫혀 있다</button><button type="button" class="opt" data-o="1">릴리프 밸브가 열려 있다</button><button type="button" class="opt" data-o="2">펌프 압력이 아직 부하 압력보다 낮아 기름이 바이패스로 빠진다</button><button type="button" class="opt" data-o="3">펌프가 멈춰 있다</button></div>
+          <div class="opts long" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">미터인이 완전히 닫혀 있다</button><button type="button" class="opt" data-o="1">릴리프 밸브가 열려 있다</button><button type="button" class="opt" data-o="2">펌프 압력이 아직 부하 압력보다 낮아 기름이 바이패스로 빠진다</button><button type="button" class="opt" data-o="3">펌프가 멈춰 있다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>기름은 압력이 낮은 쪽으로 흐릅니다.</p></details><details><summary>더 큰 힌트</summary><p>펌프 압력이 부하 압력을 넘어야 실린더로 들어갑니다.</p></details>
@@ -1744,8 +1800,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="2" data-type="choice" data-k="2fotp07mtht" data-show="7Y6M7ZSEIOycoOufieydtCDspITslrQg67CU7J207Yyo7IqkIOywqOyVlSjtjoztlIQg7JWV66ClKeydtCDrtoDtlZjquYzsp4Ag7Jik66W07KeAIOuqu+2VnOuLpA==" data-concept="오픈센터 펌프 압력은 펌프 유량에 의존">
-          <span class="qtag">응용</span><div class="qtext">엔진 회전수를 낮췄더니, 같은 레버 위치에서 무거운 붐이 잘 올라가지 않습니다. 가장 알맞은 이유는?</div>
-          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">릴리프 설정 압력이 낮아졌다</button><button type="button" class="opt" data-o="1">실린더 면적이 줄었다</button><button type="button" class="opt" data-o="2">작동유 밀도가 커졌다</button><button type="button" class="opt" data-o="3">펌프 유량이 줄어 바이패스 차압(펌프 압력)이 부하까지 오르지 못한다</button></div>
+          <div class="qhead"><span class="qno">문제 3<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">엔진 회전수를 낮췄더니, 같은 레버 위치에서 무거운 붐이 잘 올라가지 않습니다. 가장 알맞은 이유는?</div>
+          <div class="opts long" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">릴리프 설정 압력이 낮아졌다</button><button type="button" class="opt" data-o="1">실린더 면적이 줄었다</button><button type="button" class="opt" data-o="2">작동유 밀도가 커졌다</button><button type="button" class="opt" data-o="3">펌프 유량이 줄어 바이패스 차압(펌프 압력)이 부하까지 오르지 못한다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>오픈센터에서 펌프 압력은 바이패스 오리피스를 지나는 유량이 만듭니다.</p></details><details><summary>더 큰 힌트</summary><p>유량이 줄면 같은 면적에서 차압은 (유량)² 에 비례해 줄어듭니다.</p></details>
@@ -1753,7 +1810,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="3" data-type="choice" data-k="63tvh8nvih" data-show="64qY7Ja064Kc64uk" data-concept="부하 ↓ → 실린더 유량 ↑ (부하 의존)">
-          <span class="qtag">응용</span><div class="qtext">같은 레버 위치에서 부하가 가벼워지면 실린더로 가는 유량은?</div>
+          <div class="qhead"><span class="qno">문제 4<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">같은 레버 위치에서 부하가 가벼워지면 실린더로 가는 유량은?</div>
           <div class="opts" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">늘어난다</button><button type="button" class="opt" data-o="1">줄어든다</button><button type="button" class="opt" data-o="2">그대로다</button><button type="button" class="opt" data-o="3">0 이 된다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
@@ -1762,7 +1820,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q bonus" data-q="4" data-type="num" data-k="==QfzAjLwojIs9GdiwiNxojIhJye" data-show="MTYgYmFy" data-concept="중립 펌프 압력 = 바이패스 오리피스 차압">
-          <span class="qtag">보너스</span><div class="qtext"><b>보너스</b> 중립에서 센터 바이패스 면적이 <b>50 mm²</b>, 펌프 유량이 <b>120 L/min</b> 이면 펌프 압력은 몇 bar 일까요?</div>
+          <div class="qhead"><span class="qno">문제 5<small> / 5</small></span><span class="qtag">보너스 · 선택</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">중립에서 센터 바이패스 면적이 <b>50 mm²</b>, 펌프 유량이 <b>120 L/min</b> 이면 펌프 압력은 몇 bar 일까요?</div>
           <form class="ans" autocomplete="off">
             <input id="a-H03-1-4" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="5번 답">
             <span class="unit">bar</span><button type="submit">확인</button>
@@ -1876,6 +1935,7 @@ td.wk{font-size:.82rem;color:var(--p)}
       <h2 class="sec">퀴즈 5문제 <span class="muted" style="font-weight:400">· 개념 4 + 보너스 계산 1</span></h2>
       <ol>
         <li class="q" data-q="0" data-type="choice" data-k="1p52ynois5k" data-show="7Iqk7ZKAIOyYpOuyhOueqSjqsrnsuagp" data-concept="오버랩(겹침) 구간의 역할">
+          <div class="qhead"><span class="qno">문제 1<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">레버를 처음 조금 밀었을 때 아무 반응이 없는 구간을 만드는 것은?</div>
           <div class="opts" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">메인 노치</button><button type="button" class="opt" data-o="1">스풀 오버랩(겹침)</button><button type="button" class="opt" data-o="2">릴리프 밸브</button><button type="button" class="opt" data-o="3">펌프 마력 제어</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -1885,6 +1945,7 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q" data-q="1" data-type="choice" data-k="1yugl1qanvs" data-show="w5c1" data-concept="선도 기울기 = 조작 감도">
+          <div class="qhead"><span class="qno">문제 2<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">노치 구간은 1 mm 당 <b>2.5 mm²</b>, 메인 구간은 1 mm 당 <b>12.5 mm²</b> 씩 열립니다. 같은 차압에서 메인 구간은 노치 구간보다 몇 배 예민할까요?</div>
           <div class="opts" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">같다</button><button type="button" class="opt" data-o="1">×2.5</button><button type="button" class="opt" data-o="2">×10</button><button type="button" class="opt" data-o="3">×5</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -1894,8 +1955,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="2" data-type="choice" data-k="psf8p6xdew" data-show="6rCZ7J2AIOuptOyggSDrs4DtmZTrnbzrj4Qg7Jyg65+JIOuzgO2ZlOqwgCDiiJrOlFAg7JeQIOu5hOuhgO2VtCDsu6Tsp4Tri6Q=" data-concept="감도 = 면적 기울기 × √ΔP (차압의 영향)">
-          <span class="qtag">응용</span><div class="qtext">같은 스풀인데, 스풀 차압이 큰 작업에서 레버가 더 예민하게 느껴집니다. 가장 알맞은 설명은?</div>
-          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">차압이 크면 오버랩이 짧아진다</button><button type="button" class="opt" data-o="1">차압이 크면 노치 면적이 커진다</button><button type="button" class="opt" data-o="2">같은 면적 변화라도 유량 변화가 √ΔP 에 비례해 커진다</button><button type="button" class="opt" data-o="3">차압은 조작감과 관계없다</button></div>
+          <div class="qhead"><span class="qno">문제 3<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">같은 스풀인데, 스풀 차압이 큰 작업에서 레버가 더 예민하게 느껴집니다. 가장 알맞은 설명은?</div>
+          <div class="opts long" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">차압이 크면 오버랩이 짧아진다</button><button type="button" class="opt" data-o="1">차압이 크면 노치 면적이 커진다</button><button type="button" class="opt" data-o="2">같은 면적 변화라도 유량 변화가 √ΔP 에 비례해 커진다</button><button type="button" class="opt" data-o="3">차압은 조작감과 관계없다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>유량 = 0.6 × 면적 × √ΔP.</p></details><details><summary>더 큰 힌트</summary><p>차압 4배면 같은 면적 변화에 유량 변화는 2배입니다.</p></details>
@@ -1903,8 +1965,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="3" data-type="choice" data-k="2dwfc0iersx" data-show="64W47LmYIOq1rOqwhOydmCDquLjsnbTsmYAg6riw7Jq46riw" data-concept="증상 → 원인: 미세 조작 불만">
-          <span class="qtag">응용</span><div class="qtext">"미세 조작이 어렵다" 는 불만이 왔습니다. 가장 먼저 볼 것은?</div>
-          <div class="opts" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">노치 구간의 길이와 기울기</button><button type="button" class="opt" data-o="1">오버랩 길이</button><button type="button" class="opt" data-o="2">릴리프 설정 압력</button><button type="button" class="opt" data-o="3">펌프 최대 유량</button></div>
+          <div class="qhead"><span class="qno">문제 4<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">"미세 조작이 어렵다" 는 불만이 왔습니다. 가장 먼저 볼 것은?</div>
+          <div class="opts long" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">노치 구간의 길이와 기울기</button><button type="button" class="opt" data-o="1">오버랩 길이</button><button type="button" class="opt" data-o="2">릴리프 설정 압력</button><button type="button" class="opt" data-o="3">펌프 최대 유량</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>미세 조작은 선도의 어느 구간에서 하나요?</p></details><details><summary>더 큰 힌트</summary><p>노치 구간이 짧거나 가파르면 미세 조작이 어렵습니다.</p></details>
@@ -1912,7 +1975,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q bonus" data-q="4" data-type="num" data-k="==QfzAjLwojIs9GdiwSNxojIhJye" data-show="MTUgTC9taW4=" data-concept="개구면적 → 유량 (오리피스 식)">
-          <span class="qtag">보너스</span><div class="qtext"><b>보너스</b> 열린 면적 <b>5 mm²</b>, 차압 <b>25 bar</b> 일 때 유량은 몇 L/min 일까요?</div>
+          <div class="qhead"><span class="qno">문제 5<small> / 5</small></span><span class="qtag">보너스 · 선택</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">열린 면적 <b>5 mm²</b>, 차압 <b>25 bar</b> 일 때 유량은 몇 L/min 일까요?</div>
           <form class="ans" autocomplete="off">
             <input id="a-H03-2-4" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="5번 답">
             <span class="unit">L/min</span><button type="submit">확인</button>
@@ -2026,8 +2090,9 @@ td.wk{font-size:.82rem;color:var(--p)}
       <h2 class="sec">퀴즈 5문제 <span class="muted" style="font-weight:400">· 개념 4 + 보너스 계산 1</span></h2>
       <ol>
         <li class="q" data-q="0" data-type="choice" data-k="22tx6xo7j06" data-show="66+47YSw7JWE7JuDICjrgpjqsIDripQg7Kq9IOuFuOy5mCk=" data-concept="끌려가는 부하는 미터아웃이 잡는다">
+          <div class="qhead"><span class="qno">문제 1<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">붐이 자기 무게로 내려갈 때 하강 속도를 직접 묶어 두는 것은?</div>
-          <div class="opts" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">미터인 (들어가는 쪽 노치)</button><button type="button" class="opt" data-o="1">미터아웃 (나가는 쪽 노치)</button><button type="button" class="opt" data-o="2">펌프 마력 제어</button><button type="button" class="opt" data-o="3">센터 바이패스</button></div>
+          <div class="opts long" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">미터인 (들어가는 쪽 노치)</button><button type="button" class="opt" data-o="1">미터아웃 (나가는 쪽 노치)</button><button type="button" class="opt" data-o="2">펌프 마력 제어</button><button type="button" class="opt" data-o="3">센터 바이패스</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>부하가 실린더를 끌고 갈 때, 들어가는 쪽을 조이면 멈출까요?</p></details><details><summary>더 큰 힌트</summary><p>나가는 기름의 양을 정하면 속도가 정해집니다.</p></details>
@@ -2035,6 +2100,7 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q" data-q="1" data-type="choice" data-k="19ann8x5jcd" data-show="w5cy" data-concept="면적비만큼 유량이 바뀐다">
+          <div class="qhead"><span class="qno">문제 2<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">헤드측과 로드측 면적비가 <b>2 : 1</b> 인 실린더가 줄어들 때, 헤드측에서 나오는 기름은 로드측에 들어간 기름의 몇 배일까요?</div>
           <div class="opts" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">×½</button><button type="button" class="opt" data-o="1">같다</button><button type="button" class="opt" data-o="2">×2</button><button type="button" class="opt" data-o="3">×4</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -2044,8 +2110,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="2" data-type="choice" data-k="1y8802r1065" data-show="64K066Ck6rCA64qUIOuPmeyViCDroZzrk5zsuKHsnbQg642cIOyxhOybjOynhCDsupDruYTthYzsnbTshZg=" data-concept="증상 → 원인: 하강 중 반대편 공급 부족">
-          <span class="qtag">응용</span><div class="qtext">붐을 빠르게 내린 직후 다음 동작이 한 박자 늦고 덜컥거립니다. 가장 먼저 의심할 원인은?</div>
-          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">릴리프 설정 압력이 너무 높다</button><button type="button" class="opt" data-o="1">작동유 점도가 너무 높다</button><button type="button" class="opt" data-o="2">펌프 마력 설정이 너무 높다</button><button type="button" class="opt" data-o="3">내려가는 동안 로드측이 덜 채워진 캐비테이션</button></div>
+          <div class="qhead"><span class="qno">문제 3<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">붐을 빠르게 내린 직후 다음 동작이 한 박자 늦고 덜컥거립니다. 가장 먼저 의심할 원인은?</div>
+          <div class="opts long" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">릴리프 설정 압력이 너무 높다</button><button type="button" class="opt" data-o="1">작동유 점도가 너무 높다</button><button type="button" class="opt" data-o="2">펌프 마력 설정이 너무 높다</button><button type="button" class="opt" data-o="3">내려가는 동안 로드측이 덜 채워진 캐비테이션</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>빠르게 내려갈수록 반대편이 채워져야 할 기름도 많아집니다.</p></details><details><summary>더 큰 힌트</summary><p>채우는 양이 모자라면 빈 공간이 생깁니다.</p></details>
@@ -2053,7 +2120,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="3" data-type="choice" data-k="1kq0ebr6bqq" data-show="64qQ66Ck7KeE64uk" data-concept="미터아웃 면적 ↓ → 하강 속도 ↓">
-          <span class="qtag">응용</span><div class="qtext">미터아웃 면적을 줄이면 붐 하강 속도는?</div>
+          <div class="qhead"><span class="qno">문제 4<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">미터아웃 면적을 줄이면 붐 하강 속도는?</div>
           <div class="opts" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">빨라진다</button><button type="button" class="opt" data-o="1">느려진다</button><button type="button" class="opt" data-o="2">그대로다</button><button type="button" class="opt" data-o="3">점점 빨라진다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
@@ -2062,7 +2130,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q bonus" data-q="4" data-type="num" data-k="==QfzAjLwojIs9GdiwCM2ojIhJye" data-show="NjAgTC9taW4=" data-concept="면적비로 나오는 유량">
-          <span class="qtag">보너스</span><div class="qtext"><b>보너스</b> 헤드측 <b>100 cm²</b>, 로드측 <b>60 cm²</b> 실린더를 늘리며 헤드측에 <b>100 L/min</b> 을 넣습니다. 로드측에서 나오는 유량은 몇 L/min 일까요?</div>
+          <div class="qhead"><span class="qno">문제 5<small> / 5</small></span><span class="qtag">보너스 · 선택</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">헤드측 <b>100 cm²</b>, 로드측 <b>60 cm²</b> 실린더를 늘리며 헤드측에 <b>100 L/min</b> 을 넣습니다. 로드측에서 나오는 유량은 몇 L/min 일까요?</div>
           <form class="ans" autocomplete="off">
             <input id="a-H03-3-4" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="5번 답">
             <span class="unit">L/min</span><button type="submit">확인</button>
@@ -2176,6 +2245,7 @@ td.wk{font-size:.82rem;color:var(--p)}
       <h2 class="sec">퀴즈 5문제 <span class="muted" style="font-weight:400">· 개념 4 + 보너스 계산 1</span></h2>
       <ol>
         <li class="q" data-q="0" data-type="choice" data-k="1lq2q37fhyb" data-show="7Iqk7ZKAIOyVnuuSpCDssKjslZU=" data-concept="부하 의존성을 없애려면 차압을 묶는다">
+          <div class="qhead"><span class="qno">문제 1<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">같은 레버에서 부하와 상관없이 같은 속도를 내려면 무엇을 일정하게 유지해야 할까요?</div>
           <div class="opts" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">펌프 토출 압력</button><button type="button" class="opt" data-o="1">부하 압력</button><button type="button" class="opt" data-o="2">스풀 앞뒤 차압</button><button type="button" class="opt" data-o="3">릴리프 설정 압력</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -2185,6 +2255,7 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q" data-q="1" data-type="choice" data-k="26ok0moq0qy" data-show="64qQ66Ck7KeE64uk" data-concept="부하 ↑ → 차압 ↓ → 속도 ↓">
+          <div class="qhead"><span class="qno">문제 2<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">펌프 압력은 그대로이고 같은 레버인데 부하가 무거워지면 실린더 속도는?</div>
           <div class="opts" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">빨라진다</button><button type="button" class="opt" data-o="1">느려진다</button><button type="button" class="opt" data-o="2">그대로다</button><button type="button" class="opt" data-o="3">반대로 움직인다</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -2194,7 +2265,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="2" data-type="choice" data-k="ra3sxbi2py" data-show="w5fCvQ==" data-concept="차압 비율 → 속도 비율 (제곱근)">
-          <span class="qtag">응용</span><div class="qtext">같은 레버에서 부하가 무거워져 스풀 차압이 <b>100 → 25 bar</b> 로 줄었습니다. 실린더 속도는?</div>
+          <div class="qhead"><span class="qno">문제 3<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">같은 레버에서 부하가 무거워져 스풀 차압이 <b>100 → 25 bar</b> 로 줄었습니다. 실린더 속도는?</div>
           <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">×½</button><button type="button" class="opt" data-o="1">×¼</button><button type="button" class="opt" data-o="2">그대로</button><button type="button" class="opt" data-o="3">×2</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
@@ -2203,8 +2275,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="3" data-type="choice" data-k="t58qlnymja" data-show="66CI67KE66W8IOuNlCDrsIDslrQg7Je066awIOuptOyggeydhCDtgqTsmrTri6Q=" data-concept="운전자의 보상 = 면적을 키워 차압 감소를 메운다">
-          <span class="qtag">응용</span><div class="qtext">오픈센터 굴착기에서 흙을 가득 담은 버킷을 들 때 빈 버킷과 같은 속도를 내려면, 운전자는 보통 어떻게 할까요?</div>
-          <div class="opts" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">레버를 덜 민다</button><button type="button" class="opt" data-o="1">릴리프 설정을 낮춘다</button><button type="button" class="opt" data-o="2">엔진 회전수를 낮춘다</button><button type="button" class="opt" data-o="3">레버를 더 밀어 열린 면적을 키운다</button></div>
+          <div class="qhead"><span class="qno">문제 4<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">오픈센터 굴착기에서 흙을 가득 담은 버킷을 들 때 빈 버킷과 같은 속도를 내려면, 운전자는 보통 어떻게 할까요?</div>
+          <div class="opts long" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">레버를 덜 민다</button><button type="button" class="opt" data-o="1">릴리프 설정을 낮춘다</button><button type="button" class="opt" data-o="2">엔진 회전수를 낮춘다</button><button type="button" class="opt" data-o="3">레버를 더 밀어 열린 면적을 키운다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>무거우면 차압이 줄어듭니다. 유량을 지키려면?</p></details><details><summary>더 큰 힌트</summary><p>ΔP 가 줄면 A 를 키워 메웁니다.</p></details>
@@ -2212,7 +2285,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q bonus" data-q="4" data-type="num" data-k="==QfzAjLwojIs9GdiwCM2ojIhJye" data-show="NjAgTC9taW4=" data-concept="미터인 유량 = 0.6 · A · √(펌프압 − 부하압)">
-          <span class="qtag">보너스</span><div class="qtext"><b>보너스</b> 펌프 압력 <b>200 bar</b>, 부하 <b>100 bar</b>, 미터인 면적 <b>10 mm²</b> 일 때 실린더 유량은 몇 L/min 일까요?</div>
+          <div class="qhead"><span class="qno">문제 5<small> / 5</small></span><span class="qtag">보너스 · 선택</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">펌프 압력 <b>200 bar</b>, 부하 <b>100 bar</b>, 미터인 면적 <b>10 mm²</b> 일 때 실린더 유량은 몇 L/min 일까요?</div>
           <form class="ans" autocomplete="off">
             <input id="a-H03-4-4" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="5번 답">
             <span class="unit">L/min</span><button type="submit">확인</button>
@@ -2326,8 +2400,9 @@ td.wk{font-size:.82rem;color:var(--p)}
       <h2 class="sec">퀴즈 5문제 <span class="muted" style="font-weight:400">· 개념 4 + 보너스 계산 1</span></h2>
       <ol>
         <li class="q" data-q="0" data-type="choice" data-k="1tufhezbya8" data-show="67CU7J207Yyo7IqkIOKGkyDihpIgUG4g4oaTIOKGkiDtjoztlIQg7Jyg65+JIOKGkQ==" data-concept="레버 → 바이패스 ↓ → 신호 ↓ → 펌프 ↑">
+          <div class="qhead"><span class="qno">문제 1<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">네거티브 컨트롤에서 레버를 밀었을 때 일어나는 순서로 맞는 것은?</div>
-          <div class="opts" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">바이패스 ↑ → Pn ↑ → 펌프 유량 ↑</button><button type="button" class="opt" data-o="1">Pn ↑ → 바이패스 ↓ → 펌프 유량 ↓</button><button type="button" class="opt" data-o="2">바이패스 ↓ → Pn ↓ → 펌프 유량 ↑</button><button type="button" class="opt" data-o="3">펌프 유량 ↑ → 바이패스 ↑ → Pn ↓</button></div>
+          <div class="opts long" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">바이패스 ↑ → Pn ↑ → 펌프 유량 ↑</button><button type="button" class="opt" data-o="1">Pn ↑ → 바이패스 ↓ → 펌프 유량 ↓</button><button type="button" class="opt" data-o="2">바이패스 ↓ → Pn ↓ → 펌프 유량 ↑</button><button type="button" class="opt" data-o="3">펌프 유량 ↑ → 바이패스 ↑ → Pn ↓</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>레버를 밀면 실린더가 기름을 가져가 바이패스로 가는 기름은?</p></details><details><summary>더 큰 힌트</summary><p>네거티브는 Pn 이 낮을수록 펌프 유량을 늘립니다.</p></details>
@@ -2335,8 +2410,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q" data-q="1" data-type="choice" data-k="1h21tto499c" data-show="7Y6M7ZSEIO2KueyEseqzvCDrsJTsnbTtjKjsiqQg7Jik66as7ZS87IqkIOq0gOqzhOqwgCDrp4zrgpjripQg6reg7ZiV7KCQ" data-concept="중립 대기 유량 = 두 관계의 균형점">
+          <div class="qhead"><span class="qno">문제 2<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">네거티브 장비의 중립 대기 유량은 어떻게 정해질까요?</div>
-          <div class="opts" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">펌프 특성과 바이패스 오리피스 관계가 만나는 균형점</button><button type="button" class="opt" data-o="1">릴리프 설정 압력</button><button type="button" class="opt" data-o="2">엔진 회전수만으로</button><button type="button" class="opt" data-o="3">운전자가 정한다</button></div>
+          <div class="opts long" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">펌프 특성과 바이패스 오리피스 관계가 만나는 균형점</button><button type="button" class="opt" data-o="1">릴리프 설정 압력</button><button type="button" class="opt" data-o="2">엔진 회전수만으로</button><button type="button" class="opt" data-o="3">운전자가 정한다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>중립에서는 펌프 기름이 전부 바이패스로 갑니다.</p></details><details><summary>더 큰 힌트</summary><p>펌프 특성과 오리피스 관계를 동시에 만족하는 점입니다.</p></details>
@@ -2344,8 +2420,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="2" data-type="choice" data-k="201jk5ai6oi" data-show="7Iug7Zi466W8IOunjOuTpOugpOqzoCDrsJTsnbTtjKjsiqTroZwg6riw66aE7J20IOqzhOyGjSDtnZjrn6wg7YOx7YGs66GcIOqwhOuLpA==" data-concept="네거티브의 에너지 손실이 생기는 곳">
-          <span class="qtag">응용</span><div class="qtext">네거티브 장비에서 레버를 반쯤 밀고 작업할 때, 에너지 손실이 계속 생기는 가장 큰 이유는?</div>
-          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">펌프가 항상 최대 유량을 낸다</button><button type="button" class="opt" data-o="1">신호를 만들려고 바이패스로 기름이 계속 흘러 탱크로 간다</button><button type="button" class="opt" data-o="2">릴리프가 항상 열려 있다</button><button type="button" class="opt" data-o="3">실린더가 늘 미터아웃으로 막혀 있다</button></div>
+          <div class="qhead"><span class="qno">문제 3<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">네거티브 장비에서 레버를 반쯤 밀고 작업할 때, 에너지 손실이 계속 생기는 가장 큰 이유는?</div>
+          <div class="opts long" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">펌프가 항상 최대 유량을 낸다</button><button type="button" class="opt" data-o="1">신호를 만들려고 바이패스로 기름이 계속 흘러 탱크로 간다</button><button type="button" class="opt" data-o="2">릴리프가 항상 열려 있다</button><button type="button" class="opt" data-o="3">실린더가 늘 미터아웃으로 막혀 있다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>레버를 반쯤 밀었을 때 펌프 기름은 어디로 나뉘나요?</p></details><details><summary>더 큰 힌트</summary><p>신호 압력을 만들려면 바이패스가 늘 조금은 흘러야 합니다.</p></details>
@@ -2353,8 +2430,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="3" data-type="choice" data-k="zwbmwpbz46" data-show="67CU7J207Yyo7IqkIOycoOufieydtCDrsJTrgJAg65Kk7JeQ7JW8IOyLoO2YuOqwgCDrsJTrgIzquLAg65WM66y4" data-concept="네거티브는 반응이 한 박자 늦다">
-          <span class="qtag">응용</span><div class="qtext">네거티브 장비에서 레버를 밀면 펌프가 한 박자 늦게 따라옵니다. 이유는?</div>
-          <div class="opts" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">작동유 점도가 높아서</button><button type="button" class="opt" data-o="1">엔진이 약해서</button><button type="button" class="opt" data-o="2">릴리프가 늦게 닫혀서</button><button type="button" class="opt" data-o="3">바이패스 유량이 바뀐 뒤에야 신호가 바뀌기 때문</button></div>
+          <div class="qhead"><span class="qno">문제 4<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">네거티브 장비에서 레버를 밀면 펌프가 한 박자 늦게 따라옵니다. 이유는?</div>
+          <div class="opts long" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">작동유 점도가 높아서</button><button type="button" class="opt" data-o="1">엔진이 약해서</button><button type="button" class="opt" data-o="2">릴리프가 늦게 닫혀서</button><button type="button" class="opt" data-o="3">바이패스 유량이 바뀐 뒤에야 신호가 바뀌기 때문</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>네거티브 펌프가 보는 것은 레버가 아니라 무엇인가요?</p></details><details><summary>더 큰 힌트</summary><p>레버 → 바이패스 변화 → 신호 변화 → 펌프 순서입니다.</p></details>
@@ -2362,7 +2440,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q bonus" data-q="4" data-type="num" data-k="9NDMuAjOiw2b0JCL5ojIhJye" data-show="OSBiYXI=" data-concept="신호 압력 = 바이패스가 만드는 오리피스 차압">
-          <span class="qtag">보너스</span><div class="qtext"><b>보너스</b> 네거티브 오리피스 <b>25 mm²</b> 에 바이패스 <b>45 L/min</b> 이 흐르면 Pn 은 몇 bar 일까요?</div>
+          <div class="qhead"><span class="qno">문제 5<small> / 5</small></span><span class="qtag">보너스 · 선택</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">네거티브 오리피스 <b>25 mm²</b> 에 바이패스 <b>45 L/min</b> 이 흐르면 Pn 은 몇 bar 일까요?</div>
           <form class="ans" autocomplete="off">
             <input id="a-H04-1-4" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="5번 답">
             <span class="unit">bar</span><button type="submit">확인</button>
@@ -2476,8 +2555,9 @@ td.wk{font-size:.82rem;color:var(--p)}
       <h2 class="sec">퀴즈 5문제 <span class="muted" style="font-weight:400">· 개념 4 + 보너스 계산 1</span></h2>
       <ol>
         <li class="q" data-q="0" data-type="choice" data-k="1q2onp28vj7" data-show="66CI67KEIOyhsOyekSDtjIzsnbzrn78g7JWV66Cl" data-concept="포지티브가 보는 신호 = 레버 파일럿 압력">
+          <div class="qhead"><span class="qno">문제 1<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">포지티브 컨트롤에서 펌프가 유량을 정하려고 보는 신호는?</div>
-          <div class="opts" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">센터 바이패스 오리피스 압력</button><button type="button" class="opt" data-o="1">가장 높은 부하 압력 + 여유</button><button type="button" class="opt" data-o="2">작동유 온도</button><button type="button" class="opt" data-o="3">레버 조작 파일럿 압력</button></div>
+          <div class="opts long" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">센터 바이패스 오리피스 압력</button><button type="button" class="opt" data-o="1">가장 높은 부하 압력 + 여유</button><button type="button" class="opt" data-o="2">작동유 온도</button><button type="button" class="opt" data-o="3">레버 조작 파일럿 압력</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>포지티브는 레버를 밀면 펌프가 늘어나는 방식입니다.</p></details><details><summary>더 큰 힌트</summary><p>레버가 만드는 압력 신호입니다.</p></details>
@@ -2485,6 +2565,7 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q" data-q="1" data-type="choice" data-k="1mu1ajq9t2b" data-show="6rCA7J6lIO2BsCDsi6DtmLgg7ZWY64KY" data-concept="여러 레버 = 가장 큰 파일럿 압력 (셔틀)">
+          <div class="qhead"><span class="qno">문제 2<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">두 레버를 함께 밀면, 셔틀 밸브는 펌프로 어떤 신호를 보낼까요?</div>
           <div class="opts" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">두 신호의 합</button><button type="button" class="opt" data-o="1">가장 큰 신호 하나</button><button type="button" class="opt" data-o="2">가장 작은 신호 하나</button><button type="button" class="opt" data-o="3">두 신호의 평균</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -2494,8 +2575,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="2" data-type="choice" data-k="ir690794xk" data-show="7Y6M7ZSE64qUIOyLoO2YuOuMgOuhnCDquLDrpoTsnYQg64K06rOgLCDrqrsg67Cb7J2AIOq4sOumhOydgCDrsJTsnbTtjKjsiqTCt+umtOumrO2UhOuhnCDrsoTroKTsp4Tri6Q=" data-concept="포지티브의 약점: 실린더가 못 받은 기름은 손실">
-          <span class="qtag">응용</span><div class="qtext">포지티브 장비에서 부하가 너무 무거워 실린더가 거의 안 움직이는데 레버를 끝까지 밀었습니다. 펌프가 낸 기름은 주로 어떻게 될까요?</div>
-          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">펌프가 부하를 보고 스스로 유량을 0 으로 줄인다</button><button type="button" class="opt" data-o="1">실린더가 못 받은 기름은 펌프로 되돌아가 재사용된다</button><button type="button" class="opt" data-o="2">펌프는 신호대로 기름을 내고, 못 받은 기름은 바이패스·릴리프로 버려진다</button><button type="button" class="opt" data-o="3">레버 신호가 자동으로 0 이 된다</button></div>
+          <div class="qhead"><span class="qno">문제 3<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">포지티브 장비에서 부하가 너무 무거워 실린더가 거의 안 움직이는데 레버를 끝까지 밀었습니다. 펌프가 낸 기름은 주로 어떻게 될까요?</div>
+          <div class="opts long" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">펌프가 부하를 보고 스스로 유량을 0 으로 줄인다</button><button type="button" class="opt" data-o="1">실린더가 못 받은 기름은 펌프로 되돌아가 재사용된다</button><button type="button" class="opt" data-o="2">펌프는 신호대로 기름을 내고, 못 받은 기름은 바이패스·릴리프로 버려진다</button><button type="button" class="opt" data-o="3">레버 신호가 자동으로 0 이 된다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>포지티브 펌프가 보는 것은 레버 신호뿐입니다.</p></details><details><summary>더 큰 힌트</summary><p>갈 곳 없는 기름은 바이패스나 릴리프로 갑니다.</p></details>
@@ -2503,8 +2585,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="3" data-type="choice" data-k="2d4m5rlu0g9" data-show="66CI67KEIOyLoO2YuOulvCDsp4HsoJEg67SQ7IScIOuwlOydtO2MqOyKpCDrs4DtmZTrpbwg6riw64uk66as7KeAIOyViuuKlOuLpA==" data-concept="포지티브가 네거티브보다 빠른 이유">
-          <span class="qtag">응용</span><div class="qtext">포지티브가 네거티브보다 반응이 빠른 이유는?</div>
-          <div class="opts" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">레버 신호를 직접 봐서 바이패스 변화를 기다리지 않는다</button><button type="button" class="opt" data-o="1">펌프가 더 커서</button><button type="button" class="opt" data-o="2">작동유 점도가 낮아서</button><button type="button" class="opt" data-o="3">릴리프 밸브가 없어서</button></div>
+          <div class="qhead"><span class="qno">문제 4<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">포지티브가 네거티브보다 반응이 빠른 이유는?</div>
+          <div class="opts long" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">레버 신호를 직접 봐서 바이패스 변화를 기다리지 않는다</button><button type="button" class="opt" data-o="1">펌프가 더 커서</button><button type="button" class="opt" data-o="2">작동유 점도가 낮아서</button><button type="button" class="opt" data-o="3">릴리프 밸브가 없어서</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>네거티브의 신호는 무엇이 바뀐 뒤에 바뀌나요?</p></details><details><summary>더 큰 힌트</summary><p>포지티브는 레버를 미는 순간 신호가 펌프로 갑니다.</p></details>
@@ -2512,7 +2595,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q bonus" data-q="4" data-type="num" data-k="==QfzAjLwojIs9GdiwCM5ojIhJye" data-show="OTAgTC9taW4=" data-concept="포지티브 펌프 특성">
-          <span class="qtag">보너스</span><div class="qtext"><b>보너스</b> 펌프 특성이 <b>Q = 30 + 6 × (Pi − 5)</b> 일 때 파일럿 <b>15 bar</b> 면 펌프 유량은 몇 L/min 일까요?</div>
+          <div class="qhead"><span class="qno">문제 5<small> / 5</small></span><span class="qtag">보너스 · 선택</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">펌프 특성이 <b>Q = 30 + 6 × (Pi − 5)</b> 일 때 파일럿 <b>15 bar</b> 면 펌프 유량은 몇 L/min 일까요?</div>
           <form class="ans" autocomplete="off">
             <input id="a-H04-2-4" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="5번 답">
             <span class="unit">L/min</span><button type="submit">확인</button>
@@ -2626,8 +2710,9 @@ td.wk{font-size:.82rem;color:var(--p)}
       <h2 class="sec">퀴즈 5문제 <span class="muted" style="font-weight:400">· 개념 4 + 보너스 계산 1</span></h2>
       <ol>
         <li class="q" data-q="0" data-type="choice" data-k="1jpkp6q0h4w" data-show="6rCA7J6lIOuGkuydgCDrtoDtlZgg7JWV66ClICsg7Jes7JygIOywqOyVlQ==" data-concept="LS 펌프 압력 = 최대 부하 + 여유">
+          <div class="qhead"><span class="qno">문제 1<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">로드센싱 펌프는 어떤 압력을 낼까요?</div>
-          <div class="opts" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">항상 최대 압력</button><button type="button" class="opt" data-o="1">가장 높은 부하 압력 + 여유 차압</button><button type="button" class="opt" data-o="2">가장 낮은 부하 압력</button><button type="button" class="opt" data-o="3">릴리프 설정 압력</button></div>
+          <div class="opts long" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">항상 최대 압력</button><button type="button" class="opt" data-o="1">가장 높은 부하 압력 + 여유 차압</button><button type="button" class="opt" data-o="2">가장 낮은 부하 압력</button><button type="button" class="opt" data-o="3">릴리프 설정 압력</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>로드센싱 펌프는 부하 압력을 보고 따라갑니다.</p></details><details><summary>더 큰 힌트</summary><p>가장 높은 부하를 움직일 만큼 + 여유.</p></details>
@@ -2635,8 +2720,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q" data-q="1" data-type="choice" data-k="1yuuymr5m88" data-show="7Iqk7ZKAIOyVnuuSpCDssKjslZXsnbQg7Jes7JygIOywqOyVleycvOuhnCDsnbzsoJXtlZjqsowg66y27J206riwIOuVjOusuA==" data-concept="부하 의존성이 사라지는 이유 = 스풀 차압 고정">
+          <div class="qhead"><span class="qno">문제 2<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">로드센싱 장비에서 같은 레버면 부하와 상관없이 속도가 같은 가장 큰 이유는?</div>
-          <div class="opts" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">펌프가 항상 최대 압력을 내기 때문</button><button type="button" class="opt" data-o="1">부하 압력이 항상 같기 때문</button><button type="button" class="opt" data-o="2">릴리프 밸브가 유량을 맞추기 때문</button><button type="button" class="opt" data-o="3">스풀 앞뒤 차압이 여유 차압으로 일정하게 묶이기 때문</button></div>
+          <div class="opts long" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">펌프가 항상 최대 압력을 내기 때문</button><button type="button" class="opt" data-o="1">부하 압력이 항상 같기 때문</button><button type="button" class="opt" data-o="2">릴리프 밸브가 유량을 맞추기 때문</button><button type="button" class="opt" data-o="3">스풀 앞뒤 차압이 여유 차압으로 일정하게 묶이기 때문</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>H03-4 에서 속도를 정한 것은 면적과 무엇이었나요?</p></details><details><summary>더 큰 힌트</summary><p>ΔP 가 일정하면 유량은 면적으로만 정해집니다.</p></details>
@@ -2644,8 +2730,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="2" data-type="choice" data-k="16kclsftztr" data-show="67KE7YK3IOyqvSDslZXroKUg67O07IOB6riwICjqsIDrsrzsmrQg7Kq9KQ==" data-concept="복합 동작: 가벼운 쪽 보상기에서 손실">
-          <span class="qtag">응용</span><div class="qtext">로드센싱 장비에서 붐(200 bar)과 버킷(50 bar)을 동시에 움직이면, 압력을 가장 많이 깎아 버리는 곳은?</div>
-          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">버킷 쪽 압력 보상기 (가벼운 쪽)</button><button type="button" class="opt" data-o="1">붐 쪽 스풀</button><button type="button" class="opt" data-o="2">펌프 내부</button><button type="button" class="opt" data-o="3">탱크 라인</button></div>
+          <div class="qhead"><span class="qno">문제 3<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">로드센싱 장비에서 붐(200 bar)과 버킷(50 bar)을 동시에 움직이면, 압력을 가장 많이 깎아 버리는 곳은?</div>
+          <div class="opts long" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">버킷 쪽 압력 보상기 (가벼운 쪽)</button><button type="button" class="opt" data-o="1">붐 쪽 스풀</button><button type="button" class="opt" data-o="2">펌프 내부</button><button type="button" class="opt" data-o="3">탱크 라인</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>펌프 압력은 무거운 붐에 맞춰 올라갑니다.</p></details><details><summary>더 큰 힌트</summary><p>가벼운 버킷은 그 높은 압력을 깎아서 써야 합니다.</p></details>
@@ -2653,8 +2740,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="3" data-type="choice" data-k="dyy80muy6b" data-show="67aA7ZWY67O064ukIOyXrOycoOunjO2BvOunjCDslZXroKXsnYQg7Jis66CkIOq5juyVhCDrsoTrpqzripQg7JWV66Cl7J20IOyekeyVhOyEnA==" data-concept="LS 가 에너지를 아끼는 이유">
-          <span class="qtag">응용</span><div class="qtext">항상 높은 압력을 내는 펌프에 비해 로드센싱이 에너지를 아끼는 이유는?</div>
-          <div class="opts" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">유량을 항상 0 으로 두어서</button><button type="button" class="opt" data-o="1">작동유 점도가 낮아서</button><button type="button" class="opt" data-o="2">부하보다 여유만큼만 압력을 올려 깎아 버리는 압력이 작아서</button><button type="button" class="opt" data-o="3">릴리프 밸브를 없애서</button></div>
+          <div class="qhead"><span class="qno">문제 4<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">항상 높은 압력을 내는 펌프에 비해 로드센싱이 에너지를 아끼는 이유는?</div>
+          <div class="opts long" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">유량을 항상 0 으로 두어서</button><button type="button" class="opt" data-o="1">작동유 점도가 낮아서</button><button type="button" class="opt" data-o="2">부하보다 여유만큼만 압력을 올려 깎아 버리는 압력이 작아서</button><button type="button" class="opt" data-o="3">릴리프 밸브를 없애서</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>스풀에서 버리는 동력 = 깎는 차압 × 유량.</p></details><details><summary>더 큰 힌트</summary><p>LS 가 깎는 차압은 여유 차압뿐입니다.</p></details>
@@ -2662,7 +2750,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q bonus" data-q="4" data-type="num" data-k="=03Mw4CM6ICbvRnIsADMyojIhJye" data-show="MjAwIGJhcg==" data-concept="LS 펌프 압력 = 최대 부하 + 여유">
-          <span class="qtag">보너스</span><div class="qtext"><b>보너스</b> 가장 높은 부하가 <b>180 bar</b>, 여유 차압이 <b>20 bar</b> 일 때 LS 펌프 압력은 몇 bar 일까요?</div>
+          <div class="qhead"><span class="qno">문제 5<small> / 5</small></span><span class="qtag">보너스 · 선택</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">가장 높은 부하가 <b>180 bar</b>, 여유 차압이 <b>20 bar</b> 일 때 LS 펌프 압력은 몇 bar 일까요?</div>
           <form class="ans" autocomplete="off">
             <input id="a-H04-3-4" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="5번 답">
             <span class="unit">bar</span><button type="submit">확인</button>
@@ -2776,8 +2865,9 @@ td.wk{font-size:.82rem;color:var(--p)}
       <h2 class="sec">퀴즈 5문제 <span class="muted" style="font-weight:400">· 개념 4 + 보너스 계산 1</span></h2>
       <ol>
         <li class="q" data-q="0" data-type="choice" data-k="vb94p3yuuk" data-show="7JqU6rWsIOycoOufieydhCDrjZTtlbTshJwg7KeA66C57ZWc64uk" data-concept="전자 제어는 레버별 요구를 더한다">
+          <div class="qhead"><span class="qno">문제 1<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">전자 펌프 제어 컨트롤러가 두 레버의 요구 유량을 다루는 방식으로 맞는 것은?</div>
-          <div class="opts" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">가장 큰 것 하나만 따른다</button><button type="button" class="opt" data-o="1">요구 유량을 더해서 지령한다</button><button type="button" class="opt" data-o="2">평균을 낸다</button><button type="button" class="opt" data-o="3">가장 작은 것을 따른다</button></div>
+          <div class="opts long" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">가장 큰 것 하나만 따른다</button><button type="button" class="opt" data-o="1">요구 유량을 더해서 지령한다</button><button type="button" class="opt" data-o="2">평균을 낸다</button><button type="button" class="opt" data-o="3">가장 작은 것을 따른다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>포지티브의 셔틀과 다른 점을 떠올려 보세요.</p></details><details><summary>더 큰 힌트</summary><p>컨트롤러는 레버마다 필요한 유량을 계산해 더할 수 있습니다.</p></details>
@@ -2785,8 +2875,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q" data-q="1" data-type="choice" data-k="7aozkzezog" data-show="7J6R7JeFIOuqqOuTnOuCmCDrp4jroKUg7ZWc6rOE66W8IOyEpOygleqwkuunjCDrsJTqv5Qg7KGw7KCV7ZWc64uk" data-concept="전자 제어의 장점 = 설정값으로 조정">
+          <div class="qhead"><span class="qno">문제 2<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">전자 펌프 제어가 유압 신호 방식보다 쉽게 할 수 있는 것은?</div>
-          <div class="opts" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">배관 손실을 0 으로 만든다</button><button type="button" class="opt" data-o="1">작동유 점도를 바꾼다</button><button type="button" class="opt" data-o="2">릴리프 밸브를 없앤다</button><button type="button" class="opt" data-o="3">작업 모드나 마력 한계를 설정값만 바꿔 조정한다</button></div>
+          <div class="opts long" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">배관 손실을 0 으로 만든다</button><button type="button" class="opt" data-o="1">작동유 점도를 바꾼다</button><button type="button" class="opt" data-o="2">릴리프 밸브를 없앤다</button><button type="button" class="opt" data-o="3">작업 모드나 마력 한계를 설정값만 바꿔 조정한다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>전자 제어에서 펌프 지령은 컨트롤러의 계산 결과입니다.</p></details><details><summary>더 큰 힌트</summary><p>에코·표준·파워 모드가 무엇을 바꾸는지 떠올려 보세요.</p></details>
@@ -2794,8 +2885,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="2" data-type="choice" data-k="46460gsdi9" data-show="RVBQUiDrsLjruIzsmYAg66CI6rek66CI7J207YSwICjsnKDslZUg7Kq9KQ==" data-concept="증상 → 원인: 전류로 전기/유압 나누기">
-          <span class="qtag">응용</span><div class="qtext">컨트롤러의 지령 전류는 정상인데 펌프 유량이 안 나옵니다. 먼저 볼 곳은?</div>
-          <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">EPPR 밸브와 레귤레이터 (유압 쪽)</button><button type="button" class="opt" data-o="1">레버 센서</button><button type="button" class="opt" data-o="2">작업 모드 설정</button><button type="button" class="opt" data-o="3">컨트롤러 프로그램</button></div>
+          <div class="qhead"><span class="qno">문제 3<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">컨트롤러의 지령 전류는 정상인데 펌프 유량이 안 나옵니다. 먼저 볼 곳은?</div>
+          <div class="opts long" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">EPPR 밸브와 레귤레이터 (유압 쪽)</button><button type="button" class="opt" data-o="1">레버 센서</button><button type="button" class="opt" data-o="2">작업 모드 설정</button><button type="button" class="opt" data-o="3">컨트롤러 프로그램</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>전류가 정상이면 전기 쪽 지령은 제대로 나간 것입니다.</p></details><details><summary>더 큰 힌트</summary><p>그 뒤의 전류 → 압력 → 사판 쪽을 봅니다.</p></details>
@@ -2803,7 +2895,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="3" data-type="choice" data-k="ngotu682g" data-show="64qQ66Ck7KeE64uk" data-concept="모드 = 마력 한계 → 고압 유량">
-          <span class="qtag">응용</span><div class="qtext">에코 모드(마력 한계를 낮춤)로 바꾸면 고압 작업의 속도는?</div>
+          <div class="qhead"><span class="qno">문제 4<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">에코 모드(마력 한계를 낮춤)로 바꾸면 고압 작업의 속도는?</div>
           <div class="opts" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">빨라진다</button><button type="button" class="opt" data-o="1">느려진다</button><button type="button" class="opt" data-o="2">그대로다</button><button type="button" class="opt" data-o="3">멈춘다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
@@ -2812,7 +2905,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q bonus" data-q="4" data-type="num" data-k="==QfzAjLwojIs9GdiwCMzojIhJye" data-show="MzAgYmFy" data-concept="EPPR: 전류 → 파일럿 압력 (비례)">
-          <span class="qtag">보너스</span><div class="qtext"><b>보너스</b> EPPR 이 <b>200 mA → 0 bar</b>, <b>600 mA → 40 bar</b> 로 비례합니다. <b>500 mA</b> 면 파일럿은 몇 bar 일까요?</div>
+          <div class="qhead"><span class="qno">문제 5<small> / 5</small></span><span class="qtag">보너스 · 선택</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">EPPR 이 <b>200 mA → 0 bar</b>, <b>600 mA → 40 bar</b> 로 비례합니다. <b>500 mA</b> 면 파일럿은 몇 bar 일까요?</div>
           <form class="ans" autocomplete="off">
             <input id="a-H04-4-4" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="5번 답">
             <span class="unit">bar</span><button type="submit">확인</button>
@@ -2926,6 +3020,7 @@ td.wk{font-size:.82rem;color:var(--p)}
       <h2 class="sec">퀴즈 5문제 <span class="muted" style="font-weight:400">· 개념 4 + 보너스 계산 1</span></h2>
       <ol>
         <li class="q" data-q="0" data-type="choice" data-k="1wk1s2ss1k8" data-show="67aA7ZWYIOyVleugpeydtCDrgq7snYAg7Kq9" data-concept="복합 동작: 기름은 압력이 낮은 쪽으로 먼저">
+          <div class="qhead"><span class="qno">문제 1<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">압력 보상이 없는 회로에서 두 실린더를 동시에 움직이면, 펌프 기름은 주로 어디로 먼저 갈까요?</div>
           <div class="opts" role="group" aria-label="1번 보기"><button type="button" class="opt" data-o="0">부하 압력이 높은 쪽</button><button type="button" class="opt" data-o="1">두 쪽에 항상 반반</button><button type="button" class="opt" data-o="2">부하 압력이 낮은 쪽</button><button type="button" class="opt" data-o="3">실린더가 큰 쪽</button></div>
           <p class="fb" aria-live="polite"></p>
@@ -2935,8 +3030,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q" data-q="1" data-type="choice" data-k="2fxf321ax12" data-show="7JuA7KeB7J207KeAIOyViuuKlOuLpA==" data-concept="펌프 압력이 부하를 못 넘으면 그쪽은 멈춘다">
+          <div class="qhead"><span class="qno">문제 2<small> / 5</small></span><span class="qtag base">기본</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
           <div class="qtext">버킷이 기름을 다 받아 펌프 압력이 <b>120 bar</b> 에 머물러 있습니다. 부하가 <b>150 bar</b> 인 붐은?</div>
-          <div class="opts" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">천천히 움직인다</button><button type="button" class="opt" data-o="1">움직이지 않는다</button><button type="button" class="opt" data-o="2">버킷과 같은 속도로 움직인다</button><button type="button" class="opt" data-o="3">내려간다</button></div>
+          <div class="opts long" role="group" aria-label="2번 보기"><button type="button" class="opt" data-o="0">천천히 움직인다</button><button type="button" class="opt" data-o="1">움직이지 않는다</button><button type="button" class="opt" data-o="2">버킷과 같은 속도로 움직인다</button><button type="button" class="opt" data-o="3">내려간다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>실린더가 움직이려면 펌프 압력이 부하보다 높아야 합니다.</p></details><details><summary>더 큰 힌트</summary><p>120 과 150 을 비교해 보세요.</p></details>
@@ -2944,7 +3040,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="2" data-type="choice" data-k="s8progr6ay" data-show="67KE7YK3IOugiOuyhOulvCDrjZwg66+864uk" data-concept="가벼운 쪽을 조여 펌프 압력을 올린다">
-          <span class="qtag">응용</span><div class="qtext">붐과 버킷을 함께 쓰는데 붐이 안 올라갑니다. 운전자가 붐을 움직이게 하려면?</div>
+          <div class="qhead"><span class="qno">문제 3<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">붐과 버킷을 함께 쓰는데 붐이 안 올라갑니다. 운전자가 붐을 움직이게 하려면?</div>
           <div class="opts" role="group" aria-label="3번 보기"><button type="button" class="opt" data-o="0">버킷 레버를 더 민다</button><button type="button" class="opt" data-o="1">붐 레버를 덜 민다</button><button type="button" class="opt" data-o="2">엔진 회전수를 낮춘다</button><button type="button" class="opt" data-o="3">버킷 레버를 덜 민다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
@@ -2953,8 +3050,9 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q apply" data-q="3" data-type="choice" data-k="1k7fs3jufdm" data-show="6riw66aE7J20IOyVleugpeydtCDrgq7snYAg67KE7YK3IOyqveycvOuhnCDrqrDroLjri6Q=" data-concept="증상 해석: 복합 동작 멈칫은 분배 문제">
-          <span class="qtag">응용</span><div class="qtext">붐을 올리며 버킷을 함께 쓸 때 붐이 멈칫합니다. 맞는 설명은?</div>
-          <div class="opts" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">붐 실린더가 고장 났다</button><button type="button" class="opt" data-o="1">릴리프 밸브가 고장 났다</button><button type="button" class="opt" data-o="2">기름이 압력이 낮은 버킷 쪽으로 몰렸다</button><button type="button" class="opt" data-o="3">작동유가 부족하다</button></div>
+          <div class="qhead"><span class="qno">문제 4<small> / 5</small></span><span class="qtag">응용</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">붐을 올리며 버킷을 함께 쓸 때 붐이 멈칫합니다. 맞는 설명은?</div>
+          <div class="opts long" role="group" aria-label="4번 보기"><button type="button" class="opt" data-o="0">붐 실린더가 고장 났다</button><button type="button" class="opt" data-o="1">릴리프 밸브가 고장 났다</button><button type="button" class="opt" data-o="2">기름이 압력이 낮은 버킷 쪽으로 몰렸다</button><button type="button" class="opt" data-o="3">작동유가 부족하다</button></div>
           <p class="fb" aria-live="polite"></p>
           <div class="hints">
             <details><summary>힌트</summary><p>고장이 아니라 기름이 나뉘는 방식의 문제입니다.</p></details><details><summary>더 큰 힌트</summary><p>기름은 압력이 낮은 쪽으로 먼저 갑니다.</p></details>
@@ -2962,7 +3060,8 @@ td.wk{font-size:.82rem;color:var(--p)}
           </div>
         </li>
         <li class="q bonus" data-q="4" data-type="num" data-k="==QfzAjLwojIs9GdiwCO0ojIhJye" data-show="NDggTC9taW4=" data-concept="같은 펌프 압력에서 스풀별 유량">
-          <span class="qtag">보너스</span><div class="qtext"><b>보너스</b> 펌프 압력 <b>166 bar</b>, 붐 부하 <b>150 bar</b>, 붐 스풀 면적 <b>20 mm²</b> 일 때 붐으로 가는 유량은 몇 L/min 일까요?</div>
+          <div class="qhead"><span class="qno">문제 5<small> / 5</small></span><span class="qtag">보너스 · 선택</span><span class="qdone" aria-hidden="true">✔ 맞힘</span></div>
+          <div class="qtext">펌프 압력 <b>166 bar</b>, 붐 부하 <b>150 bar</b>, 붐 스풀 면적 <b>20 mm²</b> 일 때 붐으로 가는 유량은 몇 L/min 일까요?</div>
           <form class="ans" autocomplete="off">
             <input id="a-H05-1-4" name="a" inputmode="decimal" autocapitalize="off" spellcheck="false" placeholder="답 입력" aria-label="5번 답">
             <span class="unit">L/min</span><button type="submit">확인</button>
