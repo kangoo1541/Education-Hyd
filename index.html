@@ -169,7 +169,7 @@ code{font-size:.92em;background:var(--off);border-radius:6px;padding:1px 6px}
 .calc-fab{display:none;position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;
   font:inherit;font-weight:700;min-height:48px;padding:10px 18px;border:0;border-radius:999px;background:var(--r);color:var(--surface);
   box-shadow:0 4px 14px rgb(0 0 0 / .25);cursor:pointer}
-body.in-lesson .calc-fab:not([hidden]){display:block}
+body.in-lesson.near-num .calc-fab:not([hidden]){display:block}   /* 계산 문제가 화면에 보일 때만 */
 .calc{position:fixed;left:0;right:0;bottom:0;z-index:31;margin:0 auto;max-width:440px;background:var(--surface);color:var(--ink);
   border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;box-shadow:0 -6px 24px rgb(0 0 0 / .25);
   padding:12px max(14px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));
@@ -3818,6 +3818,13 @@ td.wk{font-size:.82rem;color:var(--p)}
     function calcClose() { pane.hidden = true; fab.setAttribute('aria-expanded', 'false'); fab.hidden = false; document.body.style.paddingBottom = ''; }
     window.calcClose = calcClose;
     fab.addEventListener('click', calcOpen);
+    // 계산기 버튼은 계산 문제(답 칸이 있는 문제)가 화면에 보일 때만 띄운다. 개념 문제 보기를 가리지 않게
+    const near = new Set();
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(es => { es.forEach(e => { if (e.isIntersecting) near.add(e.target); else near.delete(e.target); });
+        document.body.classList.toggle('near-num', near.size > 0); }, { rootMargin: '0px 0px -15% 0px' });
+      document.querySelectorAll('.q[data-type="num"]').forEach(q => io.observe(q));
+    } else document.body.classList.add('near-num');
     pane.querySelector('.calc-x').addEventListener('click', calcClose);
     document.addEventListener('keydown', e => { if (pane.hidden) return;
       if (e.target.matches('input, textarea')) return;
